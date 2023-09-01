@@ -20,6 +20,7 @@ include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-member.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/checkout-parent.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
 
 /**
