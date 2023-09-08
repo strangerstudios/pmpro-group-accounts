@@ -15,7 +15,7 @@ define( 'PMPROGROUPACCT_DIR', dirname( __FILE__ ) );
 define( 'PMPROGROUPACCT_VERSION', 'TBD' );
 
 include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group.php' );
-include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-member.php' );
+include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group-member.php' );
 
 include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );

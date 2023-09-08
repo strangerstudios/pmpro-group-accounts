@@ -148,17 +148,17 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 
 	// Check if this parent already has a group for this level. If so, check if $seats is greater than the number of seats in the group.
 	$group_search_params = array(
-		'parent_user_id'  => get_current_user_id(),
-		'parent_level_id' => $level->id,
+		'group_parent_user_id'  => get_current_user_id(),
+		'group_parent_level_id' => $level->id,
 	);
 	$groups = PMProGroupAcct_Group::get_groups( $group_search_params );
 	if ( ! empty( $groups ) ) {
 		// Get the number of active members in this group.
 		$member_search_params = array(
-			'group_id' => $groups[0]->id,
-			'status'   => 'active',
+			'group_id'           => $groups[0]->id,
+			'group_child_status' => 'active',
 		);
-		$members = PMProGroupAcct_Member::get_members( $member_search_params );
+		$members = PMProGroupAcct_Group_Member::get_members( $member_search_params );
 
 		// If there are not enough seats for all the active members, show an error.
 		if ( $seats < count( $members ) ) {
@@ -267,8 +267,8 @@ function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
 
 	// Check if there is already a group for this user and level.
 	$group_search_params = array(
-		'parent_user_id'  => $user_id,
-		'parent_level_id' => $level->id,
+		'group_parent_user_id'  => $user_id,
+		'group_parent_level_id' => $level->id,
 	);
 	$groups = PMProGroupAcct_Group::get_groups( $group_search_params );
 	if ( ! empty( $groups ) ) {

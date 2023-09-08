@@ -5,7 +5,7 @@
  *
  * @since TBD
  */
-class PMProGroupAcct_Member {
+class PMProGroupAcct_Group_Member {
 	/**
 	 * The ID of the group member entry.
 	 *
@@ -22,7 +22,7 @@ class PMProGroupAcct_Member {
 	 *
 	 * @var int
 	 */
-	protected $user_id;
+	protected $group_child_user_id;
 
 	/**
 	 * The level ID that the group member claimed using this group.
@@ -31,7 +31,7 @@ class PMProGroupAcct_Member {
 	 *
 	 * @var int
 	 */
-	protected $level_id;
+	protected $group_child_level_id;
 
 	/**
 	 * The group ID that the group member is associated with.
@@ -50,7 +50,7 @@ class PMProGroupAcct_Member {
 	 *
 	 * @var string
 	 */
-	protected $status;
+	protected $group_child_status;
 
 	/**
 	 * Get the list of members based on passed query arguments.
@@ -82,15 +82,15 @@ class PMProGroupAcct_Member {
 		}
 	
 		// Filter by user ID.
-		if ( isset( $args['user_id'] ) ) {
-			$where[]    = 'user_id = %d';
-			$prepared[] = $args['user_id'];
+		if ( isset( $args['group_child_user_id'] ) ) {
+			$where[]    = 'group_child_user_id = %d';
+			$prepared[] = $args['group_child_user_id'];
 		}
 	
 		// Filter by level ID.
-		if ( isset( $args['level_id'] ) ) {
-			$where[]    = 'level_id = %d';
-			$prepared[] = $args['level_id'];
+		if ( isset( $args['group_child_level_id'] ) ) {
+			$where[]    = 'group_child_level_id = %d';
+			$prepared[] = $args['group_child_level_id'];
 		}
 	
 		// Filter by group ID.
@@ -100,9 +100,9 @@ class PMProGroupAcct_Member {
 		}
 	
 		// Filter by status.
-		if ( isset( $args['status'] ) ) {
-			$where[]    = 'status = %s';
-			$prepared[] = $args['status'];
+		if ( isset( $args['group_child_status'] ) ) {
+			$where[]    = 'group_child_status = %s';
+			$prepared[] = $args['group_child_status'];
 		}
 	
 		// Maybe filter the data.
@@ -140,17 +140,17 @@ class PMProGroupAcct_Member {
 	 *
 	 * @since TBD
 	 *
-	 * @param int $user_id The user ID of the group member.
-	 * @param int $level_id The level ID that the group member claimed using this group.
+	 * @param int $group_child_user_id The user ID of the group member.
+	 * @param int $group_child_level_id The level ID that the group member claimed using this group.
 	 * @param int $group_id The group ID that the group member is associated with.
 	 */
-	public static function create( $user_id, $level_id, $group_id ) {
+	public static function create( $group_child_user_id, $group_child_level_id, $group_id ) {
 		global $wpdb;
 
 		// Validate the passed data.
 		if (
-			! is_int( $user_id ) || $user_id <= 0 ||
-			! is_int( $level_id ) || $level_id <= 0 ||
+			! is_int( $group_child_user_id ) || $group_child_user_id <= 0 ||
+			! is_int( $group_child_level_id ) || $group_child_level_id <= 0 ||
 			! is_int( $group_id ) || $group_id <= 0
 		) {
 			return false;
@@ -160,10 +160,10 @@ class PMProGroupAcct_Member {
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_members,
 			array(
-				'user_id'  => $user_id,
-				'level_id' => $level_id,
+				'group_child_user_id'  => $group_child_user_id,
+				'group_child_level_id' => $group_child_level_id,
 				'group_id' => $group_id,
-				'status'   => 'active',
+				'group_child_status'   => 'active',
 			),
 			array(
 				'%d',
@@ -201,21 +201,21 @@ class PMProGroupAcct_Member {
 	 *
 	 * @since TBD
 	 *
-	 * @param string $status The new status of the group member. 'active' or 'inactive'.
+	 * @param string $group_child_status The new status of the group member. 'active' or 'inactive'.
 	 */
-	public function update_status( $status ) {
+	public function update_group_child_status( $group_child_status ) {
 		global $wpdb;
 
 		// Validate the passed data.
-		if ( ! in_array( $status, array( 'active', 'inactive' ) ) ) {
+		if ( ! in_array( $group_child_status, array( 'active', 'inactive' ) ) ) {
 			return;
 		}
 
-		$this->status = $status;
+		$this->group_child_status = $group_child_status;
 		$wpdb->update(
 			$wpdb->pmprogroupacct_members,
 			array(
-				'status' => $status,
+				'group_child_status' => $group_child_status,
 			),
 			array(
 				'id' => $this->id,
@@ -248,10 +248,10 @@ class PMProGroupAcct_Member {
 
 			if ( ! empty( $data ) ) {
 				$this->id       = $data->id;
-				$this->user_id  = $data->user_id;
-				$this->level_id = $data->level_id;
+				$this->group_child_user_id  = $data->group_child_user_id;
+				$this->group_child_level_id = $data->group_child_level_id;
 				$this->group_id = $data->group_id;
-				$this->status   = $data->status;
+				$this->group_child_status   = $data->group_child_status;
 			}
 		}
 	}

@@ -22,7 +22,7 @@ class PMProGroupAcct_Group {
 	 *
 	 * @var int
 	 */
-	protected $parent_user_id;
+	protected $group_parent_user_id;
 
 	/**
 	 * The parent user's level ID that this group is associated with.
@@ -31,7 +31,7 @@ class PMProGroupAcct_Group {
 	 *
 	 * @var int
 	 */
-	protected $parent_level_id;
+	protected $group_parent_level_id;
 
 	/**
 	 * The total number of seats in this group.
@@ -40,7 +40,7 @@ class PMProGroupAcct_Group {
 	 *
 	 * @var int
 	 */
-	protected $seats;
+	protected $group_total_seats;
 
 	/**
 	 * The checkout code to join this group.
@@ -49,7 +49,7 @@ class PMProGroupAcct_Group {
 	 *
 	 * @var string
 	 */
-	protected $code;
+	protected $group_checkout_code;
 
 	/**
 	 * Get the list of groups based on query arguments.
@@ -82,21 +82,21 @@ class PMProGroupAcct_Group {
 		}
 
 		// Filter by parent user ID.
-		if ( isset( $args['parent_user_id'] ) ) {
-			$where[]    = 'parent_user_id = %d';
-			$prepared[] = $args['parent_user_id'];
+		if ( isset( $args['group_parent_user_id'] ) ) {
+			$where[]    = 'group_parent_user_id = %d';
+			$prepared[] = $args['group_parent_user_id'];
 		}
 
 		// Filter by parent level ID.
-		if ( isset( $args['parent_level_id'] ) ) {
-			$where[]    = 'parent_level_id = %d';
-			$prepared[] = $args['parent_level_id'];
+		if ( isset( $args['group_parent_level_id'] ) ) {
+			$where[]    = 'group_parent_level_id = %d';
+			$prepared[] = $args['group_parent_level_id'];
 		}
 
-		// Filter by checkout code.
-		if ( isset( $args['code'] ) ) {
-			$where[]    = 'code = %s';
-			$prepared[] = $args['code'];
+		// Filter by checkout group_checkout_code.
+		if ( isset( $args['group_checkout_code'] ) ) {
+			$where[]    = 'group_checkout_code = %s';
+			$prepared[] = $args['group_checkout_code'];
 		}
 
 		// Maybe filter the data.
@@ -134,35 +134,35 @@ class PMProGroupAcct_Group {
 	 *
 	 * @since TBD
 	 *
-	 * @param int $parent_user_id The user ID of the parent user.
-	 * @param int $parent_level_id The level ID of the parent user.
-	 * @param int $seats The number of seats in the group.
+	 * @param int $group_parent_user_id The user ID of the parent user.
+	 * @param int $group_parent_level_id The level ID of the parent user.
+	 * @param int $group_total_seats The number of seats in the group.
 	 *
 	 * @return bool|PMProGroupAcct_Group The new group object or false if the group could not be created.
 	 */
-	public static function create( $parent_user_id, $parent_level_id, $seats ) {
+	public static function create( $group_parent_user_id, $group_parent_level_id, $group_total_seats ) {
 		global $wpdb;
 
 		// Validate the passed data.
 		if (
-			! is_int( $parent_user_id ) || $parent_user_id <= 0 ||
-			! is_int( $parent_level_id ) || $parent_level_id <= 0 ||
-			! is_int( $seats ) || $seats < 0
+			! is_int( $group_parent_user_id ) || $group_parent_user_id <= 0 ||
+			! is_int( $group_parent_level_id ) || $group_parent_level_id <= 0 ||
+			! is_int( $group_total_seats ) || $group_total_seats < 0
 		) {
 			return false;
 		}
 
 		// Get a checkout code for the group.
-		$code = self::generate_code();
+		$group_checkout_code = self::generate_group_checkout_code();
 
 		// Create the group in the database.
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_groups,
 			array(
-				'parent_user_id'  => $parent_user_id,
-				'parent_level_id' => $parent_level_id,
-				'code'            => $code,
-				'seats'           => $seats,
+				'group_parent_user_id'  => $group_parent_user_id,
+				'group_parent_level_id' => $group_parent_level_id,
+				'group_checkout_code'            => $group_checkout_code,
+				'group_total_seats'           => $group_total_seats,
 			)
 		);
 
@@ -196,13 +196,13 @@ class PMProGroupAcct_Group {
 	 *
 	 * @since TBD
 	 */
-	public function regenerate_code() {
+	public function regenerate_group_checkout_code() {
 		global $wpdb;
-		$this->code = self::generate_code();
+		$this->group_checkout_code = self::generate_group_checkout_code();
 		$wpdb->update(
 			$wpdb->pmprogroupacct_groups,
 			array(
-				'code' => $this->code,
+				'group_checkout_code' => $this->group_checkout_code,
 			),
 			array(
 				'id' => $this->id,
@@ -221,21 +221,21 @@ class PMProGroupAcct_Group {
 	 *
 	 * @since TBD
 	 *
-	 * @param int $seats The new number of seats in the group.
+	 * @param int $group_total_seats The new number of seats in the group.
 	 */
-	public function update_seats( $seats ) {
+	public function update_group_total_seats( $group_total_seats ) {
 		global $wpdb;
 
 		// Validate the passed data.
-		if ( ! is_int( $seats ) || $seats <= 0 ) {
+		if ( ! is_int( $group_total_seats ) || $group_total_seats <= 0 ) {
 			return;
 		}
 
-		$this->seats = $seats;
+		$this->group_total_seats = $group_total_seats;
 		$wpdb->update(
 			$wpdb->pmprogroupacct_groups,
 			array(
-				'seats' => $seats,
+				'group_total_seats' => $group_total_seats,
 			),
 			array(
 				'id' => $this->id,
@@ -261,13 +261,13 @@ class PMProGroupAcct_Group {
 	 */
 	public function is_accepting_signups() {
 		// Check whether the parent user still has the level that the group is associated with.
-		if ( ! pmpro_hasMembershipLevel( $this->parent_level_id, $this->parent_user_id ) ) {
+		if ( ! pmpro_hasMembershipLevel( $this->group_parent_level_id, $this->group_parent_user_id ) ) {
 			return false;
 		}
 
 		// Check whether the group has any seats available.
-		$members = PMProGroupAcct_Member::get_members( array( 'group_id' => $this->id, 'status' => 'active' ) );
-		if ( count( $members ) >= $this->seats ) {
+		$members = PMProGroupAcct_Group_Member::get_members( array( 'group_id' => $this->id, 'group_child_status' => 'active' ) );
+		if ( count( $members ) >= $this->group_total_seats ) {
 			return false;
 		}
 
@@ -292,10 +292,10 @@ class PMProGroupAcct_Group {
 
 			if ( ! empty( $data ) ) {
 				$this->id              = $data->id;
-				$this->parent_user_id  = $data->parent_user_id;
-				$this->parent_level_id = $data->parent_level_id;
-				$this->code            = $data->code;
-				$this->seats           = $data->seats;
+				$this->group_parent_user_id  = $data->group_parent_user_id;
+				$this->group_parent_level_id = $data->group_parent_level_id;
+				$this->group_checkout_code            = $data->group_checkout_code;
+				$this->group_total_seats           = $data->group_total_seats;
 			}
 		}
 	}
@@ -307,15 +307,15 @@ class PMProGroupAcct_Group {
 	 *
 	 * @return string The checkout code.
 	 */
-	protected static function generate_code() {
+	protected static function generate_group_checkout_code() {
 		global $wpdb;
 
-		// While $new_code is not unique, generate a new code.
-		$new_code = pmpro_getDiscountCode();
-		while ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->pmprogroupacct_groups} WHERE code = %s", $new_code ) ) ) {
-			$new_code = pmpro_getDiscountCode();
+		// While $new_group_checkout_code is not unique, generate a new code.
+		$new_group_checkout_code = pmpro_getDiscountCode();
+		while ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->pmprogroupacct_groups} WHERE group_checkout_code = %s", $new_group_checkout_code ) ) ) {
+			$new_group_checkout_code = pmpro_getDiscountCode();
 		}
 
-		return $new_code;
+		return $new_group_checkout_code;
 	}
 }

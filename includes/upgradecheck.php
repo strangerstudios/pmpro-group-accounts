@@ -29,34 +29,34 @@ function pmprogroupacct_db_delta() {
 	global $wpdb;
 	$wpdb->hide_errors();
 	$wpdb->pmprogroupacct_groups = $wpdb->prefix . 'pmprogroupacct_groups';
-    $wpdb->pmprogroupacct_members = $wpdb->prefix . 'pmprogroupacct_members';
+	$wpdb->pmprogroupacct_group_members = $wpdb->prefix . 'pmprogroupacct_group_members';
 
-	// wp_pmprogroupacct_groups
+	// pmprogroupacct_groups
 	$sqlQuery = "
 		CREATE TABLE `" . $wpdb->pmprogroupacct_groups . "` (
-            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            `parent_user_id` bigint(20) unsigned NOT NULL,
-            `parent_level_id` int(11) unsigned NOT NULL,
-            `code` varchar(32) NOT NULL,
-            `seats` int(11) unsigned NOT NULL,
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `parent` (`parent_user_id`,`parent_level_id`),
-            UNIQUE KEY `code` (`code`)
+			`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			`group_parent_user_id` bigint(20) unsigned NOT NULL,
+			`group_parent_level_id` int(11) unsigned NOT NULL,
+			`group_checkout_code` varchar(32) NOT NULL,
+			`group_total_seats` int(11) unsigned NOT NULL,
+			PRIMARY KEY (`id`),
+			UNIQUE KEY `parent` (`group_parent_user_id`,`group_parent_level_id`),
+			UNIQUE KEY `group_checkout_code` (`group_checkout_code`)
 		);
 	";
 	dbDelta( $sqlQuery );
 
-	// wp_pmprogroupacct_members
+	// pmprogroupacct_group_members
 	$sqlQuery = "
-		CREATE TABLE `" . $wpdb->pmprogroupacct_members . "` (
-            `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-            `user_id` bigint(20) unsigned NOT NULL,
-            `level_id` int(11) unsigned NOT NULL,
-            `group_id` bigint(20) unsigned NOT NULL,
-            `status` varchar(20) NOT NULL DEFAULT 'active',
-            PRIMARY KEY (`id`),
-            UNIQUE KEY `user_group` (`user_id`,`level_id`,`group_id`),
-            KEY `status` (`status`)
+		CREATE TABLE `" . $wpdb->pmprogroupacct_group_members . "` (
+			`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			`group_child_user_id` bigint(20) unsigned NOT NULL,
+			`group_child_level_id` int(11) unsigned NOT NULL,
+			`group_id` bigint(20) unsigned NOT NULL,
+			`group_child_status` varchar(20) NOT NULL DEFAULT 'active',
+			PRIMARY KEY (`id`),
+			UNIQUE KEY `user_group` (`group_child_user_id`,`group_child_level_id`,`group_id`),
+			KEY `group_child_status` (`group_child_status`)
 		);
 	";
 	dbDelta( $sqlQuery );
