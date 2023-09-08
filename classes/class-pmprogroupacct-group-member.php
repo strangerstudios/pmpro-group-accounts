@@ -53,6 +53,34 @@ class PMProGroupAcct_Group_Member {
 	protected $group_child_status;
 
 	/**
+	 * Get a group member object by ID.
+	 *
+	 * @since TBD
+	 *
+	 * @param int $member_id The group member ID to populate.
+	 */
+	public function __construct( $member_id ) {
+		global $wpdb;
+
+		if ( is_int( $member_id ) ) {
+			$data = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->pmprogroupacct_members} WHERE id = %d",
+					$member_id
+				)
+			);
+
+			if ( ! empty( $data ) ) {
+				$this->id       = $data->id;
+				$this->group_child_user_id  = $data->group_child_user_id;
+				$this->group_child_level_id = $data->group_child_level_id;
+				$this->group_id = $data->group_id;
+				$this->group_child_status   = $data->group_child_status;
+			}
+		}
+	}
+
+	/**
 	 * Get the list of members based on passed query arguments.
 	 *
 	 * @since TBD
@@ -227,32 +255,5 @@ class PMProGroupAcct_Group_Member {
 				'%d',
 			)
 		);
-	}
-
-	/**
-	 * Protected constructor to force the use of a factory method.
-	 *
-	 * @since TBD
-	 *
-	 * @param int $member_id The group member ID to populate.
-	 */
-	protected function __construct( $member_id ) {
-		global $wpdb;
-		if ( is_int( $member_id ) ) {
-			$data = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->pmprogroupacct_members} WHERE id = %d",
-					$member_id
-				)
-			);
-
-			if ( ! empty( $data ) ) {
-				$this->id       = $data->id;
-				$this->group_child_user_id  = $data->group_child_user_id;
-				$this->group_child_level_id = $data->group_child_level_id;
-				$this->group_id = $data->group_id;
-				$this->group_child_status   = $data->group_child_status;
-			}
-		}
 	}
 }

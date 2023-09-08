@@ -52,6 +52,34 @@ class PMProGroupAcct_Group {
 	protected $group_checkout_code;
 
 	/**
+	 * Get a group object by ID.
+	 *
+	 * @since TBD
+	 *
+	 * @param int $group The group ID to populate.
+	 */
+	public function __construct( $group_id ) {
+		global $wpdb;
+
+		if ( is_int( $group_id ) ) {
+			$data = $wpdb->get_row(
+				$wpdb->prepare(
+					"SELECT * FROM {$wpdb->pmprogroupacct_groups} WHERE id = %d",
+					$group_id
+				)
+			);
+
+			if ( ! empty( $data ) ) {
+				$this->id              = $data->id;
+				$this->group_parent_user_id  = $data->group_parent_user_id;
+				$this->group_parent_level_id = $data->group_parent_level_id;
+				$this->group_checkout_code            = $data->group_checkout_code;
+				$this->group_total_seats           = $data->group_total_seats;
+			}
+		}
+	}
+
+	/**
 	 * Get the list of groups based on query arguments.
 	 *
 	 * @since TBD
@@ -272,32 +300,6 @@ class PMProGroupAcct_Group {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Protected constructor to force the use of a factory method.
-	 *
-	 * @since TBD
-	 *
-	 * @param int $group The group ID to populate.
-	 */
-	protected function __construct( $group_id ) {
-		if ( is_int( $group_id ) ) {
-			$data = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->pmprogroupacct_groups} WHERE id = %d",
-					$group_id
-				)
-			);
-
-			if ( ! empty( $data ) ) {
-				$this->id              = $data->id;
-				$this->group_parent_user_id  = $data->group_parent_user_id;
-				$this->group_parent_level_id = $data->group_parent_level_id;
-				$this->group_checkout_code            = $data->group_checkout_code;
-				$this->group_total_seats           = $data->group_total_seats;
-			}
-		}
 	}
 
 	/**
