@@ -86,12 +86,12 @@ class PMProGroupAcct_Group_Member {
 	 * @since TBD
 	 *
 	 * @param array $args The query arguments to use to retrieve the members.
-	 * @return PMProGroupAcct_Member[] The list of members.
+	 * @return PMProGroupAcct_Member[]|int The list of members or the count of members if $args['return_count'] is `true`.
 	 */
-	public static function get_members( $args = array() ) {
+	public static function get_group_members( $args = array() ) {
 		global $wpdb;
 
-		$sql_query = "SELECT id FROM {$wpdb->pmprogroupacct_members}";
+		$sql_query = empty( $args['return_count'] ) ? "SELECT id FROM {$wpdb->pmprogroupacct_members}" : "SELECT COUNT(id) FROM {$wpdb->pmprogroupacct_members}";
 
 		$prepared = array();
 		$where    = array();
@@ -138,8 +138,10 @@ class PMProGroupAcct_Group_Member {
 			$sql_query .= ' WHERE ' . implode( ' AND ', $where );
 		}
 	
-		// Add the order and limit.
-		$sql_query .= " ORDER BY {$orderby} LIMIT {$limit}";
+		// Add the order and limit if we're not just counting.
+		if ( empty( $args['return_count'] ) ) {
+			$sql_query .= " ORDER BY {$orderby} LIMIT {$limit}";
+		}
 	
 		// Prepare the query.
 		if ( ! empty( $prepared ) ) {
@@ -148,6 +150,13 @@ class PMProGroupAcct_Group_Member {
 	
 		// Get the data.
 		$member_ids = $wpdb->get_col( $sql_query );
+
+		// If we're just counting, return the count.
+		if ( ! empty( $args['return_count'] ) ) {
+			return (int) $member_ids[0];
+		}
+
+		// If we didn't get any member IDs, return an empty array.
 		if ( empty( $member_ids ) ) {
 			return array();
 		}

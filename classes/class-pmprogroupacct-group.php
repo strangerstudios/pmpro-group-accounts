@@ -158,6 +158,50 @@ class PMProGroupAcct_Group {
 	}
 
 	/**
+	 * Get a group object by parent user ID and parent level ID.
+	 *
+	 * @since TBD
+	 *
+	 * @param int $group_parent_user_id The user ID of the parent user.
+	 * @param int $group_parent_level_id The level ID of the parent user.
+	 * @return PMProGroupAcct_Group|null The group object or null if the group could not be found.
+	 */
+	public static function get_group_by_parent_user_id_and_parent_level_id( $group_parent_user_id, $group_parent_level_id ) {
+		$groups = self::get_groups(
+			array(
+				'group_parent_user_id'  => $group_parent_user_id,
+				'group_parent_level_id' => $group_parent_level_id,
+				'limit'                 => 1,
+			)
+		);
+		if ( empty( $groups ) ) {
+			return null;
+		}
+		return $groups[0];
+	}
+
+	/**
+	 * Get a group object by checkout code.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $group_checkout_code The checkout code to search for.
+	 * @return PMProGroupAcct_Group|null The group object or null if the group could not be found.
+	 */
+	public static function get_group_by_checkout_code( $group_checkout_code ) {
+		$groups = self::get_groups(
+			array(
+				'group_checkout_code' => $group_checkout_code,
+				'limit'               => 1,
+			)
+		);
+		if ( empty( $groups ) ) {
+			return null;
+		}
+		return $groups[0];
+	}
+
+	/**
 	 * Create a new group.
 	 *
 	 * @since TBD
@@ -294,12 +338,28 @@ class PMProGroupAcct_Group {
 		}
 
 		// Check whether the group has any seats available.
-		$members = PMProGroupAcct_Group_Member::get_members( array( 'group_id' => $this->id, 'group_child_status' => 'active' ) );
-		if ( count( $members ) >= $this->group_total_seats ) {
+		if ( $this->get_active_members( true ) >= $this->group_total_seats ) {
 			return false;
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the active members in this group.
+	 *
+	 * @since TBD
+	 *
+	 * @param bool return_count Whether to return the count of members instead of the list of members.
+	 * @return PMProGroupAcct_Group_Member[]|int The list of members or the count of members.
+	 */
+	public function get_active_members( $return_count = false ) {
+		$member_query_args = array(
+			'group_id' => $this->id,
+			'group_child_status' => 'active',
+			'return_count' => $return_count,
+		);
+		return PMProGroupAcct_Group_Member::get_group_members( $member_query_args );
 	}
 
 	/**
