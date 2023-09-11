@@ -21,7 +21,13 @@ include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/checkout-parent.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/manage-group-page.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
+
+// Set up $wpdb tables.
+global $wpdb;
+$wpdb->pmprogroupacct_groups = $wpdb->prefix . 'pmprogroupacct_groups';
+$wpdb->pmprogroupacct_group_members = $wpdb->prefix . 'pmprogroupacct_group_members';
 
 /**
  * Load the languages folder for translations.

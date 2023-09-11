@@ -91,7 +91,7 @@ class PMProGroupAcct_Group_Member {
 	public static function get_group_members( $args = array() ) {
 		global $wpdb;
 
-		$sql_query = empty( $args['return_count'] ) ? "SELECT id FROM {$wpdb->pmprogroupacct_members}" : "SELECT COUNT(id) FROM {$wpdb->pmprogroupacct_members}";
+		$sql_query = empty( $args['return_count'] ) ? "SELECT id FROM {$wpdb->pmprogroupacct_group_members}" : "SELECT COUNT(id) FROM {$wpdb->pmprogroupacct_group_members}";
 
 		$prepared = array();
 		$where    = array();
@@ -195,7 +195,7 @@ class PMProGroupAcct_Group_Member {
 
 		// Create the group member in the database with an "active" status.
 		$wpdb->insert(
-			$wpdb->pmprogroupacct_members,
+			$wpdb->pmprogroupacct_group_members,
 			array(
 				'group_child_user_id'  => $group_child_user_id,
 				'group_child_level_id' => $group_child_level_id,
@@ -231,6 +231,21 @@ class PMProGroupAcct_Group_Member {
 		if ( property_exists( $this, $name ) ) {
 			return $this->$name;
 		}
+	}
+
+	/**
+	 * Magic isset to check protected properties.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $name The name of the property to check.
+	 * @return bool Whether the property is set.
+	 */
+	public function __isset( $name ) {
+		if ( property_exists( $this, $name ) ) {
+			return isset( $this->$name );
+		}
+		return false;
 	}
 
 	/**

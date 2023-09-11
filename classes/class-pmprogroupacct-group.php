@@ -70,11 +70,11 @@ class PMProGroupAcct_Group {
 			);
 
 			if ( ! empty( $data ) ) {
-				$this->id              = $data->id;
-				$this->group_parent_user_id  = $data->group_parent_user_id;
-				$this->group_parent_level_id = $data->group_parent_level_id;
-				$this->group_checkout_code            = $data->group_checkout_code;
-				$this->group_total_seats           = $data->group_total_seats;
+				$this->id                   = $data->id;
+				$this->group_parent_user_id  = (int)$data->group_parent_user_id;
+				$this->group_parent_level_id = (int)$data->group_parent_level_id;
+				$this->group_checkout_code   = $data->group_checkout_code;
+				$this->group_total_seats     = (int)$data->group_total_seats;
 			}
 		}
 	}
@@ -91,7 +91,7 @@ class PMProGroupAcct_Group {
 	public static function get_groups( $args = array() ) {
 		global $wpdb;
 
-		$sql_query = "SELECT * FROM {$wpdb->pmprogroupacct_groups}";
+		$sql_query = "SELECT id FROM {$wpdb->pmprogroupacct_groups}";
 
 		$prepared = array();
 		$where    = array();
@@ -141,7 +141,7 @@ class PMProGroupAcct_Group {
 		}
 
 		// Get the data.
-		$group_ids = $wpdb->get_results( $sql_query );
+		$group_ids = $wpdb->get_col( $sql_query );
 		if ( empty( $group_ids ) ) {
 			return array();
 		}
@@ -149,7 +149,7 @@ class PMProGroupAcct_Group {
 		// Return the list of groups.
 		$groups = array();
 		foreach ( $group_ids as $group_id ) {
-			$group = new self( $group_id );
+			$group = new self( (int)$group_id );
 			if ( ! empty( $group->id ) ) {
 				$groups[] = $group;
 			}
@@ -217,9 +217,9 @@ class PMProGroupAcct_Group {
 
 		// Validate the passed data.
 		if (
-			! is_int( $group_parent_user_id ) || $group_parent_user_id <= 0 ||
-			! is_int( $group_parent_level_id ) || $group_parent_level_id <= 0 ||
-			! is_int( $group_total_seats ) || $group_total_seats < 0
+			! is_numeric( $group_parent_user_id ) || (int) $group_parent_user_id <= 0 ||
+			! is_numeric( $group_parent_level_id ) || (int) $group_parent_level_id <= 0 ||
+			! is_numeric( $group_total_seats ) || (int) $group_total_seats < 0
 		) {
 			return false;
 		}
@@ -231,10 +231,10 @@ class PMProGroupAcct_Group {
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_groups,
 			array(
-				'group_parent_user_id'  => $group_parent_user_id,
-				'group_parent_level_id' => $group_parent_level_id,
-				'group_checkout_code'            => $group_checkout_code,
-				'group_total_seats'           => $group_total_seats,
+				'group_parent_user_id'  => (int)$group_parent_user_id,
+				'group_parent_level_id' => (int)$group_parent_level_id,
+				'group_checkout_code'   => $group_checkout_code,
+				'group_total_seats'     => (int)$group_total_seats,
 			)
 		);
 
@@ -261,7 +261,20 @@ class PMProGroupAcct_Group {
 		}
 	}
 
-	
+	/**
+	 * Magic isset to check protected properties.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $name The name of the property to check.
+	 * @return bool Whether the property is set.
+	 */
+	public function __isset( $name ) {
+		if ( property_exists( $this, $name ) ) {
+			return isset( $this->$name );
+		}
+		return false;
+	}
 
 	/**
 	 * Regenerate the checkout code for this group.
