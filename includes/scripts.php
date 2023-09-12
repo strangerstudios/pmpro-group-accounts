@@ -14,3 +14,14 @@ function pmprogroupacct_admin_enqueue_scripts() {
     wp_enqueue_style( 'select2', plugins_url( 'css/select2.min.css', dirname(__FILE__) ), array(), '4.0.13' );
 }
 add_action( 'admin_enqueue_scripts', 'pmprogroupacct_admin_enqueue_scripts' );
+
+/**
+ * Enqueue frontend scripts.
+ *
+ * @since TBD
+ */
+function pmprogroupacct_wp_enqueue_scripts() {
+    // Enqueue the checkout script.
+    wp_enqueue_script( 'pmprogroupacct-checkout', plugins_url( 'js/pmprogroupacct-checkout.js', dirname(__FILE__) ), array( 'jquery' ), PMPROGROUPACCT_VERSION );
+}
+add_action( 'wp_enqueue_scripts', 'pmprogroupacct_wp_enqueue_scripts' );

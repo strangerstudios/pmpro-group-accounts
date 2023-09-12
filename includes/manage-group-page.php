@@ -94,8 +94,8 @@ function pmprogroupacct_shortcode_manage_group() {
 				<tbody>
 					<?php
 					foreach ( $active_members as $member ) {
-						$user  = get_userdata( $member->user_id );
-						$level = pmpro_getLevel( $member->level_id );
+						$user  = get_userdata( $member->group_child_user_id );
+						$level = pmpro_getLevel( $member->group_child_level_id );
 						?>
 						<tr>
 							<td><?php echo esc_html( $user->user_login ); ?></td>

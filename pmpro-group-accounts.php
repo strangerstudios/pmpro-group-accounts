@@ -21,6 +21,7 @@ include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/checkout-parent.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/checkout-child.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/manage-group-page.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
 

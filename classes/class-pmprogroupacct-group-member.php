@@ -65,7 +65,7 @@ class PMProGroupAcct_Group_Member {
 		if ( is_int( $member_id ) ) {
 			$data = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$wpdb->pmprogroupacct_members} WHERE id = %d",
+					"SELECT * FROM {$wpdb->pmprogroupacct_group_members} WHERE id = %d",
 					$member_id
 				)
 			);
@@ -164,7 +164,7 @@ class PMProGroupAcct_Group_Member {
 		// Return the list of members.
 		$members = array();
 		foreach ( $member_ids as $member_id ) {
-			$member = new self( $member_id );
+			$member = new self( (int)$member_id );
 			if ( ! empty( $member->id ) ) {
 				$members[] = $member;
 			}
@@ -186,9 +186,9 @@ class PMProGroupAcct_Group_Member {
 
 		// Validate the passed data.
 		if (
-			! is_int( $group_child_user_id ) || $group_child_user_id <= 0 ||
-			! is_int( $group_child_level_id ) || $group_child_level_id <= 0 ||
-			! is_int( $group_id ) || $group_id <= 0
+			! is_numeric( $group_child_user_id ) || (int)$group_child_user_id <= 0 ||
+			! is_numeric( $group_child_level_id ) || (int)$group_child_level_id <= 0 ||
+			! is_numeric( $group_id ) || (int)$group_id <= 0
 		) {
 			return false;
 		}
@@ -197,9 +197,9 @@ class PMProGroupAcct_Group_Member {
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_group_members,
 			array(
-				'group_child_user_id'  => $group_child_user_id,
-				'group_child_level_id' => $group_child_level_id,
-				'group_id' => $group_id,
+				'group_child_user_id'  => (int)$group_child_user_id,
+				'group_child_level_id' => (int)$group_child_level_id,
+				'group_id' => (int)$group_id,
 				'group_child_status'   => 'active',
 			),
 			array(
@@ -265,7 +265,7 @@ class PMProGroupAcct_Group_Member {
 
 		$this->group_child_status = $group_child_status;
 		$wpdb->update(
-			$wpdb->pmprogroupacct_members,
+			$wpdb->pmprogroupacct_group_members,
 			array(
 				'group_child_status' => $group_child_status,
 			),

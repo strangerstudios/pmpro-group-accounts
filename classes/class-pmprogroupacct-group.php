@@ -70,7 +70,7 @@ class PMProGroupAcct_Group {
 			);
 
 			if ( ! empty( $data ) ) {
-				$this->id                   = $data->id;
+				$this->id                   = (int)$data->id;
 				$this->group_parent_user_id  = (int)$data->group_parent_user_id;
 				$this->group_parent_level_id = (int)$data->group_parent_level_id;
 				$this->group_checkout_code   = $data->group_checkout_code;
