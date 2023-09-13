@@ -74,15 +74,46 @@ function pmprogroupacct_shortcode_manage_group() {
 		return '<p>' . esc_html__( 'You do not have permission to view this group.', 'pmpro-group-accounts' ) . '</p>';
 	}
 
+	// If the user is trying to remove a group member, remove them.
+	$removal_message = '';
+	if ( ! empty( $_REQUEST['pmprogroupacct_remove_group_member'] ) ) {
+		// Make sure that the nonce is valid.
+		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_remove_group_member_nonce'], 'pmprogroupacct_remove_group_member' ) ) {
+			$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Get the group member.
+		$group_member = new PMProGroupAcct_Group_Member( intval( $_REQUEST['pmprogroupacct_remove_group_member'] ) );
+
+		// If the group member doesn't exist or the current user doesn't own this group, show an error.
+		if ( empty( $group_member->id ) || $group_member->group_id !== $group->id ) {
+			$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to remove this group member.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// If there wasn't an error, cancel the group member's membership, which will remove them from the group.
+		if ( empty( $removal_message ) ) {
+			if ( pmpro_cancelMembershipLevel( $group_member->group_child_level_id, $group_member->group_child_user_id ) ) {
+				// Membership cancelled. Force the group removal to happen now.
+				pmpro_do_action_after_all_membership_level_changes();
+			} else {
+				// User must not have had this membership level. Remove them from the group.
+				$group_member->update_group_child_status( 'inactive' );
+			}
+			$removal_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group member removed.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+	}
+
 	// Get the active members in this group.
 	$active_members = $group->get_active_members();
 
 	// Show UI for showing seat usage, viewing/removing group members, and inviting new members.
+	$nonce = wp_create_nonce( 'pmprogroupacct_remove_group_member' );
 	ob_start();
 	?>
 	<div id="pmproacct_manage_group">
 		<div id="pmproacct_manage_group_members">
 			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
+			<?php echo $removal_message; ?>
 			<table>
 				<thead>
 					<tr>
@@ -100,7 +131,7 @@ function pmprogroupacct_shortcode_manage_group() {
 						<tr>
 							<td><?php echo esc_html( $user->user_login ); ?></td>
 							<td><?php echo esc_html( $level->name ); ?></td>
-							<td><a href="<?php echo esc_url( add_query_arg( 'pmprogroupacct_remove_member', $member->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ); ?>"><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></a></td>
+							<td><a href="<?php echo esc_url( add_query_arg( array( 'pmprogroupacct_grooup_id' => $group->id, 'pmprogroupacct_remove_group_member' => $member->id, 'pmprogroupacct_remove_group_member_nonce' => $nonce ) ) ); ?>" onclick="return confirm('<?php printf( esc_html__( 'Are you sure that you would like to remove the user %s from your group?', 'pmpro-group-accounts' ), esc_html( esc_html( $user->user_login ) ) );?>');"><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></a></td>
 						</tr>
 						<?php
 					}

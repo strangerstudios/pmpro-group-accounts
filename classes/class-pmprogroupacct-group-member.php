@@ -71,10 +71,10 @@ class PMProGroupAcct_Group_Member {
 			);
 
 			if ( ! empty( $data ) ) {
-				$this->id       = $data->id;
-				$this->group_child_user_id  = $data->group_child_user_id;
-				$this->group_child_level_id = $data->group_child_level_id;
-				$this->group_id = $data->group_id;
+				$this->id                   = (int)$data->id;
+				$this->group_child_user_id  = (int)$data->group_child_user_id;
+				$this->group_child_level_id = (int)$data->group_child_level_id;
+				$this->group_id             = (int)$data->group_id;
 				$this->group_child_status   = $data->group_child_status;
 			}
 		}

@@ -5,6 +5,8 @@
  * choose the number of seats to purchase if there is a variable amount. We
  * also want to show them the price per seat if there is one set and the levels
  * that group members will be able to claim.
+ *
+ * @since TBD
  */
 function pmprogroupacct_pmpro_checkout_boxes_parent() {
 	// Get the level being checked out for.
@@ -102,6 +104,8 @@ add_action( 'pmpro_checkout_boxes', 'pmprogroupacct_pmpro_checkout_boxes_parent'
  * If the user is checking out for a group parent level, we need to make sure
  * that their checkout selections are valid.
  *
+ * @since TBD
+ *
  * @param bool $continue_checkout Whether or not to continue with checkout.
  * @return bool Whether or not to continue with checkout.
  */
@@ -163,6 +167,8 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 /**
  * If the user is checking out for a group parent level, we need to
  * add the seat price to the checkout level.
+ *
+ * @since TBD
  *
  * @param object $level The level being checked out for.
  * @return object The level being checked out for.
@@ -230,6 +236,8 @@ add_filter( 'pmpro_checkout_level', 'pmprogroupacct_pmpro_checkout_level_parent'
  * If the user just completed checkout for a group parent level, we need to
  * create the group.
  *
+ * @since TBD
+ *
  * @param int $user_id The ID of the user who just completed checkout.
  */
 function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
@@ -262,3 +270,51 @@ function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_parent' );
+
+/**
+ * If a parent loses a membership level that they have a group for,
+ * we need to remove all members from the group.
+ *
+ * @since TBD
+ *
+ * @param $old_user_levels array The old levels the users had.
+ */
+function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_user_levels ) {
+	// Track if we cancel a membership during this function.
+	// If so, we need to make sure to run pmpro_do_action_after_all_membership_level_changes() afterwards.
+	$cancelled_membership = false;
+
+	// Loop through all users who have had changed levels.
+	foreach ( $old_user_levels as $user_id => $old_levels ) {
+		// Get the IDs of the user's old levels.
+		$old_level_ids = wp_list_pluck( $old_levels, 'id' );
+
+		// Get the new level for this user.
+		$new_levels    = pmpro_getMembershipLevelsForUser( $user_id );
+		$new_level_ids = wp_list_pluck( $new_levels, 'id' );
+
+		// Get the levels that the user lost.
+		$lost_level_ids = array_diff( $old_level_ids, $new_level_ids );
+
+		// Check if the parent has a group for any of the levels they lost.
+		foreach ( $lost_level_ids as $lost_level_id ) {
+			$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $lost_level_id );
+			if ( ! empty( $existing_group ) ) {
+				// There is a group for this parent and level. Let's get all the active members for this group and cancel their group level.
+				$active_members = $existing_group->get_active_members();
+				foreach ( $active_members as $active_member ) {
+					pmpro_cancelMembershipLevel( $active_member->group_child_level_id, $active_member->group_child_user_id );
+					$cancelled_membership = true;
+				}
+			}
+		}
+	}
+
+	// If we cancelled a membership during this function, we need to make sure to run pmpro_do_action_after_all_membership_level_changes() afterwards
+	// so that cancelled users are removed from the corresponding groups.
+	if ( $cancelled_membership ) {
+		pmpro_do_action_after_all_membership_level_changes();
+	}
+}
+// Hook at a late priority since we may change further levels and need to run pmpro_do_action_after_all_membership_level_changes() again.
+add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_parent', 20, 1 );

@@ -169,9 +169,9 @@ function pmprogroupacct_pmpro_registration_checks_child( $pmpro_continue_registr
 
 	// Check if this user is already a member of this group in active status.
 	$group_member_query_args = array(
-		'group_id' => $group->id,
-		'user_id'  => get_current_user_id(),
-		'status'   => 'active',
+		'group_id'            => $group->id,
+		'group_child_user_id' => get_current_user_id(),
+		'group_child_status'  => 'active',
 	);
 	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
 	if ( ! empty( $group_members ) ) {
@@ -201,9 +201,9 @@ function pmprogroupacct_pmpro_after_checkout_child( $user_id, $morder ) {
 	// Check if the current user was already a member of a group using this level.
 	// If so, remove them from that group.
 	$group_member_query_args = array(
-		'user_id' => $user_id,
-		'level_id' => $checkout_level_id,
-		'status' => 'active',
+		'group_child_user_id'  => $user_id,
+		'group_child_level_id' => $checkout_level_id,
+		'group_child_status'   => 'active',
 	);
 	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
 	if ( ! empty( $group_members ) ) {
@@ -234,8 +234,8 @@ function pmprogroupacct_pmpro_after_checkout_child( $user_id, $morder ) {
 
 	// Check if the user had previously been a member of this group.
 	$group_member_query_args = array(
-		'group_id' => $group->id,
-		'user_id'  => $user_id,
+		'group_id'           => $group->id,
+		'group_child_user_id' => $user_id,
 	);
 	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
 	if ( ! empty( $group_members ) ) {
@@ -250,3 +250,40 @@ function pmprogroupacct_pmpro_after_checkout_child( $user_id, $morder ) {
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_child', 10, 2 );
+
+/**
+ * If a child loses a membership level associated with a group,
+ * we need to remove them from that group.
+ *
+ * @since TBD
+ *
+ * @param array $old_user_levels The old levels the users had.
+ */
+function pmprogroupacct_pmpro_after_all_membership_level_changes_child( $old_user_levels ) {
+	// Loop through all users who have had changed levels.
+	foreach ( $old_user_levels as $user_id => $old_levels ) {
+		// Get the IDs of the user's old levels.
+		$old_level_ids = wp_list_pluck( $old_levels, 'id' );
+
+		// Get the new level for this user.
+		$new_levels    = pmpro_getMembershipLevelsForUser( $user_id );
+		$new_level_ids = wp_list_pluck( $new_levels, 'id' );
+
+		// Get the levels that the user lost.
+		$lost_level_ids = array_diff( $old_level_ids, $new_level_ids );
+
+		// Check if the lost level is associated with a group.
+		foreach ( $lost_level_ids as $lost_level_id ) {
+			$member_query_args = array(
+				'group_child_user_id'  => (int)$user_id,
+				'group_child_level_id' => (int)$lost_level_id,
+				'group_child_status'   => 'active',
+			);
+			$group_members = PMProGroupAcct_Group_Member::get_group_members( $member_query_args );
+			foreach ( $group_members as $group_member ) {
+				$group_member->update_group_child_status( 'inactive' );
+			}
+		}
+	}
+}
+add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_child' );
