@@ -318,3 +318,46 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 }
 // Hook at a late priority since we may change further levels and need to run pmpro_do_action_after_all_membership_level_changes() again.
 add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_parent', 20, 1 );
+
+/**
+ * Add an invoice bullet if the level purchased with the invoice that we are showing
+ * has a group associated with it.
+ *
+ * @since TBD
+ *
+ * @param MemberOrder $invoice The invoice being shown.
+ */
+function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
+	// Try to get a group related to this invoice.
+	$group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $invoice->user_id, $invoice->membership_id );
+
+	// If there is no group, bail.
+	if ( empty( $group ) ) {
+		return;
+	}
+
+	// Show an invoice bullet with the group code, seats purchased, and a link to manage the group.
+	?>
+	<li>
+		<?php
+		echo '<strong>' . esc_html__( 'Group Account', 'pmpro-group-accounts' ) . '</strong>: ';
+		/* translators: 1: Group code, 2: Number of seats claimed, 3: Total number of seats in the group. */
+		printf(
+			esc_html__( 'Users can join your group by using the %1$s code at checkout (%2$d/%3$d seats claimed).', 'pmpro-group-accounts' ),
+			'<strong>' . esc_html( $group->group_checkout_code ) . '</strong>',
+			(int)$group->get_active_members( true ),
+			(int)$group->group_total_seats
+		);
+
+		// Check if we have a "manage group" page set.
+		$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );
+		if ( ! empty( $manage_group_url ) ) {
+			?>
+			<a href="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, $manage_group_url ) ); ?>"><?php esc_html_e( 'Manage Group', 'pmpro-group-accounts' ); ?></a>
+			<?php
+		}
+		?>
+	</li>
+	<?php
+}
+add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullets_bottom_parent' );

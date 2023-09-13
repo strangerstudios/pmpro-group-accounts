@@ -248,6 +248,9 @@ function pmprogroupacct_pmpro_after_checkout_child( $user_id, $morder ) {
 		// This user was not previously a member of this group. Add them to the group.
 		PMProGroupAcct_Group_Member::create( $user_id, $checkout_level_id, $group->id );
 	}
+
+	// Note the group ID that was joined in order meta.
+	update_pmpro_membership_order_meta( $morder->id, 'pmprogroupacct_group_id', $group->id );
 }
 add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_child', 10, 2 );
 
@@ -287,3 +290,100 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_child( $old_use
 	}
 }
 add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_child' );
+
+/**
+ * If a group was joined with the invoice that is being displayed,
+ * show an invoice bullet with the group parent.
+ *
+ * @since TBD
+ *
+ * @param MemberOrder $invoice The invoice being displayed.
+ */
+function pmprogroupacct_pmpro_invoice_bullets_bottom_child( $invoice ) {
+	// Get the group ID that was joined.
+	$group_id = get_pmpro_membership_order_meta( $invoice->id, 'pmprogroupacct_group_id', true );
+
+	// If no group ID was joined, bail.
+	if ( empty( $group_id ) ) {
+		return;
+	}
+
+	// Get the group.
+	$group = new PMProGroupAcct_Group( (int)$group_id );
+
+	// If the group doesn't exist, bail.
+	if ( empty( $group->id ) ) {
+		return;
+	}
+	
+	// Get the group parent.
+	$group_parent = get_userdata( $group->group_parent_user_id );
+
+	// If the group parent doesn't exist, bail.
+	if ( empty( $group_parent->ID ) ) {
+		return;
+	}
+
+	// Show the group parent.
+	?>
+	<li>
+		<strong><?php esc_html_e( 'Membership Group', 'pmpro-group-accounts' ); ?>:</strong>
+		<?php printf( esc_html__( 'Invited to group by %s.', 'pmpro-group-accounts' ), '<strong>' . $group_parent->user_login . '</strong>' ); ?>
+	</li>
+	<?php
+}
+add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullets_bottom_child' );
+
+/**
+ * If we're on the Membership Account page, for levels that were claimed by being a part
+ * of a membership group, filter the level cost to show who is paying for the membership.
+ *
+ * @since TBD
+ *
+ * @param string $level_cost The level cost.
+ * @param object $level The level being displayed.
+ * @return string The level cost.
+ */
+function pmprogroupacct_pmpro_level_cost_text_child( $level_cost, $level ) {
+	global $pmpro_pages;
+
+	// Check if we are on the Membership Account page.
+	if ( empty( $pmpro_pages ) || ! is_array( $pmpro_pages ) || ! array_key_exists( 'account', $pmpro_pages ) || ! is_page( $pmpro_pages['account'] ) ) {
+		return $level_cost;
+	};
+
+	// Check if the user is an active member claiming this level.
+	$group_member_query_args = array(
+		'group_child_user_id'  => (int)get_current_user_id(),
+		'group_child_level_id' => (int)$level->id,
+		'group_child_status'   => 'active',
+	);
+	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+
+	// If the user is not an active member claiming this level, bail.
+	if ( empty( $group_members ) ) {
+		return $level_cost;
+	}
+
+	// Get the group that the user is a member of.
+	$group = new PMProGroupAcct_Group( $group_members[0]->group_id );
+
+	// If no group was found, bail.
+	if ( empty( $group->id ) ) {
+		return $level_cost;
+	}
+
+	// Get the group parent.
+	$group_parent = get_userdata( $group->group_parent_user_id );
+
+	// If no group parent was found, bail.
+	if ( empty( $group_parent->ID ) ) {
+		return $level_cost;
+	}
+
+	// Show the group parent.
+	$level_cost = sprintf( esc_html__( 'Invited to group by %s.', 'pmpro-group-accounts' ), '<strong>' . $group_parent->user_login . '</strong>' );
+
+	return $level_cost;
+}
+add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child', 10, 2 );

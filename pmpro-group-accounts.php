@@ -20,8 +20,8 @@ include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group-member.p
 include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
-include_once( PMPROGROUPACCT_DIR . '/includes/checkout-parent.php' );
-include_once( PMPROGROUPACCT_DIR . '/includes/checkout-child.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/parents.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/children.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/manage-group-page.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
 
@@ -32,6 +32,8 @@ $wpdb->pmprogroupacct_group_members = $wpdb->prefix . 'pmprogroupacct_group_memb
 
 /**
  * Load the languages folder for translations.
+ *
+ * @since TBD
  */
 function pmprogroupacct_load_textdomain() {
 	load_plugin_textdomain( 'pmpro-group-accounts', false, basename( dirname( __FILE__ ) ) . '/languages' );
@@ -40,6 +42,8 @@ add_action( 'plugins_loaded', 'pmprogroupacct_load_textdomain' );
 
 /**
  * Add links to the plugin row meta
+ *
+ * @since TBD
  *
  * @param $links - Links for plugin
  * @param $file - main plugin filename
