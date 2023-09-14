@@ -22,6 +22,7 @@ include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/parents.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/children.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/edit-user.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/manage-group-page.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
 

@@ -69,80 +69,177 @@ function pmprogroupacct_shortcode_manage_group() {
 	// Get the group.
 	$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) );
 
-	// If the group doesn't exist or the current user doesn't own this group, show an error.
-	if ( empty( $group->id ) || $group->group_parent_user_id !== get_current_user_id() ) {
+	// If the group doesn't exist, show an error.
+	if ( empty( $group->id ) ) {
+		return '<p>' . esc_html__( 'You do not have permission to view this group.', 'pmpro-group-accounts' ) . '</p>';
+	}
+
+	// Check if the current user can view this page.
+	$is_admin = current_user_can( apply_filters( 'pmpro_edit_member_capability', 'manage_options' ) );
+	if ( ! $is_admin && $group->group_parent_user_id !== get_current_user_id() ) {
+		// The current user doesn't have permission to view this group.
 		return '<p>' . esc_html__( 'You do not have permission to view this group.', 'pmpro-group-accounts' ) . '</p>';
 	}
 
 	// If the user is trying to remove a group member, remove them.
 	$removal_message = '';
-	if ( ! empty( $_REQUEST['pmprogroupacct_remove_group_member'] ) ) {
+	if ( ! empty( $_REQUEST['pmprogroupacct_remove_group_members'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_remove_group_member_nonce'], 'pmprogroupacct_remove_group_member' ) ) {
+		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_remove_group_members_nonce'], 'pmprogroupacct_remove_group_members' ) ) {
 			$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
 		}
 
-		// Get the group member.
-		$group_member = new PMProGroupAcct_Group_Member( intval( $_REQUEST['pmprogroupacct_remove_group_member'] ) );
+		// Get the group members.
+		$group_members = array();
+		foreach ( $_REQUEST['pmprogroupacct_remove_group_members'] as $group_member_id ) {
+			$group_members[] = new PMProGroupAcct_Group_Member( intval( $group_member_id ) );
+		}
 
 		// If the group member doesn't exist or the current user doesn't own this group, show an error.
-		if ( empty( $group_member->id ) || $group_member->group_id !== $group->id ) {
-			$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to remove this group member.', 'pmpro-group-accounts' ) . '</p></div>';
+		foreach ( $group_members as $group_member ) {
+			if ( empty( $group_member->id ) || $group_member->group_id !== $group->id ) {
+				$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to remove this group member.', 'pmpro-group-accounts' ) . '</p></div>';
+			}
 		}
 
 		// If there wasn't an error, cancel the group member's membership, which will remove them from the group.
 		if ( empty( $removal_message ) ) {
-			if ( pmpro_cancelMembershipLevel( $group_member->group_child_level_id, $group_member->group_child_user_id ) ) {
-				// Membership cancelled. Force the group removal to happen now.
-				pmpro_do_action_after_all_membership_level_changes();
-			} else {
-				// User must not have had this membership level. Remove them from the group.
-				$group_member->update_group_child_status( 'inactive' );
+			foreach ( $group_members as $group_member ) {
+				if ( pmpro_cancelMembershipLevel( $group_member->group_child_level_id, $group_member->group_child_user_id ) ) {
+					// Membership cancelled. Force the group removal to happen now.
+					pmpro_do_action_after_all_membership_level_changes();
+				} else {
+					// User must not have had this membership level. Remove them from the group.
+					$group_member->update_group_child_status( 'inactive' );
+				}
 			}
-			$removal_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group member removed.', 'pmpro-group-accounts' ) . '</p></div>';
+			$removal_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group members removed.', 'pmpro-group-accounts' ) . '</p></div>';
 		}
+	}
+
+	// If the user is trying to update the group settings, update them.
+	$update_message = '';
+	if ( isset( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
+		// Make sure that the current user has permission to update this group.
+		if ( ! $is_admin ) {
+			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that the nonce is valid.
+		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
+			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that the total seats is a number.
+		if ( ! is_numeric( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
+			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Update the group settings.
+		$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
+
+		// Show a success message.
+		$update_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</p></div>';
 	}
 
 	// Get the active members in this group.
 	$active_members = $group->get_active_members();
 
-	// Show UI for showing seat usage, viewing/removing group members, and inviting new members.
-	$nonce = wp_create_nonce( 'pmprogroupacct_remove_group_member' );
+	// Get the old members in this group.
+	$old_member_query_args = array(
+		'group_id' => $group->id,
+		'group_child_status' => 'inactive',
+	);
+	$old_members = PMProGroupAcct_Group_Member::get_group_members( $old_member_query_args );
+
+	// Create UI.
 	ob_start();
 	?>
 	<div id="pmproacct_manage_group">
+		<?php
+		// We want admins to have more settings, like the ability to change the number of seats.
+		if ( $is_admin ) {
+			?>
+			<div id="pmproacct_manage_group_settings">
+				<h2><?php esc_html_e( 'Group Settings', 'pmpro-group-accounts' ); ?></h2>
+				<?php echo $update_message; ?>
+				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+					<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
+					<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+					<input type="hidden" name="pmprogroupacct_update_group_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_update_group_settings' ) ); ?>">
+					<input type="submit" value="<?php esc_attr_e( 'Update Settings', 'pmpro-group-accounts' ); ?>">
+				</form>
+			</div>
+			<?php
+		}
+		?>
 		<div id="pmproacct_manage_group_members">
 			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
 			<?php echo $removal_message; ?>
-			<table>
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
-						<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
-						<th><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php
-					foreach ( $active_members as $member ) {
-						$user  = get_userdata( $member->group_child_user_id );
-						$level = pmpro_getLevel( $member->group_child_level_id );
-						?>
+			<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+				<table>
+					<thead>
 						<tr>
-							<td><?php echo esc_html( $user->user_login ); ?></td>
-							<td><?php echo esc_html( $level->name ); ?></td>
-							<td><a href="<?php echo esc_url( add_query_arg( array( 'pmprogroupacct_grooup_id' => $group->id, 'pmprogroupacct_remove_group_member' => $member->id, 'pmprogroupacct_remove_group_member_nonce' => $nonce ) ) ); ?>" onclick="return confirm('<?php printf( esc_html__( 'Are you sure that you would like to remove the user %s from your group?', 'pmpro-group-accounts' ), esc_html( esc_html( $user->user_login ) ) );?>');"><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></a></td>
+							<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
+							<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+							<th><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></th>
 						</tr>
+					</thead>
+					<tbody>
 						<?php
-					}
-					?>
-				</tbody>
-			</table>
+						foreach ( $active_members as $member ) {
+							$user  = get_userdata( $member->group_child_user_id );
+							$level = pmpro_getLevel( $member->group_child_level_id );
+							?>
+							<tr>
+								<td><?php echo esc_html( $user->user_login ); ?></td>
+								<td><?php echo esc_html( $level->name ); ?></td>
+								<td><input type="checkbox" name="pmprogroupacct_remove_group_members[]" value="<?php echo esc_attr( $member->id ); ?>"></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+				<?php wp_nonce_field( 'pmprogroupacct_remove_group_members', 'pmprogroupacct_remove_group_members_nonce' ); ?>
+				<input type="submit" value="<?php esc_attr_e( 'Remove Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php esc_html_e( 'Are you sure that you would like to remove these users from your group?', 'pmpro-group-accounts' ); ?>' );">
+			</form>
 		</div>
 		<div id="pmproacct_invite_new_members">
 			<h2><?php esc_html_e( 'Invite New Members', 'pmpro-group-accounts' ); ?></h2>
 			<p><?php printf( esc_html__( 'Users can join your group by using the checkout code %s.', 'pmpro-group-accounts' ), '<strong>' . esc_html( $group->group_checkout_code ) . '</strong>' ); ?></p>
 		</div>
+		<?php
+		if ( ! empty( $old_members ) ) {
+			?>
+			<div id="pmproacct_manage_group_old_members">
+				<h2><?php esc_html_e( 'Old Members', 'pmpro-group-accounts' ); ?></h2>
+				<table>
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
+							<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php
+						foreach ( $old_members as $member ) {
+							$user  = get_userdata( $member->group_child_user_id );
+							$level = pmpro_getLevel( $member->group_child_level_id );
+							?>
+							<tr>
+								<td><?php echo esc_html( $user->user_login ); ?></td>
+								<td><?php echo esc_html( $level->name ); ?></td>
+							</tr>
+							<?php
+						}
+						?>
+					</tbody>
+				</table>
+			</div> 
+			<?php
+		}
+		?>
 	</div>
 	<?php
 	$content = ob_get_contents();

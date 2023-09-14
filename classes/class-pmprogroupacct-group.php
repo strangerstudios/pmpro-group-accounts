@@ -312,7 +312,7 @@ class PMProGroupAcct_Group {
 		global $wpdb;
 
 		// Validate the passed data.
-		if ( ! is_int( $group_total_seats ) || $group_total_seats <= 0 ) {
+		if ( ! is_int( $group_total_seats ) || $group_total_seats < 0 ) {
 			return;
 		}
 
