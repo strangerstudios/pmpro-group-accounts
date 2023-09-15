@@ -81,6 +81,9 @@ function pmprogroupacct_shortcode_manage_group() {
 		return '<p>' . esc_html__( 'You do not have permission to view this group.', 'pmpro-group-accounts' ) . '</p>';
 	}
 
+	// Get the group settings for the level that this group is for.
+	$group_settings = pmprogroupacct_get_settings_for_level( $group->group_parent_level_id );
+
 	// If the user is trying to remove a group member, remove them.
 	$removal_message = '';
 	if ( ! empty( $_REQUEST['pmprogroupacct_remove_group_members'] ) ) {
@@ -142,6 +145,103 @@ function pmprogroupacct_shortcode_manage_group() {
 		$update_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</p></div>';
 	}
 
+	// If the user is trying to invite new members, invite them.
+	$invite_message = '';
+	if ( isset( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
+		// Make sure that the nonce is valid.
+		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_invite_new_members_nonce'], 'pmprogroupacct_invite_new_members' ) ) {
+			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that a level ID was passed.
+		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
+			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that the level ID is an integer.
+		if ( ! empty( $invite_message ) && ! is_numeric( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
+			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Level ID must be a number.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that the level ID can be claimed using this group code.
+		if ( ! empty( $invite_message ) && ! in_array( (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'], array_map( 'intval', $group_settings['child_level_ids'] ), true ) ) {
+			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'This level cannot be claimed using this group code.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that email addresses were passed.
+		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
+			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No email addresses were passed.', 'pmpro-group-accounts' ) . '</p></div>';
+		}
+
+		// Make sure that the email addresses are valid. Each should be on a new line.
+		if ( empty( $invite_message ) ) {
+			$emails = explode( "\n", $_REQUEST['pmprogroupacct_invite_new_members_emails'] );
+			$valid_emails = array();
+			$invalid_emails = array();
+			foreach ( $emails as $email ) {
+				$email = trim( $email );
+				if ( is_email( $email ) ) {
+					$valid_emails[] = $email;
+				} else {
+					$invalid_emails[] = $email;
+				}
+			}
+			if ( empty( $valid_emails ) ) {
+				$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No valid email addresses were passed.', 'pmpro-group-accounts' ) . '</p></div>';
+			}
+		}
+
+		// Send the invites.
+		if ( ! empty( $valid_emails ) ) {
+			$parent_user = get_userdata( $group->group_parent_user_id );
+			$email_data = array(
+				'pmprogroupacct_parent_display_name' => empty( $parent_user ) ? '[' . esc_html__( 'User Not Found' ) . ']' : $parent_user->display_name,
+				'pmprogroupacct_invite_link' => esc_url( add_query_arg( array( 'level' => (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'], 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ),
+				'blog_name' => get_bloginfo( 'name' ),
+			);
+			$failed_emails = array();
+			foreach ( $valid_emails as $valid_email ) {
+				$email           = new PMProEmail();
+				$email->template = 'pmpgoroupacct_invite';
+				$email->email    = $valid_email;
+				$email->data     = $email_data;
+				$success = $email->sendEmail();
+				if ( ! $success ) {
+					$failed_emails[] = $valid_email;
+				}
+			}
+
+			$sent_emails = array_diff( $valid_emails, $failed_emails );
+			if ( empty( $sent_emails ) ) {
+				$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Failed to send emails.', 'pmpro-group-accounts' ) . '</p></div>';
+			} elseif ( empty( $failed_emails ) && empty( $invalid_emails ) ) {
+				$invite_message = '<div class="pmpro_success"><p>' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</p></div>';
+			} else {
+				// Some emails were sent, but others were not. List the emails that were sent, the emails that failed to send, and the invalid emails.
+				$invite_message = '<div class="pmpro_success"><p>' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
+				foreach ( $sent_emails as $sent_email ) {
+					$invite_message .= '<li>' . esc_html( $sent_email ) . '</li>';
+				}
+				$invite_message .= '</ul>';
+				if ( ! empty( $failed_emails ) ) {
+					$invite_message .= '<p>' . esc_html__( 'Failed to send invites to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
+					foreach ( $failed_emails as $failed_email ) {
+						$invite_message .= '<li>' . esc_html( $failed_email ) . '</li>';
+					}
+					$invite_message .= '</ul>';
+				}
+				if ( ! empty( $invalid_emails ) ) {
+					$invite_message .= '<p>' . esc_html__( 'The following email addresses were invalid:', 'pmpro-group-accounts' ) . '</p><ul>';
+					foreach ( $invalid_emails as $invalid_email ) {
+						$invite_message .= '<li>' . esc_html( $invalid_email ) . '</li>';
+					}
+					$invite_message .= '</ul>';
+				}
+				$invite_message .= '</div>';
+			}
+		}
+	}
+
 	// Get the active members in this group.
 	$active_members = $group->get_active_members();
 
@@ -175,41 +275,101 @@ function pmprogroupacct_shortcode_manage_group() {
 		?>
 		<div id="pmproacct_manage_group_members">
 			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
-			<?php echo $removal_message; ?>
-			<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-				<table>
-					<thead>
-						<tr>
-							<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
-							<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
-							<th><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-						foreach ( $active_members as $member ) {
-							$user  = get_userdata( $member->group_child_user_id );
-							$level = pmpro_getLevel( $member->group_child_level_id );
-							?>
+			<?php
+			echo $removal_message;
+			if ( empty( $active_members ) ) {
+				echo '<p>' . esc_html__( 'There are no active members in this group.', 'pmpro-group-accounts' ) . '</p>';
+			} else {
+			?>
+				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+					<table>
+						<thead>
 							<tr>
-								<td><?php echo esc_html( $user->user_login ); ?></td>
-								<td><?php echo esc_html( $level->name ); ?></td>
-								<td><input type="checkbox" name="pmprogroupacct_remove_group_members[]" value="<?php echo esc_attr( $member->id ); ?>"></td>
+								<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
+								<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+								<th><?php esc_html_e( 'Remove', 'pmpro-group-accounts' ); ?></th>
 							</tr>
+						</thead>
+						<tbody>
+							<?php
+							foreach ( $active_members as $member ) {
+								$user  = get_userdata( $member->group_child_user_id );
+								$level = pmpro_getLevel( $member->group_child_level_id );
+								?>
+								<tr>
+									<td><?php echo esc_html( $user->user_login ); ?></td>
+									<td><?php echo esc_html( $level->name ); ?></td>
+									<td><input type="checkbox" name="pmprogroupacct_remove_group_members[]" value="<?php echo esc_attr( $member->id ); ?>"></td>
+								</tr>
+								<?php
+							}
+							?>
+						</tbody>
+					</table>
+					<?php wp_nonce_field( 'pmprogroupacct_remove_group_members', 'pmprogroupacct_remove_group_members_nonce' ); ?>
+					<input type="submit" value="<?php esc_attr_e( 'Remove Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php esc_html_e( 'Are you sure that you would like to remove these users from your group?', 'pmpro-group-accounts' ); ?>' );">
+				</form>
+			<?php
+			}
+			?>
+		</div>
+		<?php
+		// Make sure that this group code has levels that can be claimed.
+		if ( ! empty( $group_settings ) && ! empty( $group_settings['child_level_ids'] ) ) {
+			?>
+			<div id="pmproacct_invite_new_members">
+				<h2><?php esc_html_e( 'Invite New Members', 'pmpro-group-accounts' ); ?></h2>
+				<?php
+				// Check if this group is accepting signups.
+				if ( ! $group->is_accepting_signups() ) {
+					echo '<p>' . esc_html__( 'This group is not accepting signups.', 'pmpro-group-accounts' ) . '</p>';
+				} else {
+					// Show the group code and the levels that can be claimed with links to checkout for those levels.
+					?>
+					<p><?php printf( esc_html__( 'New members can use this code to claim a seat in your group by checking out for one of the following levels using the group code %s:', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' ); ?></p>
+					<ul>
+						<?php
+						foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+							$child_level = pmpro_getLevel( $child_level_id );
+							?>
+							<li>
+								<a href="<?php echo esc_url( add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ); ?>">
+									<?php echo esc_html( $child_level->name ); ?>
+								</a>
+							</li>
 							<?php
 						}
 						?>
-					</tbody>
-				</table>
-				<?php wp_nonce_field( 'pmprogroupacct_remove_group_members', 'pmprogroupacct_remove_group_members_nonce' ); ?>
-				<input type="submit" value="<?php esc_attr_e( 'Remove Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php esc_html_e( 'Are you sure that you would like to remove these users from your group?', 'pmpro-group-accounts' ); ?>' );">
-			</form>
-		</div>
-		<div id="pmproacct_invite_new_members">
-			<h2><?php esc_html_e( 'Invite New Members', 'pmpro-group-accounts' ); ?></h2>
-			<p><?php printf( esc_html__( 'Users can join your group by using the checkout code %s.', 'pmpro-group-accounts' ), '<strong>' . esc_html( $group->group_checkout_code ) . '</strong>' ); ?></p>
-		</div>
-		<?php
+					</ul>
+					<?php
+					// Show a form to invite new members via email.
+					?>
+					<h3><?php esc_html_e( 'Invite New Members via Email', 'pmpro-group-accounts' ); ?></h3>
+					<?php echo $invite_message; ?>
+					<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+						<label for="pmprogroupacct_invite_new_members_emails"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
+						<textarea name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails"></textarea>
+						<p><small class="description"><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></small></p>
+						<label for="pmprogroupacct_invite_new_members_level_id"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
+						<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id">
+							<?php
+							foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+								$child_level = pmpro_getLevel( $child_level_id );
+								?>
+								<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+								<?php
+							}
+							?>
+						</select><br>
+						<input type="hidden" name="pmprogroupacct_invite_new_members_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_invite_new_members' ) ); ?>">
+						<input type="submit" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
+					<?php
+				}
+				?>
+			</div>
+			<?php
+		}
+		// Show old members if there are any.
 		if ( ! empty( $old_members ) ) {
 			?>
 			<div id="pmproacct_manage_group_old_members">

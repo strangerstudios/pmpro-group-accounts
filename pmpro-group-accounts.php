@@ -19,6 +19,7 @@ include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group-member.p
 
 include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/emails.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/parents.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/children.php' );
