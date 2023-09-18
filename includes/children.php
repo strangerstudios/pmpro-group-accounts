@@ -92,7 +92,7 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprogroupacct_checkout_after_le
  */
 function pmprogroupacct_pmpro_checkout_level_child( $level ) {
 	// Check if this level can be claimed with a group code.
-	if ( ! pmprogroupacct_level_can_be_claimed_using_group_codes( $level->id ) ) {
+	if ( empty( $level->id ) || ! pmprogroupacct_level_can_be_claimed_using_group_codes( $level->id ) ) {
 		return $level;
 	}
 
