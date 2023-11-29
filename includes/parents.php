@@ -41,18 +41,34 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 				<p class="pmpro_checkout-field pmpro_checkout-field-seats">
 				<?php
 					$seat_count = (int)$settings['total_seats'];
-					if ( $seat_)
-					printf(
-						esc_html__(
-							_n(
-								'You are purchasing %d additional seat.',
-								'You are purchasing %d additional seats.',
-								$seat_count,
-								'pmpro-group-accounts'
-							)
-						),
-						$seat_count
-					);
+					switch ( $settings['pricing_model'] ) {
+						case 'none':
+							printf(
+								esc_html__(
+									_n(
+										'This purchase includes %d additional seat.',
+										'This purchase includes %d additional seats.',
+										$seat_count,
+										'pmpro-group-accounts'
+									)
+								),
+								$seat_count
+							);
+							break;
+						case 'fixed':
+							printf(
+								esc_html__(
+									_n(
+										'You are purchasing %d additional seat.',
+										'You are purchasing %d additional seats.',
+										$seat_count,
+										'pmpro-group-accounts'
+									)
+								),
+								$seat_count
+							);
+							break;
+					}
 				?>
 				</p>
 				<?php
