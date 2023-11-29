@@ -5,6 +5,7 @@ jQuery( document ).ready( function( $ ) {
 			$( '.pmprogroupacct_setting' ).hide();
 		} else {
 			$( '.pmprogroupacct_setting' ).show();
+			pmprogroupacct_update_edit_level_group_type_field_visibility();
 			pmprogroupacct_update_edit_level_pricing_model_field_visibility();
 		}
 	}
@@ -12,6 +13,20 @@ jQuery( document ).ready( function( $ ) {
 	$( '#pmprogroupacct_child_level_ids' ).select2();
 	$( '#pmprogroupacct_child_level_ids' ).change( function() {
 		pmprogroupacct_update_edit_level_field_visibility();
+	} );
+
+	// Handle showing/hiding the settings for group type.
+	function pmprogroupacct_update_edit_level_group_type_field_visibility() {
+		// Hide all seats settings.
+		$( '.pmprogroupacct_group_type_setting' ).hide();
+		// Show the seats settings for the selected group type.
+		if ( $( '#pmprogroupacct_child_level_ids' ).val() && $( '#pmprogroupacct_child_level_ids' ).val().length > 0 ) {
+			$( '.pmprogroupacct_group_type_setting_' + $( '#pmprogroupacct_group_type' ).val() ).show();
+		}
+	}
+	pmprogroupacct_update_edit_level_group_type_field_visibility();
+	$( '#pmprogroupacct_group_type' ).change( function() {
+		pmprogroupacct_update_edit_level_group_type_field_visibility();
 	} );
 
 	// Handle showing/hiding the settings for indiviual pricing models.

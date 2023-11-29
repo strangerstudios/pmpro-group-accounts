@@ -13,7 +13,9 @@
  * @param WP_User $user The user object being edited.
  */
 function pmprogroupacct_after_membership_level_profile_fields( $user ) {
-    // Get all groups that the user manages.
+	global $pmpro_pages;
+
+	// Get all groups that the user manages.
 	$group_query_args = array(
 		'group_parent_user_id' => (int)$user->ID,
 	);
@@ -36,11 +38,13 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 	} else {
 		// Show the groups that the user manages.
 		?>
-		<table>
+		<table class="widefat fixed striped">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Group ID', 'pmpro-group-accounts' ); ?></th>
-					<th><?php esc_html_e( 'Level ID', 'pmpro-group-accounts' ); ?></th>
+					<th><?php esc_html_e( 'Parent Level', 'pmpro-group-accounts' ); ?></th>
+					<th><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></th>
+					<th><?php esc_html_e( 'Group Levels', 'pmpro-group-accounts' ); ?></th>
 					<th><?php esc_html_e( 'Seats', 'pmpro-group-accounts' ); ?></th>
 					<th><?php esc_html_e( 'Manage Group', 'pmpro-group-accounts' ); ?></th>
 				</tr>
@@ -48,10 +52,30 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 			<tbody>
 				<?php
 				foreach ( $groups as $group ) {
+					$parent_level = pmpro_getLevel( $group->group_parent_level_id );
 					?>
 					<tr>
-						<td><?php echo esc_html( $group->id ); ?></td>
-						<td><?php echo esc_html( $group->group_parent_level_id ); ?></td>
+						<th><?php echo esc_html( $group->id ); ?></th>
+						<td><?php echo esc_html( $parent_level->name ); ?></td>
+						<td><?php echo esc_html( $group->group_checkout_code ); ?></td>
+						<td>
+						<?php
+							$group_settings = pmprogroupacct_get_settings_for_level( $group->group_parent_level_id );
+							$child_level_links = array();
+							foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+								if ( ! empty( $pmpro_pages['checkout'] ) ) {
+									$child_level = pmpro_getLevel( $child_level_id );
+									$child_level_links[] = '<a target="_blank" href="' . esc_url( add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ) . '">' . esc_html( $child_level->name ) . '</a>';
+								}
+							}
+							if ( $child_level_links ) {
+								// Echo imploded level names and escape allowing links.
+								echo wp_kses( implode( ', ', $child_level_links ), array( 'a' => array( 'href' => array(), 'title' => array(), 'target' => array() ) ) );
+							} else {
+								esc_html_e( 'None', 'pmpro-group-accounts' );
+							}
+						?>
+						</td>
 						<td><?php echo esc_html( $group->get_active_members( true ) ) . '/' . esc_html( $group->group_total_seats ); ?></td>
 						<td>
 							<?php
@@ -81,7 +105,7 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 	} else {
 		// Show the groups that the user is a member of.
 		?>
-		<table>
+		<table class="widefat fixed striped">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Group ID', 'pmpro-group-accounts' ); ?></th>
@@ -99,7 +123,7 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 					$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 					?>
 					<tr>
-						<td><?php echo esc_html( $group->id ); ?></td>
+						<th><?php echo esc_html( $group->id ); ?></th>
 						<td><?php echo $parent_user_link ?></td>
 						<td><?php echo esc_html( $group_member->group_child_level_id ); ?></td>
 						<td><?php echo esc_html( $group_member->group_child_status ); ?></td>

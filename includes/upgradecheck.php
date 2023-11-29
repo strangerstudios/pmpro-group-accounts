@@ -3,7 +3,7 @@
  * Run any necessary upgrades to the DB.
  */
 function pmprogroupacct_check_for_upgrades() {
-	$db_version = get_option( 'pmproacct_db_version' );
+	$db_version = get_option( 'pmprogroupacct_db_version' );
 
 	// If we can't find the DB tables, reset db_version to 0
 	global $wpdb;
@@ -16,7 +16,7 @@ function pmprogroupacct_check_for_upgrades() {
 	// Default options.
 	if ( ! $db_version ) {
 		pmprogroupacct_db_delta();
-		update_option( 'pmproacct_db_version', 1 );
+		update_option( 'pmprogroupacct_db_version', 1 );
 	}
 }
 

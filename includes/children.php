@@ -64,20 +64,41 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
 			// Add a hidden field to the checkout form with the group code and return so that we don't show the group code field.
 			?>
-			<p><?php esc_html_e( 'You have applied the following group code', 'pmpro-group-accounts' ); ?>: <?php echo esc_html( $group_code ); ?></p>
+			<p>
+				<?php
+					/* translators: %s: Group code */
+					printf( esc_html__( 'You have applied the following group code: %s', 'pmpro-group-accounts' ), '<strong>' . esc_html( $group_code ) . '</strong>' );
+				?>
+			</p>
 			<input type="hidden" name="pmprogroupacct_group_code" value="<?php echo esc_attr( $group_code ); ?>" />
 			<?php
 			return;
 		}
 	}
 
-	// Show the group code field along with a button to apply the code by redirecting to this page with the code in the URL.
+	/**
+	 * Filter whether or not to show the group code field on the checkout page.
+	 * By default, this is true
+	 *
+	 * @since TBD
+	 * @param bool $show_group_code_field Whether or not to show the group code field on the checkout page.
+	 * @return bool Whether or not to show the group code field on the checkout page.
+	 */
+	$show_group_code_field = apply_filters( 'pmprogroupacct_show_group_code_field', true );
+
+	// If we're not supposed to show the group code field, bail.
+	if ( ! $show_group_code_field ) {
+		return;
+	}
+
+	// Show the group code field along with a button to apply the code.
+	// The button will redirect to this page with the code in the URL.
 	?>
-	<p>
+	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-group_code', 'pmpro_checkout-field-group_code' ) ); ?>">
 		<label for="pmprogroupacct_group_code"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
 		<input id="pmprogroupacct_group_code" name="pmprogroupacct_group_code" type="text" />
-		<button type="button" id="pmprogroupacct_apply_group_code" class="pmpro_btn"><?php esc_html_e( 'Apply', 'pmpro-group-accounts' ); ?></button>
-	</p>
+		<button type="button" id="pmprogroupacct_apply_group_code" class="pmpro_btn"><?php esc_html_e( 'Apply Code', 'pmpro-group-accounts' ); ?></button>
+	</div>
 	<?php
 }
 add_action( 'pmpro_checkout_after_level_cost', 'pmprogroupacct_checkout_after_level_cost_child' );
@@ -105,12 +126,45 @@ function pmprogroupacct_pmpro_checkout_level_child( $level ) {
 			// Set the level cost to 0.
 			$level->initial_payment = 0;
 			$level->billing_amount  = 0;
+
+			// Unset the level expiration data.
+			$level->expiration_number = 0;
 		}
 	}
 
 	return $level;
 }
 add_filter( 'pmpro_checkout_level', 'pmprogroupacct_pmpro_checkout_level_child' );
+
+/**
+ * If a valid group code is being used, unset the level cost text.
+ *
+ * @since TBD
+ *
+ * @param string $level_cost_text The level cost text.
+ * @param object $level The level being checked out for.
+ * @return string The level cost text.
+ */
+function pmprogroupacct_pmpro_level_cost_text_child_checkout( $level_cost_text, $level ) {
+	// Check if this level can be claimed with a group code.
+	if ( empty( $level->id ) || ! pmprogroupacct_level_can_be_claimed_using_group_codes( $level->id ) ) {
+		return $level_cost_text;
+	}
+
+	// Check if a valid group code was already passed.
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	if ( ! empty( $group_code ) ) {
+		// Check if the group code is valid.
+		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
+		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
+			// Unset the level cost text.
+			$level_cost_text = '';
+		}
+	}
+
+	return $level_cost_text;
+}
+add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child_checkout', 10, 2 );
 
 /**
  * If a group code is being used, we need to make sure that the code is valid and
@@ -327,8 +381,8 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_child( $invoice ) {
 	// Show the group parent.
 	?>
 	<li>
-		<strong><?php esc_html_e( 'Membership Group', 'pmpro-group-accounts' ); ?>:</strong>
-		<?php printf( esc_html__( 'Invited to group by %s.', 'pmpro-group-accounts' ), '<strong>' . $group_parent->user_login . '</strong>' ); ?>
+		<strong><?php esc_html_e( 'Group', 'pmpro-group-accounts' ); ?>:</strong>
+		<?php printf( esc_html__( 'Managed by %s', 'pmpro-group-accounts' ), esc_html( $group_parent->display_name ) ); ?>
 	</li>
 	<?php
 }
@@ -344,7 +398,7 @@ add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullet
  * @param object $level The level being displayed.
  * @return string The level cost.
  */
-function pmprogroupacct_pmpro_level_cost_text_child( $level_cost, $level ) {
+function pmprogroupacct_pmpro_level_cost_text_child_account( $level_cost, $level ) {
 	global $pmpro_pages;
 
 	// Check if we are on the Membership Account page.
@@ -382,8 +436,8 @@ function pmprogroupacct_pmpro_level_cost_text_child( $level_cost, $level ) {
 	}
 
 	// Show the group parent.
-	$level_cost = sprintf( esc_html__( 'Invited to group by %s.', 'pmpro-group-accounts' ), '<strong>' . $group_parent->user_login . '</strong>' );
+	$level_cost = sprintf( esc_html__( 'Managed by %s', 'pmpro-group-accounts' ), esc_html( $group_parent->display_name ) );
 
 	return $level_cost;
 }
-add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child', 10, 2 );
+add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child_account', 10, 2 );

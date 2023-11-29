@@ -35,18 +35,71 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 		<div class="pmpro_checkout-fields">
 			<?php
 			// Show seats.
-			if ( $settings['min_seats'] === $settings['max_seats'] ) {
+			if ( $settings['total_seats'] > 0 ) {
+				?>
+				<input type="hidden" name="pmprogroupacct_seats" value="<?php echo esc_attr( $settings['total_seats'] ); ?>" />
+				<p class="pmpro_checkout-field pmpro_checkout-field-seats">
+				<?php
+					$seat_count = (int)$settings['total_seats'];
+					if ( $seat_)
+					printf(
+						esc_html__(
+							_n(
+								'You are purchasing %d additional seat.',
+								'You are purchasing %d additional seats.',
+								$seat_count,
+								'pmpro-group-accounts'
+							)
+						),
+						$seat_count
+					);
+				?>
+				</p>
+				<?php
+			} elseif ( $settings['min_seats'] === $settings['max_seats'] ) {
 				?>
 				<input type="hidden" name="pmprogroupacct_seats" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 				<p class="pmpro_checkout-field pmpro_checkout-field-seats">
-					<?php printf( esc_html__( 'You are purchasing %d seats.', 'pmpro-group-accounts' ), (int)$settings['min_seats'] ); ?>
+				<?php
+					$seat_count = (int)$settings['min_seats'];
+					switch ( $settings['pricing_model'] ) {
+						case 'none':
+							printf(
+								esc_html__(
+									_n(
+										'This purchase includes %d additional seat.',
+										'This purchase includes %d additional seats.',
+										$seat_count,
+										'pmpro-group-accounts'
+									)
+								),
+								$seat_count
+							);
+							break;
+						case 'fixed':
+							printf(
+								esc_html__(
+									_n(
+										'You are purchasing %d additional seat.',
+										'You are purchasing %d additional seats.',
+										$seat_count,
+										'pmpro-group-accounts'
+									)
+								),
+								$seat_count
+							);
+							break;
+					}
+				?>
 				</p>
 				<?php
 			} else {
 				?>
-				<label for="pmprogroupacct_seats"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
-				<input id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
-				<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %d and %d seats.', 'pmpro-group-accounts' ), (int)$settings['min_seats'], (int)$settings['max_seats'] ); ?></p>
+				<div class="pmpro_checkout-field pmpro_checkout-field-seats">
+					<label for="pmprogroupacct_seats"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
+					<input id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
+					<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %d and %d seats.', 'pmpro-group-accounts' ), (int)$settings['min_seats'], (int)$settings['max_seats'] ); ?></p>
+				</div> <!-- end .pmpro_checkout-field-seats -->
 				<?php
 			}
 
@@ -63,10 +116,10 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 								printf( esc_html__( 'The price per seat is %s.', 'pmpro-group-accounts' ), esc_html( pmpro_formatPrice( $settings['pricing_model_settings'] ) ) );
 								break;
 							case 'initial':
-								printf( esc_html__( 'The price per seat is %s for the initial payment.', 'pmpro-group-accounts' ), esc_html( pmpro_formatPrice( $settings['pricing_model_settings'] ) ) );
+								printf( esc_html__( 'You will be charged an additional %s per seat for with initial payment only.', 'pmpro-group-accounts' ), esc_html( pmpro_formatPrice( $settings['pricing_model_settings'] ) ) );
 								break;
 							case 'recurring':
-								printf( esc_html__( 'The price per seat is %s for recurring payments.', 'pmpro-group-accounts' ), esc_html( pmpro_formatPrice( $settings['pricing_model_settings'] ) ) );
+								printf( esc_html__( 'You will be charged an additional %s per seat with each recurring payment.', 'pmpro-group-accounts' ), esc_html( pmpro_formatPrice( $settings['pricing_model_settings'] ) ) );
 								break;
 						}
 						?>
@@ -189,7 +242,7 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
 
 	// If the number of seats is not an integer, bail.
-	if ( empty( $_REQUEST['pmprogroupacct_seats'] ) || $seats !== $_REQUEST['pmprogroupacct_seats'] ) {
+	if ( empty( $seats ) || ! is_numeric( $seats ) ) {
 		return $level;
 	}
 
@@ -200,12 +253,6 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 			break;
 		case 'fixed':
 			$seat_cost = $seats * (float)$settings['pricing_model_settings'];
-			break;
-		case 'tiered':
-			break;
-		case 'volume':
-			break;
-		case 'dropdown':
 			break;
 	}
 

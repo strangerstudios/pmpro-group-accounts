@@ -89,7 +89,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( ! empty( $_REQUEST['pmprogroupacct_remove_group_members'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_remove_group_members_nonce'], 'pmprogroupacct_remove_group_members' ) ) {
-			$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+			$removal_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Get the group members.
@@ -101,7 +101,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		// If the group member doesn't exist or the current user doesn't own this group, show an error.
 		foreach ( $group_members as $group_member ) {
 			if ( empty( $group_member->id ) || $group_member->group_id !== $group->id ) {
-				$removal_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to remove this group member.', 'pmpro-group-accounts' ) . '</p></div>';
+				$removal_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to remove this group member.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		}
 
@@ -116,7 +116,7 @@ function pmprogroupacct_shortcode_manage_group() {
 					$group_member->update_group_child_status( 'inactive' );
 				}
 			}
-			$removal_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group members removed.', 'pmpro-group-accounts' ) . '</p></div>';
+			$removal_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group members removed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 	}
 
@@ -125,24 +125,24 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
 		// Make sure that the current user has permission to update this group.
 		if ( ! $is_admin ) {
-			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</p></div>';
+			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the total seats is a number.
 		if ( ! is_numeric( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
-			$update_message = '<div class="pmpro_error"><p>' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</p></div>';
+			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Update the group settings.
 		$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
 
 		// Show a success message.
-		$update_message = '<div class="pmpro_success"><p>' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</p></div>';
+		$update_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</div>';
 	}
 
 	// If the user is trying to invite new members, invite them.
@@ -150,27 +150,27 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_invite_new_members_nonce'], 'pmprogroupacct_invite_new_members' ) ) {
-			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</p></div>';
+			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that a level ID was passed.
 		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
-			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</p></div>';
+			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the level ID is an integer.
 		if ( ! empty( $invite_message ) && ! is_numeric( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
-			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Level ID must be a number.', 'pmpro-group-accounts' ) . '</p></div>';
+			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Level ID must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the level ID can be claimed using this group code.
 		if ( ! empty( $invite_message ) && ! in_array( (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'], array_map( 'intval', $group_settings['child_level_ids'] ), true ) ) {
-			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'This level cannot be claimed using this group code.', 'pmpro-group-accounts' ) . '</p></div>';
+			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'This level cannot be claimed using this group code.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that email addresses were passed.
 		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
-			$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No email addresses were passed.', 'pmpro-group-accounts' ) . '</p></div>';
+			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the email addresses are valid. Each should be on a new line.
@@ -187,7 +187,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				}
 			}
 			if ( empty( $valid_emails ) ) {
-				$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'No valid email addresses were passed.', 'pmpro-group-accounts' ) . '</p></div>';
+				$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No valid email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		}
 
@@ -202,7 +202,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			$failed_emails = array();
 			foreach ( $valid_emails as $valid_email ) {
 				$email           = new PMProEmail();
-				$email->template = 'pmpgoroupacct_invite';
+				$email->template = 'pmprogroupacct_invite';
 				$email->email    = $valid_email;
 				$email->data     = $email_data;
 				$success = $email->sendEmail();
@@ -213,12 +213,12 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			$sent_emails = array_diff( $valid_emails, $failed_emails );
 			if ( empty( $sent_emails ) ) {
-				$invite_message = '<div class="pmpro_error"><p>' . esc_html__( 'Failed to send emails.', 'pmpro-group-accounts' ) . '</p></div>';
+				$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Failed to send emails.', 'pmpro-group-accounts' ) . '</div>';
 			} elseif ( empty( $failed_emails ) && empty( $invalid_emails ) ) {
-				$invite_message = '<div class="pmpro_success"><p>' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</p></div>';
+				$invite_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</div>';
 			} else {
 				// Some emails were sent, but others were not. List the emails that were sent, the emails that failed to send, and the invalid emails.
-				$invite_message = '<div class="pmpro_success"><p>' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
+				$invite_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
 				foreach ( $sent_emails as $sent_email ) {
 					$invite_message .= '<li>' . esc_html( $sent_email ) . '</li>';
 				}
@@ -255,12 +255,12 @@ function pmprogroupacct_shortcode_manage_group() {
 	// Create UI.
 	ob_start();
 	?>
-	<div id="pmproacct_manage_group">
+	<div id="pmprogroupacct_manage_group">
 		<?php
 		// We want admins to have more settings, like the ability to change the number of seats.
 		if ( $is_admin ) {
 			?>
-			<div id="pmproacct_manage_group_settings">
+			<div id="pmprogroupacct_manage_group_settings">
 				<h2><?php esc_html_e( 'Group Settings', 'pmpro-group-accounts' ); ?></h2>
 				<?php echo $update_message; ?>
 				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
@@ -273,7 +273,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			<?php
 		}
 		?>
-		<div id="pmproacct_manage_group_members">
+		<div id="pmprogroupacct_manage_group_members">
 			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
 			<?php
 			echo $removal_message;
@@ -282,7 +282,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			} else {
 			?>
 				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-					<table>
+				<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
 						<thead>
 							<tr>
 								<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
@@ -317,7 +317,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Make sure that this group code has levels that can be claimed.
 		if ( ! empty( $group_settings ) && ! empty( $group_settings['child_level_ids'] ) ) {
 			?>
-			<div id="pmproacct_invite_new_members">
+			<div id="pmprogroupacct_invite_new_members">
 				<h2><?php esc_html_e( 'Invite New Members', 'pmpro-group-accounts' ); ?></h2>
 				<?php
 				// Check if this group is accepting signups.
@@ -326,16 +326,22 @@ function pmprogroupacct_shortcode_manage_group() {
 				} else {
 					// Show the group code and the levels that can be claimed with links to checkout for those levels.
 					?>
-					<p><?php printf( esc_html__( 'New members can use this code to claim a seat in your group by checking out for one of the following levels using the group code %s:', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' ); ?></p>
+					<p><?php printf( esc_html__( 'Your Group Code is: %s', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' ); ?></p>
+					<p><?php esc_html_e( 'New members can use this code to join your group at no additional cost.', 'pmpro-group-accounts' ); ?></p>
 					<ul>
 						<?php
 						foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 							$child_level = pmpro_getLevel( $child_level_id );
+							$checkout_url = add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) );
 							?>
 							<li>
-								<a href="<?php echo esc_url( add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ); ?>">
-									<?php echo esc_html( $child_level->name ); ?>
+								<a href="<?php echo esc_url( $checkout_url ); ?>">
+									<?php printf( esc_html__( 'For %s membership:', 'pmpro-group-accounts' ), esc_html( $child_level->name ) ); ?>
 								</a>
+								<br />
+								<code>
+									<?php echo esc_attr( $checkout_url ); ?>
+								</code>
 							</li>
 							<?php
 						}
@@ -372,7 +378,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Show old members if there are any.
 		if ( ! empty( $old_members ) ) {
 			?>
-			<div id="pmproacct_manage_group_old_members">
+			<div id="pmprogroupacct_manage_group_old_members">
 				<h2><?php esc_html_e( 'Old Members', 'pmpro-group-accounts' ); ?></h2>
 				<table>
 					<thead>
@@ -401,6 +407,9 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 		?>
 	</div>
+	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_actions_nav' ) ); ?>">
+		<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_actions_nav-right' ) ); ?>"><a href="<?php echo esc_url( pmpro_url( 'account' ) ) ?>"><?php esc_html_e( 'View Your Membership Account', 'pmpro-group-accounts' );?></a></span>
+	</div> <!-- end pmpro_actions_nav -->
 	<?php
 	$content = ob_get_contents();
 	ob_end_clean();
