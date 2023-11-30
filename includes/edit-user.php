@@ -1,5 +1,4 @@
 <?php
-
 /**
  * When administrators edit a user, we want to show all groups that they manage,
  * including showing the group ID, the level ID for the group, the number of seats in the group,

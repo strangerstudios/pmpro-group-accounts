@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Add group account settings to the edit level page.
  *

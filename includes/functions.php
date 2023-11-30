@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Get the group account settings for a membesrhip level.
+ * Get the group account settings for a membership level.
  *
  * @since TBD
  *

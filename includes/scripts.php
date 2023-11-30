@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Enqueue admin scripts.
  *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * If the user is checking out for a group parent level, we want to let them
  * choose the number of seats to purchase if there is a variable amount. We

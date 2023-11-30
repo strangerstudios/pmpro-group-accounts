@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Add a page setting for the Manage Group page.
  *

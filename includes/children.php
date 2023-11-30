@@ -1,5 +1,4 @@
 <?php
-
 /**
  * If a group code is passed and no other checkout messages are being shown, show a message that the group code has been applied if
  * the code is valid or an error message if not.
