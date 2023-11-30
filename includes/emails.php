@@ -86,16 +86,16 @@ function pmprogroupacct_email_data( $data, $email ) {
 		<?php
 		foreach ( $child_level_ids as $child_level_id ) {
 			$child_level = pmpro_getLevel( $child_level_id );
-			$checkout_url = add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) );
 			?>
 			<li>
-				<a href="<?php echo esc_url( $checkout_url ); ?>">
-					<?php printf( esc_html__( 'For %s membership:', 'pmpro-group-accounts' ), esc_html( $child_level->name ) ); ?>
-				</a>
-				<br />
-				<code>
-					<?php echo esc_attr( $checkout_url ); ?>
-				</code>
+				<?php
+					/* translators: 1: membership level name, 2: membership level checkout link */
+					printf(
+						esc_html__( '%1$s membership: %2$s', 'pmpro-group-accounts' ),
+						esc_html( $child_level->name ),
+						esc_url( add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) )
+					);
+				?>
 			</li>
 			<?php
 		}
