@@ -62,10 +62,10 @@ add_filter( 'pmpro_member_action_links', 'pmprogroupacct_member_action_links', 1
  */
 function pmprogroupacct_manage_group_preheader() {
 	if ( ! is_admin() ) {
-		global $post, $pmpro_pages;
+		global $pmpro_pages;
 
 		// Return if this is not the Manage Group page.
-		if ( ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
+		if ( empty( $pmpro_pages['pmprogroupacct_manage_group'] ) || ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
 			return;
 		}
 
