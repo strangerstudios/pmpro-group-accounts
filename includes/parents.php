@@ -34,44 +34,7 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 		<div class="pmpro_checkout-fields">
 			<?php
 			// Show seats.
-			if ( $settings['total_seats'] > 0 ) {
-				?>
-				<input type="hidden" name="pmprogroupacct_seats" value="<?php echo esc_attr( $settings['total_seats'] ); ?>" />
-				<p class="pmpro_checkout-field pmpro_checkout-field-seats">
-				<?php
-					$seat_count = (int)$settings['total_seats'];
-					switch ( $settings['pricing_model'] ) {
-						case 'none':
-							printf(
-								esc_html__(
-									_n(
-										'This purchase includes %d additional seat.',
-										'This purchase includes %d additional seats.',
-										$seat_count,
-										'pmpro-group-accounts'
-									)
-								),
-								$seat_count
-							);
-							break;
-						case 'fixed':
-							printf(
-								esc_html__(
-									_n(
-										'You are purchasing %d additional seat.',
-										'You are purchasing %d additional seats.',
-										$seat_count,
-										'pmpro-group-accounts'
-									)
-								),
-								$seat_count
-							);
-							break;
-					}
-				?>
-				</p>
-				<?php
-			} elseif ( $settings['min_seats'] === $settings['max_seats'] ) {
+			if ( $settings['min_seats'] === $settings['max_seats'] ) {
 				?>
 				<input type="hidden" name="pmprogroupacct_seats" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 				<p class="pmpro_checkout-field pmpro_checkout-field-seats">
