@@ -410,17 +410,29 @@ function pmprogroupacct_shortcode_manage_group() {
 						<label for="pmprogroupacct_invite_new_members_emails"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
 						<textarea name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails"></textarea>
 						<p><small class="description"><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></small></p>
-						<label for="pmprogroupacct_invite_new_members_level_id"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
-						<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id">
-							<?php
-							foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
-								$child_level = pmpro_getLevel( $child_level_id );
+						<?php
+							// Just one child level in the group? Show as a hidden field.
+							if ( count( $group_settings['child_level_ids'] ) === 1 ) {
 								?>
-								<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+								<input type="hidden" name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id" value="<?php echo esc_attr( $group_settings['child_level_ids'][0] ); ?>">
 								<?php
+							} else {
+								?>
+								<label for="pmprogroupacct_invite_new_members_level_id"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
+								<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id">
+									<?php
+									foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+										$child_level = pmpro_getLevel( $child_level_id );
+										?>
+										<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+										<?php
+									}
+									?>
+								</select>
+								<br>
+							<?php
 							}
-							?>
-						</select><br>
+						?>
 						<input type="hidden" name="pmprogroupacct_invite_new_members_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_invite_new_members' ) ); ?>">
 						<input type="submit" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
 					<?php
