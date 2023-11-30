@@ -55,6 +55,53 @@ function pmprogroupacct_member_action_links( $action_links, $level_id ) {
 add_filter( 'pmpro_member_action_links', 'pmprogroupacct_member_action_links', 10, 2 );
 
 /**
+ * Redirect to the Membership Account page if someone tries to access the
+ * Manage Group page without a group ID or access.
+ *
+ * @since TBD
+ * @return void
+ */
+function pmprogroupacct_manage_group_preheader() {
+	if ( ! is_admin() ) {
+		global $post, $pmpro_pages;
+
+		// Return if this is not the Manage Group page.
+		if ( ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
+			return;
+		}
+
+		// Set up the $redirect variable.
+		$redirect = false;
+
+		// Make sure that a group ID was passed. If not, set $redirect to true.
+		if ( empty( $_REQUEST['pmprogroupacct_group_id'] ) ) {
+			$redirect = true;
+		} else {
+			// Get the group.
+			$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) );
+
+			// If the group doesn't exist, set $redirect to true.
+			if ( empty( $group->id ) ) {
+				$redirect = true;
+			}
+
+			// Check if the current user can view this page.
+			$is_admin = current_user_can( apply_filters( 'pmpro_edit_member_capability', 'manage_options' ) );
+			if ( ! $is_admin && $group->group_parent_user_id !== get_current_user_id() ) {
+				$redirect = true;
+			}
+		}
+
+		// Redirect if necessary.
+		if ( ! empty( $redirect ) ) {
+			wp_redirect( pmpro_url( 'account' ) );
+			exit;
+		}
+	}
+}
+add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
+
+/**
  * Show the content for the [pmprogroupacct_manage_group] shortcode.
  *
  * @since TBD
