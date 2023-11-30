@@ -288,6 +288,23 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 	}
 
+	// If the user is trying to generate a new group code, generate it.
+	$generate_code_message = '';
+	if ( ! empty( $_REQUEST['pmprogroupacct_generate_new_group_code'] ) ) {
+		// Make sure that the nonce is valid.
+		if ( empty( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'], 'pmprogroupacct_generate_new_group_code' ) ) {
+			$generate_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Generate a new group code.
+		if ( empty( $generate_code_message ) ) {
+			$group->regenerate_group_checkout_code();
+
+			// Show a success message.
+			$generate_code_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'New group code generated.', 'pmpro-group-accounts' ) . '</div>';
+		}
+	}
+
 	// Get the active members in this group.
 	$active_members = $group->get_active_members();
 
@@ -388,7 +405,21 @@ function pmprogroupacct_shortcode_manage_group() {
 				} else {
 					// Show the group code and the levels that can be claimed with links to checkout for those levels.
 					?>
-					<p><?php printf( esc_html__( 'Your Group Code is: %s', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' ); ?></p>
+					<form id="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+						<?php
+						// Show error/success message.
+						if ( ! empty( $generate_code_message ) ) {
+							echo wp_kses_post( $generate_code_message );
+						}
+
+						// Create nonce.
+						wp_nonce_field( 'pmprogroupacct_generate_new_group_code', 'pmprogroupacct_generate_new_group_code_nonce' );
+
+						// Show group code and regenerate button.
+						?>
+						<p><?php printf( esc_html__( 'Your Group Code is: %s', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' );?></p>
+						<input type="submit" name="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Generate New Group Code', 'pmpro-group-accounts' ); ?>">
+					</form>
 					<p><?php esc_html_e( 'New members can use this code to join your group at no additional cost.', 'pmpro-group-accounts' ); ?></p>
 					<ul>
 						<?php
