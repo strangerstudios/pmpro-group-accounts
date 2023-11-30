@@ -5,7 +5,7 @@ Requires at least: 5.4
 Tested up to: 6.4.1
 Stable tag: TBD
 
-Sell memberships to corporate organizations, families, teams, or any group of people where one member pays for a collection of people to access your content individually.
+Sell group memberships where one member pays for a collection of people to access your content individually.
 
 == Description ==
 
