@@ -11,8 +11,6 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 
 	$settings = array(
 		'child_level_ids'		 => array(),
-		'group_type'			 => 'fixed', // fixed, variable
-		'total_seats'			 => 0,
 		'min_seats'				 => 0,
 		'max_seats'				 => 0,
 		'pricing_model'			 => 'none', // none, fixed
@@ -64,8 +62,8 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 						</th>
 						<td>
 							<select id="pmprogroupacct_group_type" name="pmprogroupacct_group_type">
-								<option value="fixed" <?php selected( 'fixed', $settings['group_type'] ); ?>><?php esc_html_e( 'Fixed - Set a specific number of allowed seats.', 'pmpro-group-accounts' ); ?></option>
-								<option value="variable" <?php selected( 'variable', $settings['group_type'] ); ?>><?php esc_html_e( 'Variable - Member can choose number of seats at checkout.', 'pmpro-group-accounts' ); ?></option>
+								<option value="fixed" <?php selected( $settings['min_seats'] === $settings['max_seats'] ); ?>><?php esc_html_e( 'Fixed - Set a specific number of allowed seats.', 'pmpro-group-accounts' ); ?></option>
+								<option value="variable" <?php selected( $settings['min_seats'] !== $settings['max_seats'] ); ?>><?php esc_html_e( 'Variable - Member can choose number of seats at checkout.', 'pmpro-group-accounts' ); ?></option>
 							</select>
 							<p class="description"><?php esc_html_e( 'Set a specific number of seats in the group or allow the member to choose the number of seats they need at checkout.', 'pmpro-group-accounts' ); ?></p>
 						</td>
@@ -75,7 +73,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 							<label for="pmprogroupacct_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
 						</th>
 						<td>
-							<input id="pmprogroupacct_total_seats" name="pmprogroupacct_total_seats" type="number" min="0" value="<?php echo esc_attr( $settings['total_seats'] ); ?>" />
+							<input id="pmprogroupacct_total_seats" name="pmprogroupacct_total_seats" type="number" min="0" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 							<p class="description"><?php esc_html_e( 'The total number of seats that are included in this group. Note: the group account owner does not count toward this total.', 'pmpro-group-accounts' ); ?></p>
 						</td>
 					</tr>
@@ -171,17 +169,13 @@ function pmprogroupacct_pmpro_save_membership_level( $level_id ) {
 	// Update the group account settings for the level.
 	$settings['child_level_ids']		= array_map( 'intval', $_REQUEST['pmprogroupacct_child_level_ids'] );
 
-	// Settings for group type and seat counts.
-	$settings['group_type']				= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_group_type'], array( 'fixed', 'variable' ) ) ? $_REQUEST['pmprogroupacct_group_type'] : 'fixed';
 	// Set the total seats, min, and max based on group type and user selected values.
-	if ( $settings['group_type'] === 'fixed' ) {
-		$settings['total_seats']			= intval( $_REQUEST['pmprogroupacct_total_seats'] );
-		$settings['min_seats']				= intval( $_REQUEST['pmprogroupacct_total_seats'] );
-		$settings['max_seats']				= intval( $_REQUEST['pmprogroupacct_total_seats'] );
+	if ( ! empty( $_REQUEST['pmprogroupacct_group_type'] ) && $_REQUEST['pmprogroupacct_group_type'] === 'fixed' ) {
+		$settings['min_seats'] = intval( $_REQUEST['pmprogroupacct_total_seats'] );
+		$settings['max_seats'] = intval( $_REQUEST['pmprogroupacct_total_seats'] );
 	} else {
-		$settings['total_seats']			= 0;
-		$settings['min_seats']				= intval( $_REQUEST['pmprogroupacct_min_seats'] );
-		$settings['max_seats']				= intval( $_REQUEST['pmprogroupacct_max_seats'] );
+		$settings['min_seats'] = intval( $_REQUEST['pmprogroupacct_min_seats'] );
+		$settings['max_seats'] = intval( $_REQUEST['pmprogroupacct_max_seats'] );
 	}
 
 	// Settings for seat pricing and price application.
