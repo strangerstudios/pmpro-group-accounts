@@ -308,9 +308,17 @@ function pmprogroupacct_shortcode_manage_group() {
 		if ( $is_admin ) {
 			?>
 			<div id="pmprogroupacct_manage_group_settings">
-				<h2><?php esc_html_e( 'Group Settings', 'pmpro-group-accounts' ); ?></h2>
-				<?php echo $update_message; ?>
-				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+				<h2><?php esc_html_e( 'Group Settings (Admin Only)', 'pmpro-group-accounts' ); ?></h2>
+				<p>
+				<?php
+					// Get the group parent.
+					$group_parent = get_userdata( $group->group_parent_user_id );
+
+					/* translators: %1$s is the group ID, %2$s is a link to edit the group owner with their display name. */
+					printf( esc_html__( 'Change the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( add_query_arg( 'user_id', $group->group_parent_user_id, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
+				?>
+				</p>
+				<form id="pmprogroupacct_manage_group_settings" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 					<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
 					<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
 					<input type="hidden" name="pmprogroupacct_update_group_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_update_group_settings' ) ); ?>">
@@ -323,12 +331,12 @@ function pmprogroupacct_shortcode_manage_group() {
 		<div id="pmprogroupacct_manage_group_members">
 			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
 			<?php
-			echo $removal_message;
+			echo wp_kses_post( $removal_message );
 			if ( empty( $active_members ) ) {
 				echo '<p>' . esc_html__( 'There are no active members in this group.', 'pmpro-group-accounts' ) . '</p>';
 			} else {
 			?>
-				<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+				<form id="pmprogroupacct_manage_group_members" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 				<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
 						<thead>
 							<tr>
@@ -398,8 +406,8 @@ function pmprogroupacct_shortcode_manage_group() {
 					// Show a form to invite new members via email.
 					?>
 					<h3><?php esc_html_e( 'Invite New Members via Email', 'pmpro-group-accounts' ); ?></h3>
-					<?php echo $invite_message; ?>
-					<form action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+					<?php echo wp_kses_post( $invite_message ); ?>
+					<form id="pmprogroupacct_manage_group_invites" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 						<label for="pmprogroupacct_invite_new_members_emails"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
 						<textarea name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails"></textarea>
 						<p><small class="description"><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></small></p>
