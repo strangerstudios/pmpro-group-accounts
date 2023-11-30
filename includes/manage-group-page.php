@@ -317,11 +317,17 @@ function pmprogroupacct_shortcode_manage_group() {
 					printf( esc_html__( 'Change the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( add_query_arg( 'user_id', $group->group_parent_user_id, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
 				?>
 				</p>
-				<form id="pmprogroupacct_manage_group_settings" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-					<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
-					<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
-					<input type="hidden" name="pmprogroupacct_update_group_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_update_group_settings' ) ); ?>">
-					<input type="submit" value="<?php esc_attr_e( 'Update Settings', 'pmpro-group-accounts' ); ?>">
+				<form id="pmprogroupacct_manage_group_settings" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+					<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-fields' ); ?>">	
+						<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-text' ); ?>">
+							<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
+							<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+						</div> <!-- end .pmpro_checkout-field -->
+					</div> <!-- end .pmpro_checkout-fields -->
+					<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
+						<input type="hidden" name="pmprogroupacct_update_group_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_update_group_settings' ) ); ?>">
+						<input type="submit" name="pmprogroupacct_update_group_settings_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Update Settings', 'pmpro-group-accounts' ); ?>">
+					</div> <!-- end .pmpro_submit -->
 				</form>
 			</div>
 			<?php
@@ -335,7 +341,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				echo '<p>' . esc_html__( 'There are no active members in this group.', 'pmpro-group-accounts' ) . '</p>';
 			} else {
 			?>
-				<form id="pmprogroupacct_manage_group_members" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+				<form id="pmprogroupacct_manage_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 				<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
 						<thead>
 							<tr>
@@ -353,15 +359,17 @@ function pmprogroupacct_shortcode_manage_group() {
 								<tr>
 									<td><?php echo esc_html( $user->user_login ); ?></td>
 									<td><?php echo esc_html( $level->name ); ?></td>
-									<td><input type="checkbox" name="pmprogroupacct_remove_group_members[]" value="<?php echo esc_attr( $member->id ); ?>"></td>
+									<td><input type="checkbox" name="pmprogroupacct_remove_group_members[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
 								</tr>
 								<?php
 							}
 							?>
 						</tbody>
 					</table>
-					<?php wp_nonce_field( 'pmprogroupacct_remove_group_members', 'pmprogroupacct_remove_group_members_nonce' ); ?>
-					<input type="submit" value="<?php esc_attr_e( 'Remove Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php esc_html_e( 'Are you sure that you would like to remove these users from your group?', 'pmpro-group-accounts' ); ?>' );">
+					<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
+						<?php wp_nonce_field( 'pmprogroupacct_remove_group_members', 'pmprogroupacct_remove_group_members_nonce' ); ?>
+						<input type="submit" name="pmprogroupacct_remove_group_members_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Remove Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php esc_html_e( 'Are you sure that you would like to remove these users from your group?', 'pmpro-group-accounts' ); ?>' );">
+					</div> <!-- end .pmpro_submit -->
 				</form>
 			<?php
 			}
@@ -406,35 +414,43 @@ function pmprogroupacct_shortcode_manage_group() {
 					?>
 					<h3><?php esc_html_e( 'Invite New Members via Email', 'pmpro-group-accounts' ); ?></h3>
 					<?php echo wp_kses_post( $invite_message ); ?>
-					<form id="pmprogroupacct_manage_group_invites" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-						<label for="pmprogroupacct_invite_new_members_emails"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
-						<textarea name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails"></textarea>
-						<p><small class="description"><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></small></p>
-						<?php
-							// Just one child level in the group? Show as a hidden field.
-							if ( count( $group_settings['child_level_ids'] ) === 1 ) {
-								?>
-								<input type="hidden" name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id" value="<?php echo esc_attr( $group_settings['child_level_ids'][0] ); ?>">
-								<?php
-							} else {
-								?>
-								<label for="pmprogroupacct_invite_new_members_level_id"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
-								<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id">
-									<?php
-									foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
-										$child_level = pmpro_getLevel( $child_level_id );
-										?>
-										<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
-										<?php
-									}
-									?>
-								</select>
-								<br>
+					<form id="pmprogroupacct_manage_group_invites" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+						<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-fields' ); ?>">
+							<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-textarea' ); ?>">
+								<label for="pmprogroupacct_invite_new_members_emails"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
+								<p><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></small></p>
+								<textarea rows="5" cols="80" class="input" name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails"></textarea>
+							</div> <!-- end .pmpro_checkout-field -->
 							<?php
-							}
-						?>
-						<input type="hidden" name="pmprogroupacct_invite_new_members_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_invite_new_members' ) ); ?>">
-						<input type="submit" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
+								// Just one child level in the group? Show as a hidden field.
+								if ( count( $group_settings['child_level_ids'] ) === 1 ) {
+									?>
+									<input type="hidden" name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id" value="<?php echo esc_attr( $group_settings['child_level_ids'][0] ); ?>">
+									<?php
+								} else {
+									?>
+									<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-select' ); ?>">
+										<label for="pmprogroupacct_invite_new_members_level_id"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
+										<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id">
+											<?php
+											foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+												$child_level = pmpro_getLevel( $child_level_id );
+												?>
+												<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+												<?php
+											}
+											?>
+										</select>
+									</div> <!-- end .pmpro_checkout-field -->
+								<?php
+								}
+							?>
+						</div> <!-- end .pmpro_checkout-fields -->
+						<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
+							<input type="hidden" name="pmprogroupacct_invite_new_members_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_invite_new_members' ) ); ?>">
+							<input type="submit" name="pmprogroupacct_invite_new_members_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
+						</div> <!-- end .pmpro_submit -->
+					</form>
 					<?php
 				}
 				?>
@@ -446,7 +462,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			?>
 			<div id="pmprogroupacct_manage_group_old_members">
 				<h2><?php esc_html_e( 'Old Members', 'pmpro-group-accounts' ); ?></h2>
-				<table>
+				<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
 					<thead>
 						<tr>
 							<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
