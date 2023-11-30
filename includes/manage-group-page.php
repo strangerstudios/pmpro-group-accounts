@@ -405,21 +405,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				} else {
 					// Show the group code and the levels that can be claimed with links to checkout for those levels.
 					?>
-					<form id="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-						<?php
-						// Show error/success message.
-						if ( ! empty( $generate_code_message ) ) {
-							echo wp_kses_post( $generate_code_message );
-						}
-
-						// Create nonce.
-						wp_nonce_field( 'pmprogroupacct_generate_new_group_code', 'pmprogroupacct_generate_new_group_code_nonce' );
-
-						// Show group code and regenerate button.
-						?>
-						<p><?php printf( esc_html__( 'Your Group Code is: %s', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' );?></p>
-						<input type="submit" name="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Generate New Group Code', 'pmpro-group-accounts' ); ?>">
-					</form>
+					<p><?php printf( esc_html__( 'Your Group Code is: %s', 'pmpro-group-accounts' ), '<code>' . esc_html( $group->group_checkout_code ) . '</code>' );?></p>
 					<p><?php esc_html_e( 'New members can use this code to join your group at no additional cost.', 'pmpro-group-accounts' ); ?></p>
 					<ul>
 						<?php
@@ -440,6 +426,27 @@ function pmprogroupacct_shortcode_manage_group() {
 						}
 						?>
 					</ul>
+					<?php
+					// Show the group code and the levels that can be claimed with links to checkout for those levels.
+					?>
+					<h3><?php esc_html_e( 'Generate a New Group Code', 'pmpro-group-accounts' ); ?></h3>
+					<p><?php esc_html_e( 'Generate a new group code to prevent new members from joining your group with the current code. Your existing group members will remain in your group. This action is permanent and cannot be reversed.', 'pmpro-group-accounts' ); ?></p>
+					<form id="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+						<?php
+						// Show error/success message.
+						if ( ! empty( $generate_code_message ) ) {
+							echo wp_kses_post( $generate_code_message );
+						}
+
+						// Create nonce.
+						wp_nonce_field( 'pmprogroupacct_generate_new_group_code', 'pmprogroupacct_generate_new_group_code_nonce' );
+
+						// Show group code regenerate button.
+						?>
+						<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
+							<input type="submit" name="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_btn pmpro_btn-submit', 'pmpro_btn-submit' ); ?>" value="<?php esc_attr_e( 'Generate New Group Code', 'pmpro-group-accounts' ); ?>">
+						</div> <!-- end .pmpro_submit -->
+					</form>
 					<?php
 					// Show a form to invite new members via email.
 					?>
