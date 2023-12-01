@@ -216,9 +216,13 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 		return $level;
 	}
 
-	// Get the number of seats being purchased.
-	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
-
+	// Get the number of seats being purchased or if they're fixed amount of seats, get that from the options..
+	if ( $settings['pricing_model'] !== 'fixed' ) {
+		$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
+	} else {
+		$seats = $settings['min_seats'] ? $settings['min_seats'] : 0;
+	}
+	
 	// If the number of seats is not an integer, bail.
 	if ( empty( $seats ) || ! is_numeric( $seats ) ) {
 		return $level;
