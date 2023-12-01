@@ -167,28 +167,28 @@ function pmprogroupacct_shortcode_manage_group() {
 	}
 
 	// If the user is trying to update the group settings, update them.
-	$update_message = '';
+	$seats_message = '';
 	if ( isset( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
 		// Make sure that the current user has permission to update this group.
 		if ( ! $is_admin ) {
-			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the total seats is a number.
 		if ( ! is_numeric( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
-			$update_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Update the group settings.
 		$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
 
 		// Show a success message.
-		$update_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</div>';
+		$seats_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</div>';
 	}
 
 	// If the user is trying to invite new members, invite them.
@@ -308,6 +308,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			?>
 			<div id="pmprogroupacct_manage_group_settings">
 				<h2><?php esc_html_e( 'Group Settings (Admin Only)', 'pmpro-group-accounts' ); ?></h2>
+				<?php echo wp_kses_post( $seats_message ); ?>
 				<p>
 				<?php
 					// Get the group parent.
