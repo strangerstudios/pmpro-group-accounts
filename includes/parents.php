@@ -160,14 +160,12 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 		return $continue_checkout;
 	}
 
-	// Get the number of seats being purchased.
-	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
-
 	// If the number of seats entered is not an integer, show an error.
-	if ( $seats !== $_REQUEST['pmprogroupacct_seats'] ) {
+	if ( ! isset( $_REQUEST['pmprogroupacct_seats'] ) || ! is_numeric( $_REQUEST['pmprogroupacct_seats'] ) ) {
 		$continue_checkout = false;
 		pmpro_setMessage( esc_html__( 'The number of seats must be a whole number.', 'pmpro-group-accounts' ), 'pmpro_error' );
 	}
+	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
 
 	// If the number of seats is less than the minimum, show an error.
 	if ( $seats < $settings['min_seats'] ) {
@@ -194,6 +192,7 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 
 	return $continue_checkout;
 }
+add_filter( 'pmpro_registration_checks', 'pmprogroupacct_pmpro_registration_checks_parent' );
 
 /**
  * If the user is checking out for a group parent level, we need to
