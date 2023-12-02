@@ -221,11 +221,20 @@ function pmprogroupacct_shortcode_manage_group() {
 
 		// Make sure that the email addresses are valid. Each should be on a new line.
 		if ( empty( $invite_message ) ) {
-			$emails = explode( "\n", $_REQUEST['pmprogroupacct_invite_new_members_emails'] );
+			$emails = explode( "\n", trim( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) );
 			$valid_emails = array();
 			$invalid_emails = array();
+
 			foreach ( $emails as $email ) {
+				// Trim whitespace from the email.
 				$email = trim( $email );
+
+				// If it's empty after trimming, skip it.
+				if ( empty( $email ) ) {
+					continue;
+				}
+
+				// Check the email and add to the appropriate array.
 				if ( is_email( $email ) ) {
 					$valid_emails[] = $email;
 				} else {
