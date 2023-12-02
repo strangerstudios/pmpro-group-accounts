@@ -243,12 +243,26 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 		case 'both':
 			$level->initial_payment += $seat_cost;
 			$level->billing_amount += $seat_cost;
+			// If the level is not already recurring, default to 1 per Month.
+			if ( empty ( $level->cycle_number ) ) {
+				$level->cycle_number = 1;
+			}
+			if ( empty( $level->cycle_period ) ) {
+				$level->cycle_period = 'Month';
+			}
 			break;
 		case 'initial':
 			$level->initial_payment += $seat_cost;
 			break;
 		case 'recurring':
 			$level->billing_amount += $seat_cost;
+			// If the level is not already recurring, default to 1 per Month.
+			if ( empty ( $level->cycle_number ) ) {
+				$level->cycle_number = 1;
+			}
+			if ( empty( $level->cycle_period ) ) {
+				$level->cycle_period = 'Month';
+			}
 			break;
 	}
 
