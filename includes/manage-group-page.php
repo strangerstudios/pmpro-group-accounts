@@ -339,7 +339,7 @@ function pmprogroupacct_shortcode_manage_group() {
 					<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-fields' ); ?>">	
 						<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-text' ); ?>">
 							<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
-							<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+							<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
 						</div> <!-- end .pmpro_checkout-field -->
 					</div> <!-- end .pmpro_checkout-fields -->
 					<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
