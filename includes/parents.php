@@ -42,29 +42,31 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 					$seat_count = (int)$settings['min_seats'];
 					switch ( $settings['pricing_model'] ) {
 						case 'none':
+							/* translators: %d: Number of seats */
 							printf(
 								esc_html__(
 									_n(
-										'This purchase includes %d additional seat.',
-										'This purchase includes %d additional seats.',
+										'This purchase includes %s additional seat.',
+										'This purchase includes %s additional seats.',
 										$seat_count,
 										'pmpro-group-accounts'
 									)
 								),
-								$seat_count
+								esc_html( number_format_i18n( $seat_count ) )
 							);
 							break;
 						case 'fixed':
+							/* translators: %d: Number of seats */
 							printf(
 								esc_html__(
 									_n(
-										'You are purchasing %d additional seat.',
-										'You are purchasing %d additional seats.',
+										'You are purchasing %s additional seat.',
+										'You are purchasing %s additional seats.',
 										$seat_count,
 										'pmpro-group-accounts'
 									)
 								),
-								$seat_count
+								esc_html( number_format_i18n( $seat_count ) )
 							);
 							break;
 					}
@@ -76,7 +78,7 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 				<div class="pmpro_checkout-field pmpro_checkout-field-seats">
 					<label for="pmprogroupacct_seats"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
 					<input id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
-					<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %d and %d seats.', 'pmpro-group-accounts' ), (int)$settings['min_seats'], (int)$settings['max_seats'] ); ?></p>
+					<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %s and %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( ( (int)$settings['min_seats'] ) ) ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ); ?></p>
 				</div> <!-- end .pmpro_checkout-field-seats -->
 				<?php
 			}
@@ -103,12 +105,6 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 						?>
 					</p>
 					<?php
-					break;
-				case 'tiered':
-					break;
-				case 'volume':
-					break;
-				case 'dropdown':
 					break;
 			}
 
@@ -170,13 +166,13 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 	// If the number of seats is less than the minimum, show an error.
 	if ( $seats < $settings['min_seats'] ) {
 		$continue_checkout = false;
-		pmpro_setMessage( sprintf( esc_html__( 'You must purchase at least %d seats.', 'pmpro-group-accounts' ), (int)$settings['min_seats'] ), 'pmpro_error' );
+		pmpro_setMessage( sprintf( esc_html__( 'You must purchase at least %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( (int)$settings['min_seats'] ) ) ), 'pmpro_error' );
 	}
 
 	// If the number of seats is greater than the maximum, show an error.
 	if ( $seats > $settings['max_seats'] ) {
 		$continue_checkout = false;
-		pmpro_setMessage( sprintf( esc_html__( 'You cannot purchase more than %d seats.', 'pmpro-group-accounts' ), (int)$settings['max_seats'] ), 'pmpro_error' );
+		pmpro_setMessage( sprintf( esc_html__( 'You cannot purchase more than %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ), 'pmpro_error' );
 	}
 
 	// Check if this parent already has a group for this level. If so, check if $seats is greater than the number of seats in the group.
@@ -186,7 +182,7 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 		$member_count = $existing_group->get_active_members( true );
 		if ( $seats < $member_count ) {
 			$continue_checkout = false;
-			pmpro_setMessage( sprintf( esc_html__( 'There are currently %d members in your group. You must purchase at least that many seats.', 'pmpro-group-accounts' ), $member_count ), 'pmpro_error' );
+			pmpro_setMessage( sprintf( esc_html__( 'There are currently %s members in your group. You must purchase at least that many seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( (int)$member_count ) ) ) , 'pmpro_error' );
 		}
 	}
 
@@ -372,10 +368,10 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
 		echo '<strong>' . esc_html__( 'Group Account', 'pmpro-group-accounts' ) . '</strong>: ';
 		/* translators: 1: Group code, 2: Number of seats claimed, 3: Total number of seats in the group. */
 		printf(
-			esc_html__( 'Users can join your group by using the %1$s code at checkout (%2$d/%3$d seats claimed).', 'pmpro-group-accounts' ),
+			esc_html__( 'Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed).', 'pmpro-group-accounts' ),
 			'<strong>' . esc_html( $group->group_checkout_code ) . '</strong>',
-			(int)$group->get_active_members( true ),
-			(int)$group->group_total_seats
+			esc_html( number_format_i18n( (int)$group->get_active_members( true ) ) ),
+			esc_html( number_format_i18n( (int)$group->group_total_seats ) )
 		);
 
 		// Check if we have a "manage group" page set.

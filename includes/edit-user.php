@@ -75,7 +75,7 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 							}
 						?>
 						</td>
-						<td><?php echo esc_html( $group->get_active_members( true ) ) . '/' . esc_html( $group->group_total_seats ); ?></td>
+						<td><?php echo esc_html( number_format_i18n( $group->get_active_members( true ) ) ) . '/' . esc_html( number_format_i18n( $group->group_total_seats ) ); ?></td>
 						<td>
 							<?php
 							$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );

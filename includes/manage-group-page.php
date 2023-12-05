@@ -352,7 +352,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 		?>
 		<div id="pmprogroupacct_manage_group_members">
-			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
+			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo esc_html( number_format_i18n( count( $active_members ) ) ) . '/' . esc_html( number_format_i18n( (int)$group->group_total_seats ) ); ?>)</h2>
 			<?php
 			echo wp_kses_post( $removal_message );
 			if ( empty( $active_members ) ) {
