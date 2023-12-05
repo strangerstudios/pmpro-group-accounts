@@ -73,7 +73,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 							<label for="pmprogroupacct_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
 						</th>
 						<td>
-							<input id="pmprogroupacct_total_seats" name="pmprogroupacct_total_seats" type="number" min="0" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
+							<input id="pmprogroupacct_total_seats" name="pmprogroupacct_total_seats" type="number" min="0" max="4294967295" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 							<p class="description"><?php esc_html_e( 'The total number of seats that are included in this group. Note: the group account owner does not count toward this total.', 'pmpro-group-accounts' ); ?></p>
 						</td>
 					</tr>
@@ -82,7 +82,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 							<label for="pmprogroupacct_min_seats"><?php esc_html_e( 'Minimum Seats', 'pmpro-group-accounts' ); ?></label>
 						</th>
 						<td>
-							<input id="pmprogroupacct_min_seats" name="pmprogroupacct_min_seats" type="number" min="0" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
+							<input id="pmprogroupacct_min_seats" name="pmprogroupacct_min_seats" type="number" min="0" max="4294967295" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 							<p class="description"><?php esc_html_e( 'The minimum number of seats that can be added at checkout.', 'pmpro-group-accounts' ); ?></p>
 						</td>
 					</tr>
@@ -91,7 +91,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 							<label for="pmprogroupacct_max_seats"><?php esc_html_e( 'Maximum Seats', 'pmpro-group-accounts' ); ?></label>
 						</th>
 						<td>
-							<input id="pmprogroupacct_max_seats" name="pmprogroupacct_max_seats" type="number" min="0" value="<?php echo esc_attr( $settings['max_seats'] ); ?>" />
+							<input id="pmprogroupacct_max_seats" name="pmprogroupacct_max_seats" type="number" min="0" max="4294967295" value="<?php echo esc_attr( $settings['max_seats'] ); ?>" />
 							<p class="description"><?php esc_html_e( 'The maximum number of seats that can be added at checkout. Note: the group account owner does not count toward this limit.', 'pmpro-group-accounts' ); ?></p>
 						</td>
 					</tr>

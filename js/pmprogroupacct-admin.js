@@ -45,6 +45,16 @@ jQuery( document ).ready( function( $ ) {
 		pmprogroupacct_update_edit_level_pricing_model_field_visibility();
 	} );
 
+	// Function to update the min value of max seats based on min seats.
+	function pmprogroupacct_update_max_seats() {
+		var minSeats = $( '#pmprogroupacct_min_seats' ).val();
+		$( '#pmprogroupacct_max_seats' ).attr( 'min', minSeats );
+	}
+	pmprogroupacct_update_max_seats();
+	$('#pmprogroupacct_min_seats').change(function() {
+		pmprogroupacct_update_max_seats();
+	});
+
 	// Function to toggle the warning based on the recurring checkbox
 	function pmprogroupacct_toggle_recurring_warning() {
 		var priceApplication = $('#pmprogroupacct_price_application').val();
