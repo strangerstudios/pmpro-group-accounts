@@ -3,13 +3,13 @@
 /**
  * The PMPro Group Account Group object.
  *
- * @since TBD
+ * @since 1.0
  */
 class PMProGroupAcct_Group {
 	/**
 	 * The ID of the group entry.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -18,7 +18,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * The user ID of the group parent.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -27,7 +27,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * The parent user's level ID that this group is associated with.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -36,7 +36,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * The total number of seats in this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -45,7 +45,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * The checkout code to join this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var string
 	 */
@@ -54,7 +54,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Get a group object by ID.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $group The group ID to populate.
 	 */
@@ -82,7 +82,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Get the list of groups based on query arguments.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param array $args The query arguments to use to retrieve groups.
 	 *
@@ -160,7 +160,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Get a group object by parent user ID and parent level ID.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $group_parent_user_id The user ID of the parent user.
 	 * @param int $group_parent_level_id The level ID of the parent user.
@@ -183,7 +183,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Get a group object by checkout code.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $group_checkout_code The checkout code to search for.
 	 * @return PMProGroupAcct_Group|null The group object or null if the group could not be found.
@@ -204,7 +204,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Create a new group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $group_parent_user_id The user ID of the parent user.
 	 * @param int $group_parent_level_id The level ID of the parent user.
@@ -250,7 +250,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Magic getter to retrieve protected properties.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $name The name of the property to retrieve.
 	 * @return mixed The value of the property.
@@ -264,7 +264,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Magic isset to check protected properties.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $name The name of the property to check.
 	 * @return bool Whether the property is set.
@@ -279,7 +279,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Regenerate the checkout code for this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 */
 	public function regenerate_group_checkout_code() {
 		global $wpdb;
@@ -304,7 +304,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Update the number of seats in this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $group_total_seats The new number of seats in the group.
 	 */
@@ -340,7 +340,7 @@ class PMProGroupAcct_Group {
 	 * Specifically checks whether the parent user still has the level that the group is associated with
 	 * and whether the group has any seats available.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @return bool Whether the group is accepting signups.
 	 */
@@ -361,7 +361,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Get the active members in this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param bool return_count Whether to return the count of members instead of the list of members.
 	 * @return PMProGroupAcct_Group_Member[]|int The list of members or the count of members.
@@ -378,7 +378,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Generate a checkout code.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @return string The checkout code.
 	 */

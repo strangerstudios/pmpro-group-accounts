@@ -2,7 +2,7 @@
 /**
  * Enqueue admin scripts.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_admin_enqueue_scripts() {
     // Enqueue the admin script.
@@ -17,7 +17,7 @@ add_action( 'admin_enqueue_scripts', 'pmprogroupacct_admin_enqueue_scripts' );
 /**
  * Enqueue frontend scripts.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_wp_enqueue_scripts() {
     // Enqueue the checkout script.

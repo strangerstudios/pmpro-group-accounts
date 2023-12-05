@@ -3,7 +3,9 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 6.4.1
-Stable tag: TBD
+Stable tag: 1.0
+License: GPLv3
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Sell group memberships where one member pays for a collection of people to access your content individually.
 
@@ -22,10 +24,9 @@ This plugin allows you to sell memberships to corporate organizations, families,
 1. Upload the /pmpro-group-accounts/ directory to the /wp-content/plugins/ directory of your site.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
-= How to Use =
-...
-
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
-[Changelog]
+
+= 1.0 - 2023-12-05 =
+* Initial release.

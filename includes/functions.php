@@ -2,7 +2,7 @@
 /**
  * Get the group account settings for a membership level.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $level_id The ID of the membership level to get the settings for.
  * @return array|null The group account settings for the membership level or null if there are none.
@@ -22,7 +22,7 @@ function pmprogroupacct_get_settings_for_level( $level_id ) {
 /**
  * Check if a level can be claimed using group codes.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $level_id The ID of the membership level to check.
  * @return bool True if the level can be claimed using group codes, false otherwise.

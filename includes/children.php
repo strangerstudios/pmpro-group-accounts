@@ -3,7 +3,7 @@
  * If a group code is passed and no other checkout messages are being shown, show a message that the group code has been applied if
  * the code is valid or an error message if not.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_checkout_before_form_child() {
 	// Get the level being checked out for.
@@ -42,7 +42,7 @@ add_action( 'pmpro_checkout_before_form', 'pmprogroupacct_checkout_before_form_c
  *
  * If a group code is already being passed via URL, we will check if it is valid and show a message to the user accordingly.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_checkout_after_level_cost_child() {
 	// Get the level being checked out for.
@@ -79,7 +79,7 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 	 * Filter whether or not to show the group code field on the checkout page.
 	 * By default, this is true
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 * @param bool $show_group_code_field Whether or not to show the group code field on the checkout page.
 	 * @return bool Whether or not to show the group code field on the checkout page.
 	 */
@@ -105,7 +105,7 @@ add_action( 'pmpro_checkout_after_level_cost', 'pmprogroupacct_checkout_after_le
 /**
  * If a valid group code is being used, we need to reduce the level cost to 0.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param object $level The level being checked out for.
  * @return object The level being checked out for.
@@ -138,7 +138,7 @@ add_filter( 'pmpro_checkout_level', 'pmprogroupacct_pmpro_checkout_level_child' 
 /**
  * If a valid group code is being used, unset the level cost text.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param string $level_cost_text The level cost text.
  * @param object $level The level being checked out for.
@@ -169,7 +169,7 @@ add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child
  * If a group code is being used, we need to make sure that the code is valid and
  * that the current user is allowed to use this code before letting checkouts go through.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param bool $pmpro_continue_registration Whether or not to continue with the checkout.
  * @return bool Whether or not to continue with the checkout.
@@ -242,7 +242,7 @@ add_filter( 'pmpro_registration_checks', 'pmprogroupacct_pmpro_registration_chec
  *
  * Similarly, if the user was already a member of a group using this level, we need to remove them from that group.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The ID of the user being checked out for.
  * @param MemberOrder $morder The order being checked out for.
@@ -311,7 +311,7 @@ add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_child',
  * If a child loses a membership level associated with a group,
  * we need to remove them from that group.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $old_user_levels The old levels the users had.
  */
@@ -348,7 +348,7 @@ add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_af
  * If a group was joined with the invoice that is being displayed,
  * show an invoice bullet with the group parent.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param MemberOrder $invoice The invoice being displayed.
  */
@@ -391,7 +391,7 @@ add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullet
  * If we're on the Membership Account page, for levels that were claimed by being a part
  * of a membership group, filter the level cost to show who is paying for the membership.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param string $level_cost The level cost.
  * @param object $level The level being displayed.

@@ -5,7 +5,7 @@
  * also want to show them the price per seat if there is one set and the levels
  * that group members will be able to claim.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_pmpro_checkout_boxes_parent() {
 	// Get the level being checked out for.
@@ -135,7 +135,7 @@ add_action( 'pmpro_checkout_boxes', 'pmprogroupacct_pmpro_checkout_boxes_parent'
  * If the user is checking out for a group parent level, we need to make sure
  * that their checkout selections are valid.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param bool $continue_checkout Whether or not to continue with checkout.
  * @return bool Whether or not to continue with checkout.
@@ -198,7 +198,7 @@ add_filter( 'pmpro_registration_checks', 'pmprogroupacct_pmpro_registration_chec
  * If the user is checking out for a group parent level, we need to
  * add the seat price to the checkout level.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param object $level The level being checked out for.
  * @return object The level being checked out for.
@@ -260,7 +260,7 @@ add_filter( 'pmpro_checkout_level', 'pmprogroupacct_pmpro_checkout_level_parent'
  * If the user just completed checkout for a group parent level, we need to
  * create the group.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $user_id The ID of the user who just completed checkout.
  */
@@ -304,7 +304,7 @@ add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_parent'
  * If a parent loses a membership level that they have a group for,
  * we need to remove all members from the group.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param $old_user_levels array The old levels the users had.
  */
@@ -352,7 +352,7 @@ add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_af
  * Add an invoice bullet if the level purchased with the invoice that we are showing
  * has a group associated with it.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param MemberOrder $invoice The invoice being shown.
  */

@@ -3,13 +3,13 @@
 /**
  * The PMPro Group Account Member object.
  *
- * @since TBD
+ * @since 1.0
  */
 class PMProGroupAcct_Group_Member {
 	/**
 	 * The ID of the group member entry.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -18,7 +18,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * The user ID of the group member.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -27,7 +27,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * The level ID that the group member claimed using this group.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -36,7 +36,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * The group ID that the group member is associated with.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var int
 	 */
@@ -46,7 +46,7 @@ class PMProGroupAcct_Group_Member {
 	 * The status of the group member.
 	 * 'active' if they are still using the claimed level, 'inactive' if they are not.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @var string
 	 */
@@ -55,7 +55,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Get a group member object by ID.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $member_id The group member ID to populate.
 	 */
@@ -83,7 +83,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Get the list of members based on passed query arguments.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param array $args The query arguments to use to retrieve the members.
 	 * @return PMProGroupAcct_Member[]|int The list of members or the count of members if $args['return_count'] is `true`.
@@ -175,7 +175,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Create a new group member.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param int $group_child_user_id The user ID of the group member.
 	 * @param int $group_child_level_id The level ID that the group member claimed using this group.
@@ -222,7 +222,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Magic getter to retrieve protected properties.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $name The name of the property to retrieve.
 	 * @return mixed The value of the property.
@@ -236,7 +236,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Magic isset to check protected properties.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $name The name of the property to check.
 	 * @return bool Whether the property is set.
@@ -251,7 +251,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * Update the status of the group member.
 	 *
-	 * @since TBD
+	 * @since 1.0
 	 *
 	 * @param string $group_child_status The new status of the group member. 'active' or 'inactive'.
 	 */
