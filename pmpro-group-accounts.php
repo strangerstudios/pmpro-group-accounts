@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Group Accounts Add On
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/group-accounts/
  * Description: Sell group memberships where one member pays for a collection of people to access your content individually.
- * Version: TBD
+ * Version: 1.0
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-group-accounts
@@ -13,7 +13,7 @@
 define( 'PMPROGROUPACCT_BASE_FILE', __FILE__ );
 define( 'PMPROGROUPACCT_BASENAME', plugin_basename( __FILE__ ) );
 define( 'PMPROGROUPACCT_DIR', dirname( __FILE__ ) );
-define( 'PMPROGROUPACCT_VERSION', 'TBD' );
+define( 'PMPROGROUPACCT_VERSION', '1.0' );
 
 include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group.php' );
 include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group-member.php' );
@@ -37,7 +37,7 @@ $wpdb->pmprogroupacct_group_members = $wpdb->prefix . 'pmprogroupacct_group_memb
 /**
  * Load the languages folder for translations.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_load_textdomain() {
 	load_plugin_textdomain( 'pmpro-group-accounts', false, basename( dirname( __FILE__ ) ) . '/languages' );

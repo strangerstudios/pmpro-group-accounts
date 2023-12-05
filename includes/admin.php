@@ -6,7 +6,7 @@
 /**
  * Runs only when the plugin is activated.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_admin_notice_activation_hook() {
 	// Create transient data.
@@ -17,7 +17,7 @@ register_activation_hook( PMPROGROUPACCT_BASENAME, 'pmprogroupacct_admin_notice_
 /**
  * Admin Notice on Activation.
  *
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_admin_notice() {
 	// Check transient, if available display notice.
@@ -84,7 +84,7 @@ add_action( 'pmpro_after_order_settings', 'pmprogroupacct_after_order_settings',
  *
  * @param array $columns The columns for the Orders list table.
  * @return array The columns for the Orders list table.
- * @since TBD
+ * @since 1.0
  */
 function pmprogroupacct_manage_orderslist_columns( $columns ) {
 	$columns['pmprogroupacct_code'] = __( 'Group Code', 'pmpro-group-accounts' );
@@ -120,7 +120,7 @@ add_action( 'pmpro_manage_orderlist_custom_column' , 'pmprogroupacct_manage_orde
 /**
  * Add links to the plugin row meta
  *
- * @since TBD
+ * @since 1.0
  *
  * @param $links - Links for plugin
  * @param $file - main plugin filename

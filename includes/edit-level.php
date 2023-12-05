@@ -2,7 +2,7 @@
 /**
  * Add group account settings to the edit level page.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param object $level The level object being edited.
  */
@@ -154,7 +154,7 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprogroupacct_pm
 /**
  * Save group account settings when the level is saved.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $level_id The ID of the level being saved.
  */
@@ -200,7 +200,7 @@ add_action( 'pmpro_save_membership_level', 'pmprogroupacct_pmpro_save_membership
 /**
  * Delete group account settings when the level is deleted.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param int $level_id The ID of the level being deleted.
  */

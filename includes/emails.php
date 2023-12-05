@@ -2,7 +2,7 @@
 /**
  * Add the invite email to email templates.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $templates The email templates.
  * @return array The email templates with the invite email added.
@@ -25,7 +25,7 @@ add_filter( 'pmproet_templates', 'pmprogroupacct_email_templates' );
 /**
  * Add an email template variable to show group data when a parent purchases a level with a group.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $data The email template data.
  * @param PMProEmail $email The email object.

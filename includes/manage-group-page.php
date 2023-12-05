@@ -2,7 +2,7 @@
 /**
  * Add a page setting for the Manage Group page.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $settings Array of settings for the PMPro settings page.
  * @return array $settings Array of settings for the PMPro settings page.
@@ -21,7 +21,7 @@ add_filter( 'pmpro_extra_page_settings', 'pmprogroupacct_extra_page_settings' );
  * Add "Manage Group" as an action link on the frontend Membership Account page if
  * the user has a group for the passed level.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param array $action_links Array of action links for the Membership Account page.
  * @param int   $level_id    ID of the level the action links are being shown for.
@@ -57,7 +57,7 @@ add_filter( 'pmpro_member_action_links', 'pmprogroupacct_member_action_links', 1
  * Redirect to the Membership Account page if someone tries to access the
  * Manage Group page without a group ID or access.
  *
- * @since TBD
+ * @since 1.0
  * @return void
  */
 function pmprogroupacct_manage_group_preheader() {
@@ -103,7 +103,7 @@ add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
 /**
  * Show the content for the [pmprogroupacct_manage_group] shortcode.
  *
- * @since TBD
+ * @since 1.0
  * @return string $content Content for the shortcode.
  */
 function pmprogroupacct_shortcode_manage_group() {

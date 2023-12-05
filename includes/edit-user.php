@@ -7,7 +7,7 @@
  * We also want to show a table of all groups that the user is a member of, including
  * links to the group owner, the level that they claimed with the group, and the group member status.
  *
- * @since TBD
+ * @since 1.0
  *
  * @param WP_User $user The user object being edited.
  */
