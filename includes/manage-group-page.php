@@ -221,11 +221,20 @@ function pmprogroupacct_shortcode_manage_group() {
 
 		// Make sure that the email addresses are valid. Each should be on a new line.
 		if ( empty( $invite_message ) ) {
-			$emails = explode( "\n", $_REQUEST['pmprogroupacct_invite_new_members_emails'] );
+			$emails = explode( "\n", trim( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) );
 			$valid_emails = array();
 			$invalid_emails = array();
+
 			foreach ( $emails as $email ) {
+				// Trim whitespace from the email.
 				$email = trim( $email );
+
+				// If it's empty after trimming, skip it.
+				if ( empty( $email ) ) {
+					continue;
+				}
+
+				// Check the email and add to the appropriate array.
 				if ( is_email( $email ) ) {
 					$valid_emails[] = $email;
 				} else {
@@ -339,7 +348,7 @@ function pmprogroupacct_shortcode_manage_group() {
 					<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-fields' ); ?>">	
 						<div class="<?php echo pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-text' ); ?>">
 							<label for="pmprogroupacct_group_total_seats"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
-							<input type="number" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+							<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
 						</div> <!-- end .pmpro_checkout-field -->
 					</div> <!-- end .pmpro_checkout-fields -->
 					<div class="<?php echo pmpro_get_element_class( 'pmpro_submit' ); ?>">
@@ -352,7 +361,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 		?>
 		<div id="pmprogroupacct_manage_group_members">
-			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo count( $active_members ) . '/' . (int)$group->group_total_seats ?>)</h2>
+			<h2><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo esc_html( number_format_i18n( count( $active_members ) ) ) . '/' . esc_html( number_format_i18n( (int)$group->group_total_seats ) ); ?>)</h2>
 			<?php
 			echo wp_kses_post( $removal_message );
 			if ( empty( $active_members ) ) {
