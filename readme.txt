@@ -28,5 +28,5 @@ View full documentation at: https://www.paidmembershipspro.com/add-ons/group-acc
 
 == Changelog ==
 
-= 1.0 - 2023-12-05 =
+= 1.0 - 2023-12-06 =
 * Initial release.

@@ -28,8 +28,7 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 
 	// Show the UI.
 	?>
-	<hr>
-	<h2><?php esc_html_e( 'PMPro Group Accounts Add On', 'pmpro-group-accounts' ); ?></h2>
+	<h2><?php esc_html_e( 'Group Accounts', 'pmpro-group-accounts' ); ?></h2>
 	<h3><?php esc_html_e( 'Manage Groups', 'pmpro-group-accounts' ); ?></h3>
 	<?php
 	if ( empty( $groups ) ) {
