@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-12-05T21:36:26+00:00\n"
+"POT-Creation-Date: 2023-12-06T13:03:02+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -27,6 +27,7 @@ msgid "[Short description of the plugin]"
 msgstr ""
 
 #. Author of the plugin
+#: includes/admin.php:46
 msgid "Paid Memberships Pro"
 msgstr ""
 
@@ -61,6 +62,8 @@ msgstr ""
 #: includes/admin.php:90
 #: includes/children.php:97
 #: includes/edit-user.php:45
+#: includes/admin.php:168
+#: includes/edit-user.php:44
 msgid "Group Code"
 msgstr ""
 
@@ -101,6 +104,7 @@ msgstr ""
 
 #: includes/edit-level.php:50
 #: includes/edit-level.php:82
+#: includes/edit-level.php:106
 msgid "Minimum Seats"
 msgstr ""
 
@@ -110,6 +114,7 @@ msgstr ""
 
 #: includes/edit-level.php:59
 #: includes/edit-level.php:91
+#: includes/edit-level.php:115
 msgid "Maximum Seats"
 msgstr ""
 
@@ -119,11 +124,13 @@ msgstr ""
 
 #: includes/edit-level.php:68
 #: includes/edit-level.php:100
+#: includes/edit-level.php:124
 msgid "Pricing Model"
 msgstr ""
 
 #: includes/edit-level.php:72
 #: includes/edit-user.php:74
+#: includes/edit-user.php:73
 msgid "None"
 msgstr ""
 
@@ -145,21 +152,25 @@ msgstr ""
 
 #: includes/edit-level.php:78
 #: includes/edit-level.php:107
+#: includes/edit-level.php:131
 msgid "The pricing model to use for purchasing seats."
 msgstr ""
 
 #: includes/edit-level.php:83
 #: includes/edit-level.php:115
+#: includes/edit-level.php:139
 msgid "Cost Per Seat"
 msgstr ""
 
 #: includes/edit-level.php:87
 #: includes/edit-level.php:127
+#: includes/edit-level.php:151
 msgid "The additional cost at checkout per seat."
 msgstr ""
 
 #: includes/edit-level.php:92
 #: includes/edit-level.php:132
+#: includes/edit-level.php:156
 msgid "Price Application"
 msgstr ""
 
@@ -199,17 +210,21 @@ msgstr ""
 #: includes/admin.php:60
 #: includes/edit-user.php:43
 #: includes/edit-user.php:110
+#: includes/admin.php:138
+#: includes/edit-user.php:109
 msgid "Group ID"
 msgstr ""
 
 #: includes/edit-user.php:43
 #: includes/edit-user.php:89
 #: includes/edit-user.php:112
+#: includes/edit-user.php:111
 msgid "Level ID"
 msgstr ""
 
 #: includes/edit-user.php:44
 #: includes/edit-user.php:47
+#: includes/edit-user.php:46
 msgid "Seats"
 msgstr ""
 
@@ -228,6 +243,11 @@ msgstr ""
 #: includes/manage-group-page.php:12
 #: includes/manage-group-page.php:50
 #: includes/parents.php:395
+#: includes/admin.php:152
+#: includes/edit-user.php:47
+#: includes/edit-user.php:83
+#: includes/edit-user.php:113
+#: includes/edit-user.php:133
 msgid "Manage Group"
 msgstr ""
 
@@ -235,27 +255,34 @@ msgstr ""
 #: includes/edit-user.php:114
 #: includes/edit-user.php:87
 #: includes/edit-user.php:137
+#: includes/edit-user.php:86
+#: includes/edit-user.php:136
 msgid "Page not set."
 msgstr ""
 
 #: includes/edit-user.php:77
 #: includes/edit-user.php:100
+#: includes/edit-user.php:99
 msgid "Manage Child Memberships"
 msgstr ""
 
 #: includes/edit-user.php:80
 #: includes/edit-user.php:103
+#: includes/edit-user.php:102
 msgid "This user has not been a member of any groups."
 msgstr ""
 
 #: includes/edit-user.php:88
 #: includes/admin.php:64
 #: includes/edit-user.php:111
+#: includes/admin.php:142
+#: includes/edit-user.php:110
 msgid "Group Owner"
 msgstr ""
 
 #: includes/edit-user.php:90
 #: includes/edit-user.php:113
+#: includes/edit-user.php:112
 msgid "Status"
 msgstr ""
 
@@ -387,6 +414,7 @@ msgstr ""
 #: includes/manage-group-page.php:267
 #: includes/edit-level.php:73
 #: includes/manage-group-page.php:350
+#: includes/edit-level.php:97
 msgid "Total Seats"
 msgstr ""
 
@@ -475,6 +503,7 @@ msgstr ""
 #: includes/parents.php:33
 #: includes/admin.php:57
 #: includes/parents.php:32
+#: includes/admin.php:135
 msgid "Group Account Information"
 msgstr ""
 
@@ -539,21 +568,25 @@ msgstr ""
 
 #: pmpro-group-accounts.php:58
 #: includes/admin.php:132
+#: includes/admin.php:210
 msgid "View Documentation"
 msgstr ""
 
 #: pmpro-group-accounts.php:58
 #: includes/admin.php:132
+#: includes/admin.php:210
 msgid "Docs"
 msgstr ""
 
 #: pmpro-group-accounts.php:59
 #: includes/admin.php:133
+#: includes/admin.php:211
 msgid "Visit Customer Support Forum"
 msgstr ""
 
 #: pmpro-group-accounts.php:59
 #: includes/admin.php:133
+#: includes/admin.php:211
 msgid "Support"
 msgstr ""
 
@@ -566,19 +599,24 @@ msgid "Sell group memberships where one member pays for a collection of people t
 msgstr ""
 
 #: includes/admin.php:26
+#: includes/admin.php:31
 msgid "Thank you for activating. <a href=\"%s\">Create a new membership level or update an existing level</a> to add group account features."
 msgstr ""
 
 #: includes/admin.php:72
+#: includes/admin.php:150
 msgid "Actions"
 msgstr ""
 
 #: includes/admin.php:91
+#: includes/admin.php:169
 msgid "Parent Account"
 msgstr ""
 
 #: includes/admin.php:109
 #: includes/admin.php:114
+#: includes/admin.php:187
+#: includes/admin.php:192
 msgid "&#8212;"
 msgstr ""
 
@@ -601,86 +639,107 @@ msgid "Managed by %s"
 msgstr ""
 
 #: includes/edit-level.php:38
+#: includes/edit-level.php:51
 msgid "Group accounts allow a member to purchase a block of memberships at once. The member will receive a code to distribute to their group for use during registration."
 msgstr ""
 
 #: includes/edit-level.php:39
+#: includes/edit-level.php:52
 msgid "View documentation"
 msgstr ""
 
 #: includes/edit-level.php:45
+#: includes/edit-level.php:71
 msgid "Membership Level(s)"
 msgstr ""
 
 #: includes/edit-level.php:57
+#: includes/edit-level.php:81
 msgid "Select one or more membership levels that can be claimed by group members. Leave blank if this membership level does not offer child accounts."
 msgstr ""
 
 #: includes/edit-level.php:61
+#: includes/edit-level.php:85
 msgid "Type of Group"
 msgstr ""
 
 #: includes/edit-level.php:65
+#: includes/edit-level.php:89
 msgid "Fixed - Set a specific number of allowed seats."
 msgstr ""
 
 #: includes/edit-level.php:66
+#: includes/edit-level.php:90
 msgid "Variable - Member can choose number of seats at checkout."
 msgstr ""
 
 #: includes/edit-level.php:68
+#: includes/edit-level.php:92
 msgid "Set a specific number of seats in the group or allow the member to choose the number of seats they need at checkout."
 msgstr ""
 
 #: includes/edit-level.php:77
+#: includes/edit-level.php:101
 msgid "The total number of seats that are included in this group. Note: the group account owner does not count toward this total."
 msgstr ""
 
 #: includes/edit-level.php:86
+#: includes/edit-level.php:110
 msgid "The minimum number of seats that can be added at checkout."
 msgstr ""
 
 #: includes/edit-level.php:95
+#: includes/edit-level.php:119
 msgid "The maximum number of seats that can be added at checkout. Note: the group account owner does not count toward this limit."
 msgstr ""
 
 #: includes/edit-level.php:104
+#: includes/edit-level.php:128
 msgid "None - Group pricing is built into this membership level."
 msgstr ""
 
 #: includes/edit-level.php:105
+#: includes/edit-level.php:129
 msgid "Per Seat - Set a specific price per additional seat."
 msgstr ""
 
 #: includes/edit-level.php:109
+#: includes/edit-level.php:133
 msgid "WARNING: This level does not have any pricing set up. We highly recommend that you set up an initial payment or recurring billing for a better checkout experience."
 msgstr ""
 
 #: includes/edit-level.php:136
+#: includes/edit-level.php:160
 msgid "Initial payment and recurring subscription"
 msgstr ""
 
 #: includes/edit-level.php:137
+#: includes/edit-level.php:161
 msgid "Initial payment only"
 msgstr ""
 
 #: includes/edit-level.php:138
+#: includes/edit-level.php:162
 msgid "Recurring subscription only"
 msgstr ""
 
 #: includes/edit-level.php:140
+#: includes/edit-level.php:164
 msgid "Define whether the seat cost should be applied for the initial payment, recurring payment, or both."
 msgstr ""
 
 #: includes/edit-level.php:142
+#: includes/edit-level.php:166
 msgid "WARNING: This level does not have a recurring subscription. Child accounts will assume a monthly billing period unless you configure the subscription on this parent level."
 msgstr ""
 
 #: includes/edit-user.php:44
+#: includes/edit-user.php:43
 msgid "Parent Level"
 msgstr ""
 
 #: includes/edit-user.php:46
+#: includes/edit-user.php:45
 msgid "Group Levels"
 msgstr ""
 
@@ -794,4 +853,24 @@ msgstr ""
 
 #: includes/parents.php:385
 msgid "Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed)."
+msgstr ""
+
+#. translators: 1: This plugin's name. 2: Required plugin name(s).
+#: includes/admin.php:70
+#: includes/admin.php:102
+msgid "The following plugin(s) are required for the %1$s plugin to work: %2$s"
+msgstr ""
+
+#: includes/admin.php:71
+#: includes/admin.php:103
+#: includes/edit-user.php:31
+msgid "Group Accounts"
+msgstr ""
+
+#: includes/edit-level.php:60
+msgid "You do not have any membership levels that can be set as the child account for this group."
+msgstr ""
+
+#: includes/edit-level.php:61
+msgid "Please <a target=\"_blank\" href=\"%s\">create an additional membership level</a> to use as the child account for this group."
 msgstr ""
