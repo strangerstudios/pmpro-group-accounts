@@ -341,7 +341,7 @@ function pmprogroupacct_shortcode_manage_group() {
 					$group_parent = get_userdata( $group->group_parent_user_id );
 
 					/* translators: %1$s is the group ID, %2$s is a link to edit the group owner with their display name. */
-					printf( esc_html__( 'Change the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( add_query_arg( 'user_id', $group->group_parent_user_id, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
+					printf( esc_html__( 'Change the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $group_parent ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
 				?>
 				</p>
 				<form id="pmprogroupacct_manage_group_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) . '#pmprogroupacct_manage_group_settings' ) ) ?>" method="post">

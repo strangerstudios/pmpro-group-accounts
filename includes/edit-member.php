@@ -164,19 +164,20 @@ function pmprogroupacct_show_group_account_info( $user ) {
 				foreach ( $group_members as $group_member ) {
 					$group            = new PMProGroupAcct_Group( (int)$group_member->group_id );
 					$parent_user      = get_userdata( $group->group_parent_user_id );
-
-					// Build the parent user link.
-					if ( empty( $parent_user ) ) {
-						$parent_user_link = esc_html( $group->group_parent_user_id );
-					} elseif ( function_exists( 'pmpro_member_edit_get_panels' ) ) {
-						$parent_user_link = '<a href="' . esc_url( add_query_arg( array( 'page' => 'pmpro-member', 'user_id' => $parent_user->ID, 'pmpro_member_edit_panel' => 'group-accounts' ), admin_url( 'admin.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
-					} else {
-						$parent_user_link = '<a href="' . esc_url( add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
-					}
 					?>
 					<tr>
 						<th><?php echo esc_html( $group->id ); ?></th>
-						<td><?php echo $parent_user_link ?></td>
+						<td>
+							<?php
+								// If the parent user is not found, show the user ID.
+								if ( empty( $parent_user ) ) {
+									echo esc_html( $group->group_parent_user_id );
+								} else {
+									// Otherwise, link to the user edit page.
+									echo '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+								}
+							?>
+						</td>
 						<td><?php echo esc_html( $group_member->group_child_level_id ); ?></td>
 						<td><?php echo esc_html( $group_member->group_child_status ); ?></td>
 						<td>

@@ -128,8 +128,7 @@ function pmprogroupacct_after_order_settings( $order ) {
 	}
 
 	$group = new PMProGroupAcct_Group( intval( $group_id ) );
-	$parent_user      = get_userdata( $group->group_parent_user_id );
-	$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+	$parent_user = get_userdata( $group->group_parent_user_id );
 	?>
 	<tr>
 		<th colspan="2"><?php esc_html_e( 'Group Account Information', 'pmpro-group-accounts' ); ?></th>
@@ -140,7 +139,17 @@ function pmprogroupacct_after_order_settings( $order ) {
 	</tr>
 	<tr>
 		<th><?php esc_html_e( 'Group Owner', 'pmpro-group-accounts' ); ?></th>
-		<td><?php echo $parent_user_link ?></td>
+		<td>
+			<?php
+				// If the parent user is not found, show the user ID.
+				if ( empty( $parent_user ) ) {
+					echo esc_html( $group->group_parent_user_id );
+				} else {
+					// Otherwise, link to the user edit page.
+					echo '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+				}
+			?>
+		</td>
 	</tr>
 	<?php
 	$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );
@@ -179,7 +188,7 @@ function pmprogroupacct_manage_orderslist_column_body( $column_name, $item ) {
 	if ( ! empty( $group_id ) ) {
 		$group = new PMProGroupAcct_Group( intval( $group_id ) );
 		$parent_user      = get_userdata( $group->group_parent_user_id );
-		$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+		$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 	}
 
 	// Populate the group code column.

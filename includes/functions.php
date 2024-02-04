@@ -50,3 +50,19 @@ function pmprogroupacct_level_can_be_claimed_using_group_codes( $level_id ) {
 	}
 	return false;
 }
+
+/**
+ * Get the url for the group parent user's edit member or edit user page.
+ *
+ * @since TBD
+ */
+function pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) {
+	// Build the parent user link.
+	if ( function_exists( 'pmpro_member_edit_get_panels' ) ) {
+		$parent_user_edit_url = add_query_arg( array( 'page' => 'pmpro-member', 'user_id' => $parent_user->ID, 'pmpro_member_edit_panel' => 'group-accounts' ), admin_url( 'admin.php' ) );
+	} else {
+		$parent_user_edit_url = add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) );
+	}
+	// Return the parent user edit URL.
+	return $parent_user_edit_url;
+}
