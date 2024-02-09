@@ -400,3 +400,37 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
 	<?php
 }
 add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullets_bottom_parent' );
+
+/**
+ * Whether or not make the payment information fields required. We need to do it through the global $pmpro_requirebilling
+ *
+ * @param bool $include Whether or not to include the payment information fields.
+ * @return bool Whether or not to include the payment information fields.
+ * @since TBD
+ */
+function pmprogroupcct_pmpro_include_payment_information_fields( $include ) {
+	// Get the level being checked out for.
+	$level = pmpro_getLevelAtCheckout();
+
+	// Get the group settings for this level.
+	$settings = null;
+	if ( ! empty( $level->id ) ) {
+		$settings = pmprogroupacct_get_settings_for_level( $level->id );
+	}
+
+	// If there are no settings, then this is not a group parent level. Bail.
+	if ( empty( $settings ) ) {
+		return $include;
+	}
+
+	// If seats aren't free we must require billing fields despite parent level is free.
+	if ( intval( $settings['pricing_model_settings'] ) > 0 ) {
+		global $pmpro_requirebilling;
+		$pmpro_requirebilling = true;
+	}
+
+	return $include;
+}
+
+// Hook to include payment information fields.
+add_filter( 'pmpro_include_payment_information_fields', 'pmprogroupcct_pmpro_include_payment_information_fields' );
