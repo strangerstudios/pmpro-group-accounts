@@ -393,4 +393,20 @@ class PMProGroupAcct_Group {
 
 		return $new_group_checkout_code;
 	}
+
+	/**
+	 * Checks whether a specific level ID can be claimed by joining this group.
+	 *
+	 * @since TBD
+	 *
+	 * @param int $level_id The ID of the membership level to check.
+	 * @return bool True if the level can be claimed by joining this group, false otherwise.
+	 */
+	public function can_claim_level( $level_id ) {
+		$settings = pmprogroupacct_get_settings_for_level( $this->group_parent_level_id );
+		if ( empty( $settings ) ) {
+			return false;
+		}
+		return in_array( (int)$level_id, $settings['child_level_ids'], true );
+	}
 }
