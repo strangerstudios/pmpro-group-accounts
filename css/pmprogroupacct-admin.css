@@ -1,0 +1,13 @@
+.pmprogroupacct_setting.pmprogroupacct_pricing_setting.pmprogroupacct_pricing_setting_variable td {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.pmprogroupacct_pricing_setting_variable_button_remove_row {
+	cursor: pointer;
+}
+
+input[type="number"] {
+	width:100px;
+}
