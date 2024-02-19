@@ -215,3 +215,73 @@ function pmprogroupacct_plugin_row_meta($links, $file) {
 	return $links;
 }
 add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
+
+
+
+/*
+	Code to import group account member associations when using the Import Users From CSV plugin.
+
+	Step 0. Have your group account levels properly configured
+
+	Step 1. Add the leader members with following columns to your import CSV:
+	* pmprogroupacct_group_parent_level_id: Id of the parent level.
+	* pmprogroupacct_group_checkout_code: The code that can be distributed to create child accounts.
+	* pmprogroupacct_group_total_seats: Amount of seats or child accounts that can be created.
+	Step 2. Add the child members with following columns to your import CSV:
+	* pmprogroupacct_group_child_user_id: Id of the user that owns a parent level.
+	* pmprogroupacct_group_child_level_id: Id of the child level
+	* pmprogroupacct_group_group_id: Id of the wp_pmpro_groups group
+*/
+
+/**
+ * Import group account member associations when using the Import Users From CSV plugin.
+ *
+ * @param int $user_id The user ID of the user that was imported and just created.
+ * @return void
+ * @since TBD
+ */
+function pmprogroupacct_is_iu_post_user_import( $user_id ) {
+	global $wpdb;
+
+	$user = get_userdata($user_id);
+	$aa = $user->pmprogroupacct_group_parent_level_id;
+
+	//Is this a parent user?
+	if ( ! empty( $user->pmprogroupacct_group_parent_level_id ) ) {
+		//bail if this row has not all the necessary data
+		if ( empty( $user->pmprogroupacct_group_checkout_code ) || empty( $user->pmprogroupacct_group_total_seats ) ) {
+			return;
+		}
+			//insert the parent record
+			$wpdb->insert(
+				$wpdb->pmprogroupacct_groups,
+				array(
+					'group_parent_user_id' => $user->ID,
+					'group_parent_level_id' => $user->pmprogroupacct_group_parent_level_id,
+					'group_checkout_code' => $user->pmprogroupacct_group_checkout_code,
+					'group_total_seats' => $user->pmprogroupacct_group_total_seats,
+				)
+			);
+	//Is this a child user?
+	} else if ( ! empty( $user->pmprogroupacct_group_child_level_id ) ) {
+
+		//bail if this row has not all the necessary data
+		if ( empty( $user->pmprogroupacct_group_child_level_id ) || empty( $user->pmprogroupacct_group_group_id ) || empty( $user->pmprogroupacct_group_child_status ) ) {
+			return;
+		}
+
+		//insert the child record
+		$wpdb->insert(
+			$wpdb->pmprogroupacct_group_members,
+			array(
+				'group_child_user_id' => $user->ID,
+				'group_child_level_id' => $user->pmprogroupacct_group_child_level_id,
+				'group_id' => $user->pmprogroupacct_group_group_id,
+				'group_child_status' => $user->pmprogroupacct_group_child_status,
+			)
+		);
+	}
+}
+
+//Hook into the Import Users From CSV plugin after import action.
+add_action("pmproiucsv_post_user_import", "pmprogroupacct_is_iu_post_user_import", 20);
