@@ -240,11 +240,9 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
  * @return void
  * @since TBD
  */
-function pmprogroupacct_is_iu_post_user_import( $user_id ) {
+function pmprogroupacct_pmproiucsv_post_user_import( $user_id ) {
 	global $wpdb;
-
-	$user = get_userdata($user_id);
-	$aa = $user->pmprogroupacct_group_parent_level_id;
+	$user = get_userdata( $user_id );
 
 	//Is this a parent user?
 	if ( ! empty( $user->pmprogroupacct_group_parent_level_id ) ) {
@@ -284,4 +282,4 @@ function pmprogroupacct_is_iu_post_user_import( $user_id ) {
 }
 
 //Hook into the Import Users From CSV plugin after import action.
-add_action("pmproiucsv_post_user_import", "pmprogroupacct_is_iu_post_user_import", 20);
+add_action( 'pmproiucsv_post_user_import', 'pmprogroupacct_pmproiucsv_post_user_import', 20 );
