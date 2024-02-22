@@ -246,18 +246,26 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user_id ) {
 
 	//Is this a parent user?
 	if ( ! empty( $user->pmprogroupacct_group_parent_level_id ) ) {
+
 		//bail if this row has not all the necessary data
-		if ( empty( $user->pmprogroupacct_group_checkout_code ) || empty( $user->pmprogroupacct_group_total_seats ) ) {
+		if ( empty( $user->pmprogroupacct_group_total_seats ) ) {
+			return;
+		}
+
+		//If the checkout code isn't given we assume the importer want to genereate a new code.
+		if ( empty( $user->pmprogroupacct_group_checkout_code ) ) {
+			$parent_group = PMProGroupAcct_Group::create( $user_id, $user->pmprogroupacct_group_parent_level_id, $user->pmprogroupacct_group_total_seats );
+			//line above will insert the record, no need to run the insert below
 			return;
 		}
 			//insert the parent record
 			$wpdb->insert(
 				$wpdb->pmprogroupacct_groups,
 				array(
-					'group_parent_user_id' => $user->ID,
-					'group_parent_level_id' => $user->pmprogroupacct_group_parent_level_id,
+					'group_parent_user_id' => (int) $user->ID,
+					'group_parent_level_id' => (int) $user->pmprogroupacct_group_parent_level_id,
 					'group_checkout_code' => $user->pmprogroupacct_group_checkout_code,
-					'group_total_seats' => $user->pmprogroupacct_group_total_seats,
+					'group_total_seats' => (int) $user->pmprogroupacct_group_total_seats,
 				)
 			);
 	//Is this a child user?
@@ -268,7 +276,7 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user_id ) {
 			return;
 		}
 
-		//insert the child record
+		//insert or updaate the child record
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_group_members,
 			array(
