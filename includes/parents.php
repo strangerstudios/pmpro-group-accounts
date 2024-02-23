@@ -330,12 +330,17 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 
 		// Get the new level for this user.
 		$new_levels    = pmpro_getMembershipLevelsForUser( $user_id );
-		$new_level_ids = wp_list_pluck( $new_levels, 'id' );
+		$new_level_ids = wp_list_pluck( $new_levels, 'id' );		
 
-		// Get the levels that the user lost.
-		$lost_level_ids = array_diff( $old_level_ids, $new_level_ids );
+		// Make sure the user has a group for any group parent levels they gained.
+		$received_level_ids = array_diff( $new_level_ids, $old_level_ids );
+		foreach ( $received_level_ids as $received_level_id ) {
+			pmprogroupacct_create_free_group_if_needed( $user_id, $received_level_id );
+		}
+
 
 		// Check if the parent has a group for any of the levels they lost.
+		$lost_level_ids = array_diff( $old_level_ids, $new_level_ids );
 		foreach ( $lost_level_ids as $lost_level_id ) {
 			$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $lost_level_id );
 			if ( ! empty( $existing_group ) ) {
@@ -400,3 +405,63 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
 	<?php
 }
 add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullets_bottom_parent' );
+
+/**
+ * When a user logs in, check if they have all needed groups for their levels.
+ * If not, create empty groups for them.
+ *
+ * @since TBD
+ *
+ * @param string $user_login The user's login.
+ * @param WP_User $user The user object.
+ */
+function pmprogroupacct_wp_login_parent( $user_login, $user ) {
+	// Make sure that PMPro is enabled.
+	if ( ! function_exists( 'pmpro_getMembershipLevelsForUser' ) ) {
+		return;
+	}
+
+	// Get the user's levels.
+	$levels = pmpro_getMembershipLevelsForUser( $user->ID );
+
+	// Loop through the user's levels and create empty groups if needed.
+	foreach ( $levels as $level ) {
+		pmprogroupacct_create_free_group_if_needed( $user->ID, $level->id );
+	}
+}
+add_action( 'wp_login', 'pmprogroupacct_wp_login_parent', 10, 2 );
+
+
+/**
+ * Creates an "free" group if needed for a given parent user and level.
+ *
+ * A "free" group is a new, empty group that is created with the maximum number
+ * of free seats for the level. We do not want to give paid seats to a group
+ * until the user has completed checkout and paid for them.
+ *
+ * @since TBD
+ *
+ * @param int $user_id The ID of the parent user.
+ * @param int $level_id The ID of the level.
+ */
+function pmprogroupacct_create_free_group_if_needed( $user_id, $level_id ) {
+	// Get the group settings for this level.
+	$settings = pmprogroupacct_get_settings_for_level( $level_id );
+
+	// If there are no settings, then this is not a group parent level. Bail.
+	if ( empty( $settings ) ) {
+		return;
+	}
+
+	// Check if there is already a group for this user and level.
+	$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $level_id );
+	if ( ! empty( $existing_group ) ) {
+		return;
+	}
+
+	// Create a group for this user and level.
+	// If the pricing model is free, give them the max seats.
+	// Otherwise, give them them 0. The `pmpro_after_checkout` filter will update the seats at chekout if needed.
+	$seats = ( $settings['pricing_model'] === 'none' ) ? $settings['max_seats'] : 0;
+	PMProGroupAcct_Group::create( $user_id, $level_id, $seats );
+}
