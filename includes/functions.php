@@ -50,3 +50,19 @@ function pmprogroupacct_level_can_be_claimed_using_group_codes( $level_id ) {
 	}
 	return false;
 }
+
+/**
+ * Given parent level ID, return the child level IDs.
+ * 
+ * @since TBD
+ * 
+ * @param int $parent_level_id The ID of the parent membership level.
+ * @return array The IDs of the child membership levels.
+ */
+function pmprogroupacct_get_child_level_ids( $parent_level_id ) {
+	// Get the group account settings for the level.
+	$settings = pmprogroupacct_get_settings_for_level( $parent_level_id );
+
+	// Return the child level IDs.
+	return empty( $settings['child_level_ids'] ) ? array() : $settings['child_level_ids'];
+}
