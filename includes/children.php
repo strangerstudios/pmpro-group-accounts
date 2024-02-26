@@ -22,12 +22,9 @@ function pmprogroupacct_checkout_before_form_child() {
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
-		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $checkout_level->id ) ) {
+		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
 			// Show a message that the group code has been applied.
 			pmpro_setMessage( esc_html__( 'Group code applied.', 'pmpro-group-accounts' ), 'pmpro_success' );
-		} elseif ( ! $group->can_claim_level( $checkout_level->id ) ) {
-			// Show a message that the group code cannot be used to claim this level.
-			pmpro_setMessage( esc_html__( 'This group code cannot be used to claim this level.', 'pmpro-group-accounts' ), 'pmpro_error' );
 		} elseif ( ! empty( $group ) ) {
 			// Show a message that the group code is not accepting signups.
 			pmpro_setMessage( esc_html__( 'This group is no longer accepting signups.', 'pmpro-group-accounts' ), 'pmpro_error' );
@@ -63,7 +60,7 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
-		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $checkout_level->id ) ) {
+		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
 			// Add a hidden field to the checkout form with the group code and return so that we don't show the group code field.
 			?>
 			<p>
@@ -124,7 +121,7 @@ function pmprogroupacct_pmpro_checkout_level_child( $level ) {
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
-		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $level->id ) ) {
+		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
 			// Set the level cost to 0.
 			$level->initial_payment = 0;
 			$level->billing_amount  = 0;
@@ -158,7 +155,7 @@ function pmprogroupacct_pmpro_level_cost_text_child_checkout( $level_cost_text, 
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
-		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $level->id ) ) {
+		if ( ! empty( $group ) && $group->is_accepting_signups() ) {
 			// Unset the level cost text.
 			$level_cost_text = '';
 		}
@@ -206,13 +203,6 @@ function pmprogroupacct_pmpro_registration_checks_child( $pmpro_continue_registr
 	if ( empty( $group ) ) {
 		// This is not a valid group code. Show an error message.
 		pmpro_setMessage( esc_html__( 'Invalid group code.', 'pmpro-group-accounts' ), 'pmpro_error' );
-		return false;
-	}
-
-	// Make sure that the group code can claim the level being checked out for.
-	if ( ! $group->can_claim_level( $checkout_level->id ) ) {
-		// This group code cannot claim this level. Show an error message.
-		pmpro_setMessage( esc_html__( 'This group code cannot be used to claim this level.', 'pmpro-group-accounts' ), 'pmpro_error' );
 		return false;
 	}
 
