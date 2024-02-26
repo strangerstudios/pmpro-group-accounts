@@ -217,22 +217,6 @@ function pmprogroupacct_plugin_row_meta($links, $file) {
 add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
 
 
-
-/*
-	Code to import group account member associations when using the Import Users From CSV plugin.
-
-	Step 0. Have your group account levels properly configured
-
-	Step 1. Add the leader members with following columns to your import CSV:
-	* pmprogroupacct_group_parent_level_id: Id of the parent level.
-	* pmprogroupacct_group_checkout_code: The code that can be distributed to create child accounts.
-	* pmprogroupacct_group_total_seats: Amount of seats or child accounts that can be created.
-	Step 2. Add the child members with following columns to your import CSV:
-	* pmprogroupacct_group_child_user_id: Id of the user that owns a parent level.
-	* pmprogroupacct_group_child_level_id: Id of the child level
-	* pmprogroupacct_group_group_id: Id of the wp_pmpro_groups group
-*/
-
 /**
  * Import group account member associations when using the Import Users From CSV plugin.
  *
@@ -241,51 +225,71 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
  * @since TBD
  */
 function pmprogroupacct_pmproiucsv_post_user_import( $user_id ) {
-	global $wpdb;
+	//get the user
 	$user = get_userdata( $user_id );
-
-	//Is this a parent user?
-	if ( ! empty( $user->pmprogroupacct_group_parent_level_id ) ) {
-
-		//bail if this row has not all the necessary data
-		if ( empty( $user->pmprogroupacct_group_total_seats ) ) {
+	//It's a parent account, so let's update the number of seats. The add on created the group account already.
+	if( ! empty( $user->pmprogroupacct_group_total_seats ) ) {
+		//Check if the user level is a group account level
+		$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $user->membership_id );
+		if ( ! empty( $existing_group ) ) {
+			//Let's update the number of seats. intval will set to 0 if blank or any oddity
+			$existing_group->update_group_total_seats( intval( $user->pmpro_groupseats ) );
+			return;
+		}
+	// it's a child account let's update the DB to reflect that.
+	} else if (! empty( $user->pmprogroupacct_group_account_owner ) )  {
+		//Get user's group account owner by id, login name or email
+		if( is_numeric( $user->pmprogroupacct_group_account_owner  ) ) {
+			$group_account_owner = get_userdata( $user->pmprogroupacct_group_account_owner );
+		} else if ( strpos($sponsor, "@") !== false ) {
+			$group_account_owner = get_user_by( 'email', $user->pmprogroupacct_group_account_owner );
+		} else {
+			$group_account_owner = get_user_by( 'login', $user->pmprogroupacct_group_account_owner );
+		}
+		//bail if we can't find the group account owner
+		if( empty( $group_account_owner ) ) {
 			return;
 		}
 
-		//If the checkout code isn't given we assume the importer want to genereate a new code.
-		if ( empty( $user->pmprogroupacct_group_checkout_code ) ) {
-			$parent_group = PMProGroupAcct_Group::create( $user_id, $user->pmprogroupacct_group_parent_level_id, $user->pmprogroupacct_group_total_seats );
-			//line above will insert the record, no need to run the insert below
-			return;
-		}
-			//insert the parent record
-			$wpdb->insert(
-				$wpdb->pmprogroupacct_groups,
-				array(
-					'group_parent_user_id' => (int) $user->ID,
-					'group_parent_level_id' => (int) $user->pmprogroupacct_group_parent_level_id,
-					'group_checkout_code' => $user->pmprogroupacct_group_checkout_code,
-					'group_total_seats' => (int) $user->pmprogroupacct_group_total_seats,
-				)
-			);
-	//Is this a child user?
-	} else if ( ! empty( $user->pmprogroupacct_group_child_level_id ) ) {
-
-		//bail if this row has not all the necessary data
-		if ( empty( $user->pmprogroupacct_group_child_level_id ) || empty( $user->pmprogroupacct_group_group_id ) || empty( $user->pmprogroupacct_group_child_status ) ) {
+		// Get the membership levels for the group account owner.
+		$owner_levels = pmpro_getMembershipLevelsForUser( $group_account_owner->ID );
+		//bail if the owner doesn't have any levels
+		if( empty( $owner_levels ) ) {
 			return;
 		}
 
-		//insert or updaate the child record
-		$wpdb->insert(
-			$wpdb->pmprogroupacct_group_members,
-			array(
-				'group_child_user_id' => $user->ID,
-				'group_child_level_id' => $user->pmprogroupacct_group_child_level_id,
-				'group_id' => $user->pmprogroupacct_group_group_id,
-				'group_child_status' => $user->pmprogroupacct_group_child_status,
-			)
-		);
+		foreach( $owner_levels as $owner_level ) {
+				$group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $group_account_owner->ID, $group_account_owner->membership_id );
+				//bail is if null
+				if ( is_null( $group ) ) {
+					break;
+				}
+
+				//chck if the passed level is a child of the parent level
+				$child_level_ids = pmprogroupacct_get_child_level_ids( $group );
+				if ( ! in_array( $user->membership_id, $child_level_ids ) ) {
+					// This is not a valid group code. Bail.
+					break;
+				}
+
+				// Check if the user somehow is already in the DB
+				$group_member_query_args = array(
+					'group_id'           => $group->id,
+					'group_child_user_id' => $user_id,
+				);
+
+				$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+				if ( ! empty( $group_members ) ) {
+					// This user was previously a member of this group. Update their status to active.
+					foreach ( $group_members as $group_member ) {
+						$group_member->update_group_child_status( 'active' );
+					}
+					return;
+				} else {
+					// This user was not previously a member of this group. Add them to the group.
+					PMProGroupAcct_Group_Member::create( $user_id, $user->membership_id, $group->id );
+				}
+		}
 	}
 }
 
