@@ -146,7 +146,7 @@ function pmprogroupacct_after_order_settings( $order ) {
 					echo esc_html( $group->group_parent_user_id );
 				} else {
 					// Otherwise, link to the user edit page.
-					echo '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+					echo '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 				}
 			?>
 		</td>
@@ -188,7 +188,7 @@ function pmprogroupacct_manage_orderslist_column_body( $column_name, $item ) {
 	if ( ! empty( $group_id ) ) {
 		$group = new PMProGroupAcct_Group( intval( $group_id ) );
 		$parent_user      = get_userdata( $group->group_parent_user_id );
-		$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+		$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 	}
 
 	// Populate the group code column.

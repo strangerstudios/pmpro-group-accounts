@@ -174,7 +174,7 @@ function pmprogroupacct_show_group_account_info( $user ) {
 									echo esc_html( $group->group_parent_user_id );
 								} else {
 									// Otherwise, link to the user edit page.
-									echo '<a href="' . esc_url( pmprogroupacct_get_group_parent_user_edit_url( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+									echo '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 								}
 							?>
 						</td>
