@@ -397,7 +397,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Checks whether a specific level ID can be claimed by joining this group.
 	 *
-	 * @since TBD
+	 * @since 1.0.1
 	 *
 	 * @param int $level_id The ID of the membership level to check.
 	 * @return bool True if the level can be claimed by joining this group, false otherwise.

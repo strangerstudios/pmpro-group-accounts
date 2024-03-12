@@ -410,7 +410,7 @@ add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullet
  * When a user logs in, check if they have all needed groups for their levels.
  * If not, create empty groups for them.
  *
- * @since TBD
+ * @since 1.0.1
  *
  * @param string $user_login The user's login.
  * @param WP_User $user The user object.
@@ -439,7 +439,7 @@ add_action( 'wp_login', 'pmprogroupacct_wp_login_parent', 10, 2 );
  * of free seats for the level. We do not want to give paid seats to a group
  * until the user has completed checkout and paid for them.
  *
- * @since TBD
+ * @since 1.0.1
  *
  * @param int $user_id The ID of the parent user.
  * @param int $level_id The ID of the level.

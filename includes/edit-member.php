@@ -7,7 +7,7 @@
 /**
  * Add a panel to the Edit Member dashboard page.
  *
- * @since TBD
+ * @since 1.0.1
  *
  * @param array $panels Array of panels.
  * @return array
@@ -29,7 +29,7 @@ function pmprogroupacct_pmpro_member_edit_panels( $panels ) {
 /**
  * Hook the correct function for admins editing a member's profile.
  *
- * @since TBD
+ * @since 1.0.1
  */
 function pmprogroupacct_hook_edit_member_profile() {
 	// If the `pmpro_member_edit_get_panels()` function exists, add a panel.
@@ -50,7 +50,7 @@ add_action( 'admin_init', 'pmprogroupacct_hook_edit_member_profile', 0 );
  * We also want to show a table of all groups that the user is a member of, including
  * links to the group owner, the level that they claimed with the group, and the group member status.
  *
- * @since TBD
+ * @since 1.0.1
  *
  * @param WP_User $user The user object being viewed.
  */

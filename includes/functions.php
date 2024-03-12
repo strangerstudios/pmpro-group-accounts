@@ -54,7 +54,7 @@ function pmprogroupacct_level_can_be_claimed_using_group_codes( $level_id ) {
 /**
  * Get the url for a user's edit member or edit user page.
  *
- * @since TBD
+ * @since 1.0.1
  *
  * @param WP_User $user The user object to get the edit URL for.
  * @return string The URL for the user's edit page.
