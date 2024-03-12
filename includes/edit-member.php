@@ -1,17 +1,60 @@
 <?php
 /**
- * When administrators edit a user, we want to show all groups that they manage,
+ * Functionality for the Edit Member or Edit User page to show group account information.
+ * 
+ */
+
+/**
+ * Add a panel to the Edit Member dashboard page.
+ *
+ * @since TBD
+ *
+ * @param array $panels Array of panels.
+ * @return array
+ */
+function pmprogroupacct_pmpro_member_edit_panels( $panels ) {
+	// If the class doesn't exist and the abstract class does, require the class.
+	if ( ! class_exists( 'PMProgroupacct_Member_Edit_Panel' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+		require_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-member-edit-panel.php' );
+	}
+
+	// If the class exists, add a panel.
+	if ( class_exists( 'PMProgroupacct_Member_Edit_Panel' ) ) {
+		$panels[] = new PMProgroupacct_Member_Edit_Panel();
+	}
+
+	return $panels;
+}
+
+/**
+ * Hook the correct function for admins editing a member's profile.
+ *
+ * @since TBD
+ */
+function pmprogroupacct_hook_edit_member_profile() {
+	// If the `pmpro_member_edit_get_panels()` function exists, add a panel.
+	// Otherwise, use the legacy hook.
+	if ( function_exists( 'pmpro_member_edit_get_panels' ) ) {
+		add_filter( 'pmpro_member_edit_panels', 'pmprogroupacct_pmpro_member_edit_panels' );
+	} else {
+		add_action( 'pmpro_after_membership_level_profile_fields', 'pmprogroupacct_show_group_account_info', 10, 1 );
+	}
+}
+add_action( 'admin_init', 'pmprogroupacct_hook_edit_member_profile', 0 );
+
+/**
+ * When administrators edit a member or user, we want to show all groups that they manage,
  * including showing the group ID, the level ID for the group, the number of seats in the group,
  * and a link to manage the group if the "Manage Group" page is set.
  *
  * We also want to show a table of all groups that the user is a member of, including
  * links to the group owner, the level that they claimed with the group, and the group member status.
  *
- * @since 1.0
+ * @since TBD
  *
- * @param WP_User $user The user object being edited.
+ * @param WP_User $user The user object being viewed.
  */
-function pmprogroupacct_after_membership_level_profile_fields( $user ) {
+function pmprogroupacct_show_group_account_info( $user ) {
 	global $pmpro_pages;
 
 	// Get all groups that the user manages.
@@ -28,7 +71,6 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 
 	// Show the UI.
 	?>
-	<h2><?php esc_html_e( 'Group Accounts', 'pmpro-group-accounts' ); ?></h2>
 	<h3><?php esc_html_e( 'Manage Groups', 'pmpro-group-accounts' ); ?></h3>
 	<?php
 	if ( empty( $groups ) ) {
@@ -51,6 +93,10 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 				<?php
 				foreach ( $groups as $group ) {
 					$parent_level = pmpro_getLevel( $group->group_parent_level_id );
+					// If the parent level is not found, skip this group.
+					if ( empty( $parent_level ) ) {
+						continue;
+					}
 					?>
 					<tr>
 						<th><?php echo esc_html( $group->id ); ?></th>
@@ -118,11 +164,20 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 				foreach ( $group_members as $group_member ) {
 					$group            = new PMProGroupAcct_Group( (int)$group_member->group_id );
 					$parent_user      = get_userdata( $group->group_parent_user_id );
-					$parent_user_link = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( add_query_arg( 'user_id', $parent_user->ID, admin_url( 'user-edit.php' ) ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
 					?>
 					<tr>
 						<th><?php echo esc_html( $group->id ); ?></th>
-						<td><?php echo $parent_user_link ?></td>
+						<td>
+							<?php
+								// If the parent user is not found, show the user ID.
+								if ( empty( $parent_user ) ) {
+									echo esc_html( $group->group_parent_user_id );
+								} else {
+									// Otherwise, link to the user edit page.
+									echo '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+								}
+							?>
+						</td>
 						<td><?php echo esc_html( $group_member->group_child_level_id ); ?></td>
 						<td><?php echo esc_html( $group_member->group_child_status ); ?></td>
 						<td>
@@ -145,4 +200,3 @@ function pmprogroupacct_after_membership_level_profile_fields( $user ) {
 		<?php
 	}
 }
-add_action( 'pmpro_after_membership_level_profile_fields', 'pmprogroupacct_after_membership_level_profile_fields' );
