@@ -11,6 +11,7 @@ function pmprogroupacct_admin_enqueue_scripts() {
 	// Enqueue select2 JS and CSS.
 	wp_enqueue_script( 'select2', plugins_url( 'js/select2.min.js', dirname(__FILE__) ), array( 'jquery' ), '4.0.13' );
 	wp_enqueue_style( 'select2', plugins_url( 'css/select2.min.css', dirname(__FILE__) ), array(), '4.0.13' );
+	wp_enqueue_style( 'pmprogroupacct-admin-styles', plugins_url( 'css/pmprogroupacct-admin.css', dirname(__FILE__) ), array(), PMPROGROUPACCT_VERSION );
 }
 add_action( 'admin_enqueue_scripts', 'pmprogroupacct_admin_enqueue_scripts' );
 

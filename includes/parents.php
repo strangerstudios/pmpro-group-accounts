@@ -69,6 +69,21 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 								esc_html( number_format_i18n( $seat_count ) )
 							);
 							break;
+						case 'variable':
+							/* translators: %d: Number of seats */
+							printf(
+								esc_html__(
+									_n(
+										'You are purchasing between %s and %s seats.',
+										'You are purchasing between %s and %s seats.',
+										$seat_count,
+										'pmpro-group-accounts'
+									)
+								),
+								esc_html( number_format_i18n( $seat_count ) ),
+								esc_html( number_format_i18n( $seat_count ) )
+							);
+							break;
 					}
 				?>
 				</p>
@@ -106,8 +121,20 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 					</p>
 					<?php
 					break;
-			}
+				case 'variable':
+					?>
+					<p class="pmpro_checkout-field pmpro_checkout-field-pricing">
+						<?php
+							esc_html_e( 'The price per seat will be calculated based on the number of seats you choose.', 'pmpro-group-accounts' );
+						 ?>
+					</p>
+						<?php foreach ($settings['pricing_model_settings_variable'] as $index => $value) { ?>
+						<p class="description">
+							<?php printf( esc_html__( 'From %s to %s seats: %s', 'pmpro-group-accounts' ), esc_html( number_format_i18n( (int)$value['from'] ) ), esc_html( number_format_i18n( (int)$value['to'] ) ), esc_html__( pmpro_formatPrice( $value['cost'] ) . ' each', 'pmpro-group-accounts' ) ); ?></p>
 
+					<?php }
+					break;
+				}
 			// Show child levels.
 			?>
 			<p class="pmpro_checkout-field pmpro_checkout-field-child-levels">
@@ -226,6 +253,14 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 			break;
 		case 'fixed':
 			$seat_cost = $seats * (float)$settings['pricing_model_settings'];
+			break;
+		case 'variable':
+				$seat_cost = 0;
+				foreach ($settings['pricing_model_settings_variable'] as $index => $value) {
+					if ( $seats >= $value['from'] && $seats <= $value['to'] ) {
+						$seat_cost = $seats * (float) $value['cost'];
+					}
+				}
 			break;
 	}
 
