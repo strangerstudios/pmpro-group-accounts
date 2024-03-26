@@ -193,7 +193,23 @@ class PMProGroupAcct_Group_Member {
 			return false;
 		}
 
-		// Create the group member in the database with an "active" status.
+		// Check if the group member and group already exists, if so just update the status instead of not doing anything.
+		$existing_group_member = $wpdb->get_row(
+			$wpdb->prepare(
+				"SELECT * FROM {$wpdb->pmprogroupacct_group_members} WHERE group_child_user_id = %d AND group_child_level_id = %d AND group_id = %d AND group_child_status = 'inactive'",
+				$group_child_user_id,
+				$group_child_level_id,
+				$group_id
+			)
+		);
+
+		if ( ! empty( $existing_group_member ) ) {
+			$group_member = new self( (int) $existing_group_member->id );
+			$group_member->update_group_child_status( 'active' );
+			return $existing_group_member->id;
+		}
+
+		// Create the group member in the database with an "active" status if they don't exist.
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_group_members,
 			array(
