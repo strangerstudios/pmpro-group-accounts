@@ -227,23 +227,23 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
  */
 function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $order ) {
 
+	$group_level_settings =  pmprogroupacct_get_settings_for_level( $membership_id );
 	$parent_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user->ID, $membership_id );
-	//It's a parent account, so let's update the number of seats. The add on created the group account already.
-	if( ! empty( $parent_group ) ) {
+	$group_id = $user->pmprogroupacct_group_id; // This is used for child accounts.
+	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : $group_level_settings['max_seats'];
+	
+	// Add user to group if their level is a parent level and create the group if it doesn't exist.
+	if ( ! empty( $parent_group ) ) {
 		//Update seats if the user has a total seats value from CSV.
-		$parent_group->update_group_total_seats( intval( $user->pmprogroupacct_group_total_seats ) );
-		return;
-
-	//can this level be a child group ?
-	} else if ( pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
-		// Get the group ID for this user from CSV row.
-		$group_id = $user->pmprogroupacct_group_id;
-		//Create the group member account if it doesn't exist.
-		PMProGroupAcct_Group_Member::create( $user->ID, $membership_id, $group_id );
-		return;
+		$parent_group->update_group_total_seats( $seats );
+	} elseif ( empty( $group_id ) ) {
+		// There is not already a group for this user and level. Let's create one.
+		PMProGroupAcct_Group::create( $user->ID, $membership_id, $seats );
 	}
-	return;
+	
+	// Add the child account if the level is a child level and passed through a group ID.
+	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
+		PMProGroupAcct_Group_Member::create( $user->ID, $membership_id, $group_id );
+	}
 }
-
-//Hook into the Import Users From CSV plugin after import action.
 add_action( 'pmproiucsv_after_member_import', 'pmprogroupacct_pmproiucsv_post_user_import', 10, 3 );
