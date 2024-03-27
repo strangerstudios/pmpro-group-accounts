@@ -246,7 +246,12 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
 		
 		// Let's set all previous instances to "inactive" before trying to insert the child record.
-		$wpdb->query( "UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = $user->ID" );
+		$wpdb->query( 
+			$wpdb->prepare( 
+				"UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = %d",
+				$user->ID
+			)
+		);
 		
 		// Add them back.
 		PMProGroupAcct_Group_Member::create( $user->ID, $membership_id, $group_id );
