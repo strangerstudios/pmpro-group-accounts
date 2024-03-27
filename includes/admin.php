@@ -226,10 +226,11 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
  * @since TBD
  */
 function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $order ) {
+	global $wpdb;
 
 	$group_level_settings =  pmprogroupacct_get_settings_for_level( $membership_id );
 	$parent_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user->ID, $membership_id );
-	$group_id = $user->pmprogroupacct_group_id; // This is used for child accounts.
+	$group_id = $user->pmprogroupacct_group_id; // Child accounts would pass through the Group ID.
 	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : $group_level_settings['max_seats'];
 	
 	// Add user to group if their level is a parent level and create the group if it doesn't exist.
@@ -243,6 +244,11 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	
 	// Add the child account if the level is a child level and passed through a group ID.
 	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
+		
+		// Let's set all previous instances to "inactive" before trying to insert the child record.
+		$wpdb->query( "UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = $user->ID" );
+		
+		// Add them back.
 		PMProGroupAcct_Group_Member::create( $user->ID, $membership_id, $group_id );
 	}
 }
