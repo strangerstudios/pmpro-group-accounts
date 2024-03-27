@@ -248,8 +248,9 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 		// Let's set all previous instances to "inactive" before trying to insert the child record.
 		$wpdb->query( 
 			$wpdb->prepare( 
-				"UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = %d",
-				$user->ID
+				"UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = %d AND group_child_level_id = %d",
+				$user->ID,
+				$membership_id
 			)
 		);
 		
