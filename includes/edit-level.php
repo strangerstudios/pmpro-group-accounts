@@ -13,8 +13,9 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 		'child_level_ids'		 => array(),
 		'min_seats'				 => 0,
 		'max_seats'				 => 0,
-		'pricing_model'			 => 'none', // none, fixed
+		'pricing_model'			 => 'none', // none, fixed, variable
 		'pricing_model_settings' => 0,
+		'pricing_model_settings_variable' => array( 0 => array("from" => 1, "to" => 9, "cost" => 9.99 )),
 		'price_application'		 => 'both', // initial, recurring, both
 	);
 
@@ -127,6 +128,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 									<select id="pmprogroupacct_pricing_model" name="pmprogroupacct_pricing_model">
 										<option value="none" <?php selected( 'none', $settings['pricing_model'] ); ?>><?php esc_html_e( 'None - Group pricing is built into this membership level.', 'pmpro-group-accounts' ); ?></option>
 										<option value="fixed" <?php selected( 'fixed', $settings['pricing_model'] ); ?>><?php esc_html_e( 'Per Seat - Set a specific price per additional seat.', 'pmpro-group-accounts' ); ?></option>
+										<option value="variable" <?php selected( 'variable', $settings['pricing_model'] ); ?>><?php esc_html_e( 'Variable based on range. Example: 1-9 seats cost 10, 10-19 cost 20', 'pmpro-group-accounts' ); ?></option>
 									</select>
 									<p class="description"><?php esc_html_e( 'The pricing model to use for purchasing seats.', 'pmpro-group-accounts' ); ?></p>
 									<div id="pmprogroupacct_pricing_model_warning_free_level" style="display: none;" class="pmpro_message pmpro_alert">
@@ -149,6 +151,36 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 										echo $pmpro_currency_symbol;
 									?>
 									<p class="description"><?php esc_html_e( 'The additional cost at checkout per seat.', 'pmpro-group-accounts' ); ?></p>
+								</td>
+							</tr>
+							<tr class="pmprogroupacct_setting pmprogroupacct_pricing_setting  pmprogroupacct_pricing_setting_variable pmprogroupacct_pricing_setting_variable_range">
+								<th scope="row" valign="top">
+									<label for="pmprogroupacct_pricing_model_variable"><?php esc_html_e( 'Cost per seat(range)', 'pmpro-group-accounts' ); ?></label>
+								</th>
+								<td>
+									<?php foreach ($settings['pricing_model_settings_variable'] as $index => $variable) { ?>
+										<div class="pmprogroupacct_pricing_setting_variable_div_wrapper">
+											<label for ="pmprogroupacct_pricing_setting_variable_from_<?php echo $index ?>"><?php esc_html_e('From', 'pmpro-group-accounts'); ?></label>
+											<input  id="pmprogroupacct_pricing_setting_variable_from_<?php echo $index ?>" name="pmprogroupacct_pricing_setting_variable_from[]" type="number" class="pmprogroupacct_pricing_setting_variable_from" step="1" placeholder="1" value="<?php echo esc_attr($variable['from']); ?>" />
+											<label for="pmprogroupacct_pricing_setting_variable_to_<?php echo $index ?>"><?php esc_html_e('To', 'pmpro-group-accounts'); ?></label>
+											<input id="pmprogroupacct_pricing_setting_variable_to_<?php echo $index ?>" name="pmprogroupacct_pricing_setting_variable_to[]" type="number" class="pmprogroupacct_pricing_setting_variable_to" step="1" placeholder="9" value="<?php echo esc_attr($variable['to']); ?>" />
+											<?php if (pmpro_getCurrencyPosition() == "left") echo $pmpro_currency_symbol; ?>
+											<input name="pmprogroupacct_pricing_setting_variable_cost[]" type="number" class="pmprogroupacct_pricing_setting_variable_cost" min="0" max="4294967295" step="0.01" placeholder="9.99" value="<?php echo esc_attr($variable['cost']); ?>" />
+											<?php if (pmpro_getCurrencyPosition() == "right") echo $pmpro_currency_symbol; ?>
+											<?php if ($index === 0) { ?>
+												<button class="button button-secondary pmprogroupacct_pricing_setting_variable_button" type="button"><?php esc_html_e('Add new row', 'pmpro-group-accounts'); ?></button>
+											<?php } else { ?>
+												<span aria-label="<?php esc_html_e('Remove this row', 'pmpro-group-accounts'); ?>" class="dashicons dashicons-trash pmprogroupacct_pricing_setting_variable_button_remove_row"></span>
+											<?php } ?>
+										</div>
+									<?php } ?>
+									<p class="description"><?php esc_html_e( 'The additional cost at checkout per seat based on range', 'pmpro-group-accounts' ); ?></p>
+									<div id="pmprogroupacct_pricing_model_warning_variable" style="display: none;" class="pmpro_message pmpro_alert">
+										<p><?php esc_html_e( 'WARNING: The variable pricing model needs a min and max seats to proper configure pricing ranges', 'pmpro-group-accounts' ); ?></p>
+									</div>
+									<div id="pmprogroupacct_pricing_model_warning_variable_sequencial" style="display: none;" class="pmpro_message pmpro_alert">
+										<p><?php esc_html_e( 'WARNING: Values must be in sequential order', 'pmpro-group-accounts' ); ?></p>
+									</div>
 								</td>
 							</tr>
 							<tr class="pmprogroupacct_setting pmprogroupacct_pricing_setting pmprogroupacct_pricing_setting_paid">
@@ -212,14 +244,21 @@ function pmprogroupacct_pmpro_save_membership_level( $level_id ) {
 	}
 
 	// Settings for seat pricing and price application.
-	$settings['pricing_model']			= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_pricing_model'], array( 'none', 'fixed' ) ) ? $_REQUEST['pmprogroupacct_pricing_model'] : 'none';
+	$settings['pricing_model']	= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_pricing_model'], array( 'none', 'fixed', 'variable' ) ) ? $_REQUEST['pmprogroupacct_pricing_model'] : 'none';
 	// Set the pricing model setting to 0 if the pricing model is none.
 	if ( $settings['pricing_model'] === 'none' ) {
 		$settings['pricing_model_settings']	= '0';
-	} else {
+	} else if ( $settings['pricing_model'] === 'fixed' ) {
 		$settings['pricing_model_settings']	= sanitize_text_field( $_REQUEST['pmprogroupacct_pricing_model_settings'] );
+	} else {
+		$settings['pricing_model_settings_variable'] = array();
+		foreach ($_REQUEST['pmprogroupacct_pricing_setting_variable_from'] as $index => $value) {
+			$settings['pricing_model_settings_variable'][$index]['from'] = sanitize_text_field( intval( $value ));
+			$settings['pricing_model_settings_variable'][$index]['to'] = sanitize_text_field( intval( $_REQUEST['pmprogroupacct_pricing_setting_variable_to'][$index] ) );
+			$settings['pricing_model_settings_variable'][$index]['cost'] = sanitize_text_field( floatval( $_REQUEST['pmprogroupacct_pricing_setting_variable_cost'][$index] ));
+		}
 	}
-	$settings['price_application']		= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_price_application'], array( 'both', 'initial', 'recurring' ) ) ? $_REQUEST['pmprogroupacct_price_application'] : 'both';
+	$settings['price_application']	= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_price_application'], array( 'both', 'initial', 'recurring' ) ) ? $_REQUEST['pmprogroupacct_price_application'] : 'both';
 	update_pmpro_membership_level_meta( $level_id, 'pmprogroupacct_settings', $settings );
 }
 add_action( 'pmpro_save_membership_level', 'pmprogroupacct_pmpro_save_membership_level' );
