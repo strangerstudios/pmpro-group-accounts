@@ -77,7 +77,7 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 				?>
 				<div class="pmpro_checkout-field pmpro_checkout-field-seats">
 					<label for="pmprogroupacct_seats"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
-					<input id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
+					<input class="<?php echo esc_attr( pmpro_get_element_class( 'input pmpro_alter_price' ) ); ?>" id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
 					<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %s and %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( ( (int)$settings['min_seats'] ) ) ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ); ?></p>
 				</div> <!-- end .pmpro_checkout-field-seats -->
 				<?php
