@@ -388,7 +388,7 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
 		/* translators: 1: Group code, 2: Number of seats claimed, 3: Total number of seats in the group. */
 		printf(
 			esc_html__( 'Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed).', 'pmpro-group-accounts' ),
-			'<strong>' . esc_html( $group->group_checkout_code ) . '</strong>',
+			'<span class="' . esc_attr( pmpro_get_element_class( 'pmpro_tag pmpro_tag-discount-code', 'pmpro_tag-discount-code' ) ) . '">' . esc_html( $group->group_checkout_code ) . '</span>',
 			esc_html( number_format_i18n( (int)$group->get_active_members( true ) ) ),
 			esc_html( number_format_i18n( (int)$group->group_total_seats ) )
 		);
