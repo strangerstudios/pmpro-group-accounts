@@ -73,7 +73,7 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 			$child_level_names[] = $child_level->name;
 		}
 	}
-	$child_levels_message = sprintf( _n( 'Group members will be able to claim the %s membership level.', 'Group members will be able to claim the following membership levels: %s', count( $child_level_names ) ,'pmpro-group-accounts' ), implode( ', ', $child_level_names ) );
+	$child_levels_message = sprintf( _n( 'Group members will be able to claim the %s membership level.', 'Group members will be able to claim the following membership levels: %s.', count( $child_level_names ) ,'pmpro-group-accounts' ), implode( ', ', $child_level_names ) );
 
 	// Build the checkout box.
 	// We can check if there are a variable amount of seats by checking if min_seats is equal to max_seats.
@@ -91,38 +91,38 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 					if ( ! empty( $static_seat_number_message ) ) {
 						?>
 						<input type="hidden" name="pmprogroupacct_seats" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
-						<p class="pmpro_form-field pmpro_checkout-field-seats">
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-seats', 'pmpro_form_field-seats' ) ); ?>">
 							<?php echo esc_html( $static_seat_number_message ); ?>
-						</p>
+						</div>
 						<?php
 					} else {
 						?>
-						<div class="pmpro_form-field pmpro_checkout-field-seats">
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-seats', 'pmpro_form_field-seats' ) ); ?>">
 							<label for="pmprogroupacct_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
-							<input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number pmpro_alter_price' ) ); ?>" id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
-							<p class="description"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %s and %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( ( (int)$settings['min_seats'] ) ) ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ); ?></p>
-						</div> <!-- end .pmpro_checkout-field-seats -->
+							<input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number pmpro_alter_price', 'pmprogroupacct_seats' ) ); ?>" id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $settings['min_seats'] ); ?>" />
+							<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %s and %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( ( (int)$settings['min_seats'] ) ) ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ); ?></p>
+						</div> <!-- end .pmpro_form_field-seats -->
 						<?php
 					}
 
 					// Show pricing.
 					if ( ! empty( $pricing_message ) ) {
 						?>
-						<p class="pmpro_form-field pmpro_checkout-field-pricing">
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-pricing', 'pmpro_form_field-pricing' ) ); ?>">
 							<?php echo esc_html( $pricing_message ); ?>
-						</p>
+						</div>
 						<?php
 					}
 
 					// Show child levels.
 					?>
-					<p class="pmpro_form-field pmpro_checkout-field-child-levels">
+					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-child-levels', 'pmpro_form_field-child-levels' ) ); ?>">
 						<?php echo esc_html( $child_levels_message ); ?>
-					</p>
+					</div>
 				</div> <!-- end .pmpro_form_fields -->
 			</div> <!-- end .pmpro_card_content -->
 		</div> <!-- end .pmpro_card -->
-	</fieldset> <!-- end .pmprogroupacct_parent_fields -->
+	</fieldset> <!-- end #pmprogroupacct_parent_fields -->
 	<?php
 }
 add_action( 'pmpro_checkout_boxes', 'pmprogroupacct_pmpro_checkout_boxes_parent' );
