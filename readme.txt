@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
-Tested up to: 6.4
-Stable tag: 1.0.1
+Tested up to: 6.6
+Stable tag: 1.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,10 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.1 - 2024-07-18 =
+* ENHANCEMENT: Updated UI for compatibility with PMPro v3.1. #43 (@dparker1005, @kimcoleman)
+* BUG FIX/ENHANCEMENT: Adding the `pmpro_alter_price` class to the "seats" field at checkout. #39 (@dwanjuki)
+
 = 1.0.1 - 2024-03-12 =
 * ENHANCEMENT: Added a "Group Accounts" tab to the Edit Member page when using PMPro v3.0+. #23 (@kimcoleman)
 * BUG FIX/ENHANCEMENT: Now creating a new group when a user has a group level and a group does not already exist. #27 (@dparker1005)
