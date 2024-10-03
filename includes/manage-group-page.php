@@ -297,6 +297,77 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 	}
 
+	// If the user is trying to create a new group member, create them.
+	$create_member_message = '';
+	if ( ! empty( $_REQUEST['pmprogroupacct_create_member_submit'] ) ) {
+		// Make sure that the nonce is valid.
+		if ( empty( $_REQUEST['pmprogroupacct_create_member_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_create_member_nonce'], 'pmprogroupacct_create_member' ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that there is an available seat in the group.
+		if ( ! empty( $create_member_message ) && $group->is_accepting_signups() ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No available seats in this group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that we have an email.
+		$email = empty( $_REQUEST['pmprogroupacct_create_member_email'] ) ? '' : sanitize_email( $_REQUEST['pmprogroupacct_create_member_email'] );
+		if ( empty( $create_member_message ) && empty( $email ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No email address provided.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that the email is valid.
+		if ( empty( $create_member_message ) && ! is_email( $email ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid email address.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that we have a username.
+		$username = empty( $_REQUEST['pmprogroupacct_create_member_username'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_username'] );
+		if ( empty( $create_member_message ) && empty( $username ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid username.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that we have a password.
+		$password = empty( $_REQUEST['pmprogroupacct_create_member_password'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_password'] );
+		if ( empty( $create_member_message ) && empty( $password ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid password.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure we have a valid level ID for this group.
+		$level_id = empty( $_REQUEST['pmprogroupacct_create_member_level_id'] ) ? '' : intval( $_REQUEST['pmprogroupacct_create_member_level_id'] );
+		if ( empty( $create_member_message ) && ( empty( $level_id ) || ! in_array( $level_id, $group_settings['child_level_ids'], true ) ) ) {
+			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// If we still don't have an error, create the user.
+		if ( empty( $create_member_message ) ) {
+			// Create the user.
+			$user_id = wp_create_user( $username, $password, $email );
+
+			// If user creation failed, show an error message.
+			if ( is_wp_error( $user_id ) ) {
+				$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Error creating user.', 'pmpro-group-accounts' ) . ' ' . $user_id->get_error_message() . '</div>';
+			}
+		}
+
+		// If we still don't have an error, change the user's level.
+		if ( empty( $create_member_message ) ) {
+			// Change the user's level.
+			$change_level = pmpro_changeMembershipLevel( $level_id, $user_id );
+
+			// If changing the level failed, show an error message.
+			if ( empty( $change_level ) ) {
+				$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Error changing user level.', 'pmpro-group-accounts' );
+			}
+		}
+
+		// If we still don't have an error, add the user to the group.
+		if ( empty( $create_member_message ) ) {
+			PMProGroupAcct_Group_Member::create( $user_id, $level_id, $group->id );
+			$create_member_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'User created and added to group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+	}
+
 	// If the user is trying to generate a new group code, generate it.
 	$generate_code_message = '';
 	if ( ! empty( $_REQUEST['pmprogroupacct_generate_new_group_code'] ) ) {
@@ -521,6 +592,61 @@ function pmprogroupacct_shortcode_manage_group() {
 									</div> <!-- end .pmpro_form_submit -->
 								</form> <!-- end #pmprogroupacct_manage_group_invites -->
 							</div> <!-- end #pmprogroupacct_manage_group_invite_members -->
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_divider' ) ); ?>"></div>
+							<?php
+							// Show a form manually create an account for a new group member.
+							?>
+							<div id="pmprogroupacct_manage_group_create_member">
+								<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Create a New Member', 'pmpro-group-accounts' ); ?></h3>
+								<?php echo wp_kses_post( $create_member_message ); ?>
+								<form id="pmprogroupacct_create_member" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_create_member' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) . '#pmprogroupacct_manage_group_create_member' ) ) ?>" method="post">
+									<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
+										<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
+											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+												<label for="pmprogroupacct_create_member_username" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></label>
+												<input type="text" name="pmprogroupacct_create_member_username" id="pmprogroupacct_create_member_username" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_create_member_username' ); ?>">
+											</div> <!-- end .pmpro_form_field -->
+											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+												<label for="pmprogroupacct_create_member_email" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Email', 'pmpro-group-accounts' ); ?></label>
+												<input type="email" name="pmprogroupacct_create_member_email" id="pmprogroupacct_create_member_email" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_create_member_email' ); ?>">
+											</div> <!-- end .pmpro_form_field -->
+											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+												<label for="pmprogroupacct_create_member_password" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Password', 'pmpro-group-accounts' ); ?></label>
+												<input type="password" name="pmprogroupacct_create_member_password" id="pmprogroupacct_create_member_password" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_create_member_password' ); ?>">
+											</div> <!-- end .pmpro_form_field -->
+											<?php
+											// Just one child level in the group? Show as a hidden field.
+											if ( count( $group_settings['child_level_ids'] ) === 1 ) {
+												?>
+												<input type="hidden" name="pmprogroupacct_create_member_level_id" id="pmprogroupacct_create_member_level_id" value="<?php echo esc_attr( $group_settings['child_level_ids'][0] ); ?>">
+												<?php
+											} else {
+												?>
+												<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ); ?>">
+													<label for="pmprogroupacct_create_member_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label', 'pmprogroupacct_create_member_level_id' ) ); ?>"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
+													<select name="pmprogroupacct_create_member_level_id" id="pmprogroupacct_create_member_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>">
+														<?php
+														foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+															$child_level = pmpro_getLevel( $child_level_id );
+															?>
+															<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+															<?php
+														}
+														?>
+													</select>
+												</div> <!-- end .pmpro_form_field-select -->
+												<?php
+											}
+											?>
+										</div> <!-- end .pmpro_form_fields -->
+									</fieldset> <!-- end .pmpro_form_fieldset -->
+									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+										<input type="hidden" name="pmprogroupacct_create_member_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_create_member' ) ); ?>">
+										<input type="submit" name="pmprogroupacct_create_member_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Create New Member', 'pmpro-group-accounts' ); ?>">
+									</div> <!-- end .pmpro_form_submit -->
+								</form> <!-- end #pmprogroupacct_create_member -->
+							</div> <!-- end #pmprogroupacct_manage_group_create_member -->
 							<?php
 						}
 						?>
