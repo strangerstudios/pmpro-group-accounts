@@ -25,7 +25,7 @@ function pmprogroupacct_checkout_before_form_child() {
 		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $checkout_level->id ) ) {
 			// Show a message that the group code has been applied.
 			pmpro_setMessage( esc_html__( 'Group code applied.', 'pmpro-group-accounts' ), 'pmpro_success' );
-		} elseif ( ! $group->can_claim_level( $checkout_level->id ) ) {
+		} elseif ( ! empty( $group ) && ! $group->can_claim_level( $checkout_level->id ) ) {
 			// Show a message that the group code cannot be used to claim this level.
 			pmpro_setMessage( esc_html__( 'This group code cannot be used to claim this level.', 'pmpro-group-accounts' ), 'pmpro_error' );
 		} elseif ( ! empty( $group ) ) {
