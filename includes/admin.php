@@ -240,17 +240,23 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	$group_level_settings =  pmprogroupacct_get_settings_for_level( $membership_id );
 	$parent_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user->ID, $membership_id );
 	$group_id = $user->pmprogroupacct_group_id; // Child accounts would pass through the Group ID.
-	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : $group_level_settings['max_seats'];
-	
+	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : '';
+
+	// Bail if we don't have seats and we don't have a group ID. We aren't creating / updating a parent group account or
+	// adding a user to a child group account
+	if ( empty( $seats ) && empty( $group_id ) ) {
+		return;
+	}
+
 	// Add user to group if their level is a parent level and create the group if it doesn't exist.
-	if ( ! empty( $parent_group ) ) {
+	if ( ! empty( $parent_group ) && ! empty( $seats ) ) {
 		//Update seats if the user has a total seats value from CSV.
 		$parent_group->update_group_total_seats( $seats );
-	} elseif ( empty( $group_id ) ) {
+	} elseif ( ! empty( $seats ) ) {
 		// There is not already a group for this user and level. Let's create one.
 		PMProGroupAcct_Group::create( $user->ID, $membership_id, $seats );
 	}
-	
+
 	// Add the child account if the level is a child level and passed through a group ID.
 	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
 		
