@@ -50,3 +50,22 @@ function pmprogroupacct_level_can_be_claimed_using_group_codes( $level_id ) {
 	}
 	return false;
 }
+
+/**
+ * Get the url for a user's edit member or edit user page.
+ *
+ * @since 1.0.1
+ *
+ * @param WP_User $user The user object to get the edit URL for.
+ * @return string The URL for the user's edit page.
+ */
+function pmprogroupacct_member_edit_url_for_user( $user ) {
+	// Build the parent user link.
+	if ( function_exists( 'pmpro_member_edit_get_panels' ) ) {
+		$member_edit_url = add_query_arg( array( 'page' => 'pmpro-member', 'user_id' => $user->ID, 'pmpro_member_edit_panel' => 'group-accounts' ), admin_url( 'admin.php' ) );
+	} else {
+		$member_edit_url = add_query_arg( 'user_id', $user->ID, admin_url( 'user-edit.php' ) );
+	}
+	// Return the parent user edit URL.
+	return $member_edit_url;
+}

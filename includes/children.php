@@ -25,7 +25,7 @@ function pmprogroupacct_checkout_before_form_child() {
 		if ( ! empty( $group ) && $group->is_accepting_signups() && $group->can_claim_level( $checkout_level->id ) ) {
 			// Show a message that the group code has been applied.
 			pmpro_setMessage( esc_html__( 'Group code applied.', 'pmpro-group-accounts' ), 'pmpro_success' );
-		} elseif ( ! $group->can_claim_level( $checkout_level->id ) ) {
+		} elseif ( ! empty( $group ) && ! $group->can_claim_level( $checkout_level->id ) ) {
 			// Show a message that the group code cannot be used to claim this level.
 			pmpro_setMessage( esc_html__( 'This group code cannot be used to claim this level.', 'pmpro-group-accounts' ), 'pmpro_error' );
 		} elseif ( ! empty( $group ) ) {
@@ -96,10 +96,13 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 	// Show the group code field along with a button to apply the code.
 	// The button will redirect to this page with the code in the URL.
 	?>
-	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-group_code', 'pmpro_checkout-field-group_code' ) ); ?>">
-		<label for="pmprogroupacct_group_code"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
-		<input id="pmprogroupacct_group_code" name="pmprogroupacct_group_code" type="text" />
-		<button type="button" id="pmprogroupacct_apply_group_code" class="pmpro_btn"><?php esc_html_e( 'Apply Code', 'pmpro-group-accounts' ); ?></button>
+	<br/>
+	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_checkout-field-group_code', 'pmpro_checkout-field-group_code' ) ); ?>">
+		<label for="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
+		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-inline' ) ); ?>">
+			<input id="pmprogroupacct_group_code" name="pmprogroupacct_group_code" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'other_discount_code' ) ); ?>" />
+			<input aria-label="<?php esc_html_e( 'Apply group code', 'paid-memberships-pro' ); ?>" type="button" name="pmprogroupacct_apply_group_code" id="pmprogroupacct_apply_group_code" value="<?php esc_attr_e('Apply Code', 'paid-memberships-pro' );?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
+		</div>
 	</div>
 	<?php
 }
