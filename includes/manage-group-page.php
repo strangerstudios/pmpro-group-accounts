@@ -395,6 +395,10 @@ function pmprogroupacct_shortcode_manage_group() {
 	);
 	$old_members = PMProGroupAcct_Group_Member::get_group_members( $old_member_query_args );
 
+	// Get the subscription price for this group.
+	$subscription       = PMPro_Subscription::get_subscriptions_for_user( $group->group_parent_user_id, $group->group_parent_level_id );
+	$subscription_price = empty( $subscription ) ? esc_html_e( 'No subscription found', 'paid-memberships-pro' ) : $subscription[0]->get_cost_text();
+
 	// Create UI.
 	ob_start();
 	?>
@@ -416,6 +420,10 @@ function pmprogroupacct_shortcode_manage_group() {
 						<form id="pmprogroupacct_manage_group_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_seats' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 							<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
 								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
+									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+										<label class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Subscription Price', 'paid-memberships-pro' ); ?></label>
+										<p><?php echo esc_html( $subscription_price ); ?></p>
+									</div> <!-- end .pmpro_form_field -->
 									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
 										<label for="pmprogroupacct_group_total_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
 										<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number', 'pmprogroupacct_group_total_seats' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
