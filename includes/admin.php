@@ -237,8 +237,6 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
 function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $order ) {
 	global $wpdb;
 
-	$group_level_settings =  pmprogroupacct_get_settings_for_level( $membership_id );
-	$parent_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user->ID, $membership_id );
 	$group_id = $user->pmprogroupacct_group_id; // Child accounts would pass through the Group ID.
 	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : '';
 
@@ -248,13 +246,13 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 		return;
 	}
 
-	// Add user to group if their level is a parent level and create the group if it doesn't exist.
-	if ( ! empty( $parent_group ) && ! empty( $seats ) ) {
-		//Update seats if the user has a total seats value from CSV.
-		$parent_group->update_group_total_seats( $seats );
-	} elseif ( ! empty( $seats ) ) {
-		// There is not already a group for this user and level. Let's create one.
-		PMProGroupAcct_Group::create( $user->ID, $membership_id, $seats );
+	if ( ! empty ( $seats ) ) {
+		$parent_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user->ID, $membership_id );
+		if ( empty( $parent_group ) ) {
+			PMProGroupAcct_Group::create( $user->ID, $membership_id, $seats );
+		} else {
+			$parent_group->update_group_total_seats( $seats );
+		}
 	}
 
 	// Add the child account if the level is a child level and passed through a group ID.
