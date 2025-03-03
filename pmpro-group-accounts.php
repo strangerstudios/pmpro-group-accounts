@@ -29,10 +29,6 @@ include_once( PMPROGROUPACCT_DIR . '/includes/edit-member.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/manage-group-page.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/upgradecheck.php' );
 
-if ( class_exists( 'PMPro_Email_Template' ) ) {
-	include_once( PMPROGROUPACCT_DIR . '/classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php' );
-}
-
 // Set up $wpdb tables.
 global $wpdb;
 $wpdb->pmprogroupacct_groups = $wpdb->prefix . 'pmprogroupacct_groups';
