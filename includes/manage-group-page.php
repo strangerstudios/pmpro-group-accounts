@@ -249,18 +249,27 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Send the invites.
 		if ( ! empty( $valid_emails ) ) {
 			$parent_user = get_userdata( $group->group_parent_user_id );
+			$level_id = (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'];
 			$email_data = array(
 				'pmprogroupacct_parent_display_name' => empty( $parent_user ) ? '[' . esc_html__( 'User Not Found' ) . ']' : $parent_user->display_name,
-				'pmprogroupacct_invite_link' => esc_url( add_query_arg( array( 'level' => (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'], 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ),
+				'pmprogroupacct_invite_link' => esc_url( add_query_arg( array( 'level' => $level_id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ),
 				'blog_name' => get_bloginfo( 'name' ),
 			);
 			$failed_emails = array();
 			foreach ( $valid_emails as $valid_email ) {
-				$email           = new PMProEmail();
-				$email->template = 'pmprogroupacct_invite';
-				$email->email    = $valid_email;
-				$email->data     = $email_data;
-				$success = $email->sendEmail();
+
+				//If the PMPro_Email_Template class exists ( V3.4+ ) use it to send the invite.
+				if( class_exists( 'PMPro_Email_Template' ) ) {
+					$email = new PMPro_Email_Template_PMProGroupAcct_Invite( $parent_user, $level_id, $group, $valid_email );
+					$success = $email->send();
+				} else {
+					$email           = new PMProEmail();
+					$email->template = 'pmprogroupacct_invite';
+					$email->email    = $valid_email;
+					$email->data     = $email_data;
+					$success = $email->sendEmail();
+				}
+
 				if ( ! $success ) {
 					$failed_emails[] = $valid_email;
 				}

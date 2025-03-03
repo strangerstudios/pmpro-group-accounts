@@ -20,7 +20,10 @@ function pmprogroupacct_email_templates( $templates ) {
 	);
 	return $templates;
 }
-add_filter( 'pmproet_templates', 'pmprogroupacct_email_templates' );
+
+if ( ! class_exists( 'PMPro_Email_Templates' ) ) {
+	add_filter( 'pmproet_templates', 'pmprogroupacct_email_templates' );
+}
 
 /**
  * Add an email template variable to show group data when a parent purchases a level with a group.
