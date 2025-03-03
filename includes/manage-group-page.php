@@ -107,6 +107,11 @@ add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
  * @return string $content Content for the shortcode.
  */
 function pmprogroupacct_shortcode_manage_group() {
+	// Make sure that PMPro is enabled.
+	if ( ! function_exists( 'pmpro_get_element_class' ) ) {
+		return '<p>' . esc_html__( 'Paid Memberships Pro must be enabled to use the Group Accounts Add On.', 'pmpro-group-accounts' ) . '</p>';
+	}
+
 	// Make sure that a group was passed. If not, show an error.
 	if ( empty( $_REQUEST['pmprogroupacct_group_id'] ) ) {
 		return '<p>' . esc_html__( 'No group was passed.', 'pmpro-group-accounts' ) . '</p>';
