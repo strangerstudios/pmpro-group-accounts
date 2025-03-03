@@ -43,7 +43,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 		<div class="pmpro_section_toggle">
 			<button class="pmpro_section-toggle-button" type="button" aria-expanded="<?php echo $section_visibility === 'hidden' ? 'false' : 'true'; ?>">
 				<span class="dashicons dashicons-arrow-<?php echo $section_visibility === 'hidden' ? 'down' : 'up'; ?>-alt2"></span>
-				<?php esc_html_e( 'Group Account Settings', 'paid-memberships-pro' ); ?>
+				<?php esc_html_e( 'Group Account Settings', 'pmpro-group-accounts' ); ?>
 			</button>
 		</div>
 		<div class="pmpro_section_inside" <?php echo $section_visibility === 'hidden' ? 'style="display: none"' : ''; ?>>
