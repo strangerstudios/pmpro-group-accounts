@@ -15,7 +15,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 		'max_seats'				 => 0,
 		'pricing_model'			 => 'none', // none, fixed
 		'pricing_model_settings' => 0,
-		'price_application'		 => 'both', // initial, recurring, both
+		'price_application'		 => 'initial', // initial, recurring, both
 	);
 
 	// Get the group account settings for the level.
@@ -157,9 +157,9 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 								</th>
 								<td>
 									<select id="pmprogroupacct_price_application" name="pmprogroupacct_price_application">
-										<option value="both" <?php selected( 'both', $settings['price_application'] ); ?>><?php esc_html_e( 'Initial payment and recurring subscription', 'pmpro-group-accounts' ); ?></option>
 										<option value="initial" <?php selected( 'initial', $settings['price_application'] ); ?>><?php esc_html_e( 'Initial payment only', 'pmpro-group-accounts' ); ?></option>
 										<option value="recurring" <?php selected( 'recurring', $settings['price_application'] ); ?>><?php esc_html_e( 'Recurring subscription only', 'pmpro-group-accounts' ); ?></option>
+										<option value="both" <?php selected( 'both', $settings['price_application'] ); ?>><?php esc_html_e( 'Initial payment and recurring subscription', 'pmpro-group-accounts' ); ?></option>
 									</select>
 									<p class="description"><?php esc_html_e( 'Define whether the seat cost should be applied for the initial payment, recurring payment, or both.', 'pmpro-group-accounts' ); ?></p>
 									<div id="pmprogroupacct_pricing_model_warning_recurring_billing" style="display: none;" class="pmpro_message pmpro_alert">
