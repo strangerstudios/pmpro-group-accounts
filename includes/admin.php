@@ -237,7 +237,7 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
 function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $order ) {
 	global $wpdb;
 
-	$group_id = $user->pmprogroupacct_group_id; // Child accounts would pass through the Group ID.
+	$group_id = empty( $user->pmprogroupacct_group_id ) ? '' : $user->pmprogroupacct_group_id;
 	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : '';
 
 	// Bail if we don't have seats and we don't have a group ID. We aren't creating / updating a parent group account or
