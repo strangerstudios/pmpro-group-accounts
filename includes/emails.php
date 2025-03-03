@@ -1,5 +1,21 @@
 <?php
 /**
+ * Set up email templates.
+ *
+ * @since TBD
+ */
+function pmprogroupacct_init_email_templates() {
+	if ( class_exists( 'PMPro_Email_Template' ) ) {
+		// Using PMPro v3.4+. Include the email template class.
+		include_once( PMPROGROUPACCT_DIR . '/classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php' );
+	} else {
+		// Using PMPro version under v3.4. Use the old filter.
+		add_filter( 'pmproet_templates', 'pmprogroupacct_email_templates' );
+	}
+}
+add_action( 'init', 'pmprogroupacct_init_email_templates', 8 ); // Priority 8 to ensure the pmproet_templates hook is added before PMPro loads email templates.
+
+/**
  * Add the invite email to email templates.
  *
  * @since 1.0
@@ -20,7 +36,6 @@ function pmprogroupacct_email_templates( $templates ) {
 	);
 	return $templates;
 }
-add_filter( 'pmproet_templates', 'pmprogroupacct_email_templates' );
 
 /**
  * Add an email template variable to show group data when a parent purchases a level with a group.
