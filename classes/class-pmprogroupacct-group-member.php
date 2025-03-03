@@ -180,6 +180,8 @@ class PMProGroupAcct_Group_Member {
 	 * @param int $group_child_user_id The user ID of the group member.
 	 * @param int $group_child_level_id The level ID that the group member claimed using this group.
 	 * @param int $group_id The group ID that the group member is associated with.
+	 *
+	 * @return PMProGroupAcct_Group_Member|false The new group member object or false on failure.
 	 */
 	public static function create( $group_child_user_id, $group_child_level_id, $group_id ) {
 		global $wpdb;
@@ -193,7 +195,20 @@ class PMProGroupAcct_Group_Member {
 			return false;
 		}
 
-		// Create the group member in the database with an "active" status.
+		// Check if the group member already exists.
+		$existing_group_member = self::get_group_members( array(
+			'group_child_user_id'  => $group_child_user_id,
+			'group_child_level_id' => $group_child_level_id,
+			'group_id'             => $group_id,
+			'group_child_status'   => 'inactive',
+		) );
+
+		if ( ! empty( $existing_group_member ) ) {
+			$existing_group_member[0]->update_group_child_status( 'active' );
+			return $existing_group_member[0];
+		}
+
+		// Create the group member in the database with an "active" status if they don't exist.
 		$wpdb->insert(
 			$wpdb->pmprogroupacct_group_members,
 			array(
