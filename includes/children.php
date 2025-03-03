@@ -101,7 +101,7 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 		<label for="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
 		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields-inline' ) ); ?>">
 			<input id="pmprogroupacct_group_code" name="pmprogroupacct_group_code" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'other_discount_code' ) ); ?>" />
-			<input aria-label="<?php esc_html_e( 'Apply group code', 'paid-memberships-pro' ); ?>" type="button" name="pmprogroupacct_apply_group_code" id="pmprogroupacct_apply_group_code" value="<?php esc_attr_e('Apply Code', 'paid-memberships-pro' );?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
+			<input aria-label="<?php esc_html_e( 'Apply group code', 'pmpro-group-accounts' ); ?>" type="button" name="pmprogroupacct_apply_group_code" id="pmprogroupacct_apply_group_code" value="<?php esc_attr_e('Apply Code', 'pmpro-group-accounts' );?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
 		</div>
 	</div>
 	<?php
