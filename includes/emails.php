@@ -2,7 +2,7 @@
 /**
  * Set up email templates.
  *
- * @since TBD
+ * @since 1.3
  */
 function pmprogroupacct_init_email_templates() {
 	if ( class_exists( 'PMPro_Email_Template' ) ) {

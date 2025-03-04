@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 6.6
-Stable tag: 1.2
+Stable tag: 1.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,14 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.3 - 2025-03-04 =
+* FEATURE: Added support for creating groups and adding members to a group during member imports when using the Import Members From CSV Add On. #31 (@MaximilianoRicoTabo)
+* ENHANCEMENT: Now using the new `PMPro_Email_Template` class to show email template variables when editing email templates in PMPro v3.4+. #56 (@MaximilianoRicoTabo)
+* BUG FIX/ENHANCEMENT: Changed the default price application setting to `initial`. This helps to avoid cases where a checkout level is not recurring but the Group Accounts setup accidentally makes it recurring. #50 (@andrewlimaza)
+* BUG FIX/ENHANCEMENT: Now setting the existing member record to `active` when calling `PMProGroupAcct_Group_Member::create()` for a record that already exists. #35 (@andrewlimaza)
+* BUG FIX: Fixed a PHP fatal error that would show when the "Manage Group" page was viewed without Paid Memberships Pro active. #54 (@dparker1005)
+* BUG FIX: Fixed incorrect text domains throughout the plugin. #55 (@davidmutero)
+
 = 1.2 - 2024-10-24 =
 * FEATURE: Now allowing group owners to add new users to their group from the Manage Group page. #46 (@dparker1005)
 * ENHANCEMENT: Added translation files for Spanish. #45 (@MaximilianoRicoTabo)

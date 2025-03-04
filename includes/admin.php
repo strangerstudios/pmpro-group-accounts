@@ -232,7 +232,7 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
  * @param WP_User $user The user object that was imported.
  * @param int $membership_id The membership level ID that was imported.
  * @param MemberOrder|null $order The order object that was created during import. Null if no order is created.
- * @since TBD
+ * @since 1.3
  */
 function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $order ) {
 	global $wpdb;
