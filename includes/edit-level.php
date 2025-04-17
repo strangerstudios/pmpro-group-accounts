@@ -18,8 +18,20 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 		'price_application'		 => 'initial', // initial, recurring, both
 	);
 
+	// Are we copying a level?
+	if ( isset( $_REQUEST['copy'] ) ) {
+		$copy = intval( $_REQUEST['copy'] );
+	}
+
 	// Get the group account settings for the level.
-	$saved_settings = pmprogroupacct_get_settings_for_level( $level->id );
+	if ( ! empty( $copy ) && $copy > 0 ) {
+		// If we're copying, get the group account settings from the copied level.
+		$saved_settings = pmprogroupacct_get_settings_for_level( $copy );
+	} else {
+		// Get the group account settings for the level being edited
+		$saved_settings = pmprogroupacct_get_settings_for_level( $level->id );
+	}
+
 	if ( ! empty( $saved_settings ) ) {
 		$settings = array_merge( $settings, $saved_settings );
 	}
