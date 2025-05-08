@@ -256,7 +256,7 @@ function pmprogroupacct_orders_csv_extra_columns_group_parent( $order ) {
 	if ( ! empty( $group_id ) ) {
 		$group = new PMProGroupAcct_Group( intval( $group_id ) );
 		$parent_user = get_userdata( $group->group_parent_user_id );
-		return empty( $parent_user ) ? $parent_user->user_login : '';
+		return ! empty( $parent_user ) ? $parent_user->user_login : '';
 	} else {
 		return '';
 	}
