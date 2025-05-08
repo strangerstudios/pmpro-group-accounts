@@ -272,3 +272,95 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	}
 }
 add_action( 'pmproiucsv_after_member_import', 'pmprogroupacct_pmproiucsv_post_user_import', 10, 3 );
+
+/**
+ * Adds a Parent Account column to the Members List.
+ * 
+ * @since TBD
+ *
+ * @param array $columns The columns to display in the Members List.
+ * @return array The updated columns to display in the Members List.
+ */
+function pmprogroupacct_manage_memberslist_columns( $columns ) {
+	$columns['pmprogroupacct_parent'] = __( 'Parent Account', 'pmpro-group-accounts' );
+	return $columns;
+}
+add_filter( 'pmpro_manage_memberslist_columns', 'pmprogroupacct_manage_memberslist_columns' );
+
+/**
+ * Display the group parent in the Members List.
+ * 
+ * @since TBD
+ * 
+ * @param string $column_name The name of the column to display.
+ * @param int    $user_id     The ID of the user to display the column for.
+ * @param array  $item        The membership data being shown.
+ */
+function pmprogroupacct_manage_memberslist_column_body( $column_name, $user_id, $item ) {
+	// Populate the parent account column.
+	if ( 'pmprogroupacct_parent' === $column_name ) {
+		// Get the user's group member object for the membership level being shown.
+		$group_member_query_args = array(
+			'group_child_user_id'  => $user_id,
+			'group_child_level_id' => $item['membership_id'],
+			'group_child_status'   => 'active',
+		);
+		$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+
+		// If the membership is a group membership, get the group information.
+		if ( ! empty( $group_members) ) {
+			$group_id = $group_members[0]->group_id;	
+			$group = new PMProGroupAcct_Group( $group_id );
+			$parent_user = get_userdata( $group->group_parent_user_id );
+			$parent_user_info = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
+		} else {
+			$parent_user_info = esc_html__( '&#8212;', 'pmpro-group-accounts' );
+		}
+
+		// Echo the data for this column.
+		echo $parent_user_info;
+	}
+}
+add_filter( 'pmpro_manage_memberslist_custom_column', 'pmprogroupacct_manage_memberslist_column_body', 10, 3 );
+
+/**
+ * Add a Parent Account column to the Members List CSV export
+ * 
+ * @since TBD
+ *
+ * @param array $columns The columns to add to the CSV export as $heading => $callback.
+ * @return array The columns for the Members List CSV export.
+ */
+function pmprogroupacct_members_list_csv_extra_columns( $columns ) {
+	$columns['pmprogroupacct_parent'] = 'pmprogroupacct_members_list_csv_extra_columns_parent_account';
+	return $columns;
+}
+add_filter( 'pmpro_members_list_csv_extra_columns', 'pmprogroupacct_members_list_csv_extra_columns' );
+
+/**
+ * Callback function to add the Parent Account to the Members List CSV export.
+ * 
+ * @since TBD
+ *
+ * @param object $user The user object for the row with some additional membership data.
+ * @return string The group parent's username.
+ */
+function pmprogroupacct_members_list_csv_extra_columns_parent_account( $user ) {
+	// Get the user's group member object for the membership level in this row.
+	$group_member_query_args = array(
+		'group_child_user_id'  => $user->ID,
+		'group_child_level_id' => $user->membership_id,
+		'group_child_status'   => 'active',
+	);
+	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+
+	// If the membership is a group membership, get the group information.
+	if ( ! empty( $group_members) ) {
+		$group_id = $group_members[0]->group_id;
+		$group = new PMProGroupAcct_Group( $group_id );
+		$parent_user = get_userdata( $group->group_parent_user_id );
+		return ! empty( $parent_user ) ? $parent_user->user_login : '';
+	} else {
+		return '';
+	}
+}
