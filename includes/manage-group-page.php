@@ -479,7 +479,9 @@ function pmprogroupacct_shortcode_manage_group() {
 										$level = pmpro_getLevel( $member->group_child_level_id );
 										?>
 										<tr>
-											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user->user_login ); ?></th>
+											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>">
+												<?php echo ! empty( $user ) ? esc_html( $user->user_login ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?>
+											</th>
 											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
 											<td data-title="<?php esc_attr_e( 'Remove', 'pmpro-group-accounts' ); ?>"><input type="checkbox" name="pmprogroupacct_remove_group_members[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
 										</tr>
@@ -519,17 +521,19 @@ function pmprogroupacct_shortcode_manage_group() {
 								<?php
 								foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 									$child_level = pmpro_getLevel( $child_level_id );
-									$checkout_url = add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) );
-									?>
-									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-textarea' ) ); ?>">
-										<label for="pmprogroupaccount_link-level-<?php echo esc_attr( $child_level_id ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label', 'pmprogroupaccount_link-level-' . esc_attr( $child_level_id ) ) ); ?>">
-											<a href="<?php echo esc_url( $checkout_url ); ?>">
-												<?php printf( esc_html__( 'For %s membership:', 'pmpro-group-accounts' ), esc_html( $child_level->name ) ); ?>
-											</a>
-										</label>
-										<textarea id="pmprogroupaccount_link-level-<?php echo esc_attr( $child_level_id ); ?>" readonly class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-textarea', 'pmpro_form_input-textarea' ) ); ?>" rows="2"><?php echo esc_attr( $checkout_url ); ?></textarea>
-									</div>
-									<?php
+									if ( ! empty( $child_level ) ) {
+										$checkout_url = add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) );
+										?>
+										<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-textarea' ) ); ?>">
+											<label for="pmprogroupaccount_link-level-<?php echo esc_attr( $child_level_id ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label', 'pmprogroupaccount_link-level-' . esc_attr( $child_level_id ) ) ); ?>">
+												<a href="<?php echo esc_url( $checkout_url ); ?>">
+													<?php printf( esc_html__( 'For %s membership:', 'pmpro-group-accounts' ), esc_html( $child_level->name ) ); ?>
+												</a>
+											</label>
+											<textarea id="pmprogroupaccount_link-level-<?php echo esc_attr( $child_level_id ); ?>" readonly class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-textarea', 'pmpro_form_input-textarea' ) ); ?>" rows="2"><?php echo esc_attr( $checkout_url ); ?></textarea>
+										</div>
+										<?php
+									}
 								}
 								?>
 							</div> <!-- end .pmpro_form_fields -->
@@ -587,9 +591,11 @@ function pmprogroupacct_shortcode_manage_group() {
 														<?php
 														foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 															$child_level = pmpro_getLevel( $child_level_id );
-															?>
-															<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
-															<?php
+															if ( ! empty( $child_level ) ) {
+																?>
+																<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+																<?php
+															}
 														}
 														?>
 													</select>
@@ -650,9 +656,11 @@ function pmprogroupacct_shortcode_manage_group() {
 														<?php
 														foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 															$child_level = pmpro_getLevel( $child_level_id );
-															?>
-															<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
-															<?php
+															if ( ! empty( $child_level ) ) {
+																?>
+																<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
+																<?php
+															}
 														}
 														?>
 													</select>
@@ -692,13 +700,15 @@ function pmprogroupacct_shortcode_manage_group() {
 								<?php
 								foreach ( $old_members as $member ) {
 									$user  = get_userdata( $member->group_child_user_id );
-									$level = pmpro_getLevel( $member->group_child_level_id );
-									?>
-									<tr>
-										<td><?php echo esc_html( $user->user_login ); ?></td>
-										<td><?php echo esc_html( $level->name ); ?></td>
-									</tr>
-									<?php
+									if ( ! empty( $user ) ) {
+										$level = pmpro_getLevel( $member->group_child_level_id );
+										?>
+										<tr>
+											<td><?php echo esc_html( $user->user_login ); ?></td>
+											<td><?php echo ! empty( $level ) ? esc_html( $level->name ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+										</tr>
+										<?php
+									}
 								}
 								?>
 							</tbody>
