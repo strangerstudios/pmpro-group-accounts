@@ -24,7 +24,7 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	protected $group;
 
 	/**
-	 * The email subject.
+	 * A valid email address to send the invite to.
 	 *
 	 * @var string
 	 */
@@ -36,7 +36,9 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	 * @since 1.3
 	 *
 	 * @param WP_User $member The user applying for membership.
-	 * @param level $level The level object.
+	 * @param int $level_id The level id.
+	 * @param PMProGroupAcct_Group $group The group object.
+	 * @param string $invite_new_member_email A valid email address to send the invite to.
 	 */
 	public function __construct( WP_User $parent_user, int $level_id, PMProGroupAcct_Group $group, String $invite_new_member_email ) {
 		$this->parent_user = $parent_user;
@@ -160,6 +162,19 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	public function get_recipient_name() {
 		$email_user = get_user_by( 'email', $this->invite_new_member_email );
 		return empty( $email_user->display_name ) ? esc_html__( 'User', 'pmpro-group-accounts' ) : $email_user->display_name;
+	}
+
+	/**
+	 * Returns the arguments to send the test email from the abstract class.
+	 *
+	 * @since TBD
+	 *
+	 * @return array The arguments to send the test email from the abstract class.
+	 */
+	public static function get_test_email_constructor_args() {
+		global $current_user;
+		$groupacct = new PMProGroupAcct_Group(1);
+		return array( $current_user, "1", $groupacct->get_test_group(), $current_user->user_email );
 	}
 }
 /**

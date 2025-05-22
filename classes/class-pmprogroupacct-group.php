@@ -409,4 +409,20 @@ class PMProGroupAcct_Group {
 		}
 		return in_array( (int)$level_id, $settings['child_level_ids'], true );
 	}
+
+	/**
+	 * Get a group object for testing purposes.
+	 *
+	 * @since TBD
+	 *
+	 * @return PMProGroupAcct_Group A test group object.
+	 */
+	public function get_test_group() {
+		//Mock data for testing purposes
+		$this->group_parent_user_id  = 1;
+		$this->group_parent_level_id = 1;
+		$this->group_checkout_code   = 'test_checkout_code';
+		$this->group_total_seats     = 5;
+		return apply_filters( 'pmprogroupacct_test_group_data', $this );
+	}
 }
