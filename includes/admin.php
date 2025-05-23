@@ -419,9 +419,9 @@ function pmprogroupacct_members_list_csv_extra_columns_parent_account( $user ) {
 		$parent_user = get_userdata( $group->group_parent_user_id );
 		return ! empty( $parent_user ) ? $parent_user->user_login : '';
 	} else {
-		return;
+		return '';
 	}
   
   // If we make it here, lets just return nothing.
-  return;
+  return '';
 }
