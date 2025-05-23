@@ -101,6 +101,9 @@ function pmprogroupacct_email_data( $data, $email ) {
 		<?php
 		foreach ( $child_level_ids as $child_level_id ) {
 			$child_level = pmpro_getLevel( $child_level_id );
+			if ( empty( $child_level ) ) {
+				continue;
+			}
 			?>
 			<li>
 				<?php

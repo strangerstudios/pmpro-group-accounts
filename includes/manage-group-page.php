@@ -476,10 +476,17 @@ function pmprogroupacct_shortcode_manage_group() {
 									<?php
 									foreach ( $active_members as $member ) {
 										$user  = get_userdata( $member->group_child_user_id );
+										if ( ! empty( $user ) ) {
+											$user_login = $user->user_login;
+										} else {
+											$user_login = __( '[deleted]', 'pmpro-group-accounts' );
+										}
+
+										//Note: When you delete a membership level, it removes/cancels the level from the user so this will never get here if the level is deleted for a child level.
 										$level = pmpro_getLevel( $member->group_child_level_id );
 										?>
 										<tr>
-											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user->user_login ); ?></th>
+											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user_login ); ?></th>
 											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
 											<td data-title="<?php esc_attr_e( 'Remove', 'pmpro-group-accounts' ); ?>"><input type="checkbox" name="pmprogroupacct_remove_group_members[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
 										</tr>
@@ -519,6 +526,10 @@ function pmprogroupacct_shortcode_manage_group() {
 								<?php
 								foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 									$child_level = pmpro_getLevel( $child_level_id );
+									if ( empty( $child_level ) ) {
+										continue;
+									}
+
 									$checkout_url = add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) );
 									?>
 									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-textarea' ) ); ?>">
@@ -587,6 +598,9 @@ function pmprogroupacct_shortcode_manage_group() {
 														<?php
 														foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 															$child_level = pmpro_getLevel( $child_level_id );
+															if ( empty( $child_level ) ) {
+																continue;
+															}
 															?>
 															<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
 															<?php
@@ -650,6 +664,9 @@ function pmprogroupacct_shortcode_manage_group() {
 														<?php
 														foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
 															$child_level = pmpro_getLevel( $child_level_id );
+															if ( empty( $child_level ) ) {
+																continue;
+															}
 															?>
 															<option value="<?php echo esc_attr( $child_level->id ); ?>"><?php echo esc_html( $child_level->name ); ?></option>
 															<?php
@@ -691,12 +708,29 @@ function pmprogroupacct_shortcode_manage_group() {
 							<tbody>
 								<?php
 								foreach ( $old_members as $member ) {
-									$user  = get_userdata( $member->group_child_user_id );
+									$user = get_userdata( $member->group_child_user_id );
+									if ( ! empty ( $user ) ) {
+										$user_login = $user->user_login;
+									} else {
+										$user_login = false;
+									}
+
 									$level = pmpro_getLevel( $member->group_child_level_id );
+									if ( ! empty( $level ) ) {
+										$level_name = $level->name;
+									} else {
+										$level_name = false;
+									}
+
+									// Skip this record if both the username and level name are false/deleted.
+									if ( ! $level_name && ! $user_login ) {
+										continue;
+									}
+
 									?>
 									<tr>
-										<td><?php echo esc_html( $user->user_login ); ?></td>
-										<td><?php echo esc_html( $level->name ); ?></td>
+										<td><?php echo ! empty( $user_login ) ? esc_html( $user_login ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+										<td><?php echo ! empty( $level_name ) ? esc_html( $level_name ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
 									</tr>
 									<?php
 								}
