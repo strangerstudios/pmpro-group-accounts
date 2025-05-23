@@ -282,7 +282,7 @@ add_action( 'pmproiucsv_after_member_import', 'pmprogroupacct_pmproiucsv_post_us
  * @return array The updated columns to display in the Members List.
  */
 function pmprogroupacct_manage_memberslist_columns( $columns ) {
-	$columns['pmprogroupacct_parent'] = __( 'Parent Account', 'pmpro-group-accounts' );
+	$columns['pmprogroupacct_parent'] = esc_html__( 'Parent Account', 'pmpro-group-accounts' );
 	return $columns;
 }
 add_filter( 'pmpro_manage_memberslist_columns', 'pmprogroupacct_manage_memberslist_columns' );
