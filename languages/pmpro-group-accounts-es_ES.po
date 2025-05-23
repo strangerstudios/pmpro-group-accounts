@@ -2,16 +2,16 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.3\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.4\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-03-04T14:32:49+00:00\n"
+"POT-Creation-Date: 2025-05-23T11:58:47+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
 
 #. Plugin Name of the plugin
@@ -47,12 +47,14 @@ msgid "Group Accounts"
 msgstr "Cuentas de grupo"
 
 #: includes/admin.php:31
+#, php-format
 msgid "Thank you for activating. <a href=\"%s\">Create a new membership level or update an existing level</a> to add group account features."
 msgstr "Gracias por activar. <a href=“%s”>Cree un nuevo nivel de membresía o actualice un nivel existente</a> para agregar funciones de cuenta grupal."
 
 #. translators: 1: This plugin's name. 2: Required plugin name(s).
 #: includes/admin.php:70
 #: includes/admin.php:102
+#, php-format
 msgid "The following plugin(s) are required for the %1$s plugin to work: %2$s"
 msgstr "Los siguientes plugins son necesarios para que el plugin %1$s funcione: %2$s"
 
@@ -94,27 +96,33 @@ msgid "Group Code"
 msgstr "Codigo de grupo"
 
 #: includes/admin.php:178
+#: includes/admin.php:343
 msgid "Parent Account"
 msgstr "Cuenta primaria"
 
 #: includes/admin.php:196
 #: includes/admin.php:201
+#: includes/admin.php:375
 msgid "&#8212;"
 msgstr "&#8212;"
 
 #: includes/admin.php:219
+#: includes/admin.php:277
 msgid "View Documentation"
 msgstr "Ver documentación"
 
 #: includes/admin.php:219
+#: includes/admin.php:277
 msgid "Docs"
 msgstr "Documentación"
 
 #: includes/admin.php:220
+#: includes/admin.php:278
 msgid "Visit Customer Support Forum"
 msgstr "Visita el foro de atención al cliente"
 
 #: includes/admin.php:220
+#: includes/admin.php:278
 msgid "Support"
 msgstr "Atención al cliente"
 
@@ -139,6 +147,7 @@ msgstr "Código de grupo no válido."
 
 #. translators: %s: Group code
 #: includes/children.php:72
+#, php-format
 msgid "You have applied the following group code: %s"
 msgstr "Ha aplicado el siguiente código de grupo: %s"
 
@@ -156,47 +165,59 @@ msgstr "Grupo"
 
 #: includes/children.php:397
 #: includes/children.php:451
+#, php-format
 msgid "Managed by %s"
 msgstr "Gestionado por %s"
 
 #: includes/edit-level.php:51
+#: includes/edit-level.php:63
 msgid "Group accounts allow a member to purchase a block of memberships at once. The member will receive a code to distribute to their group for use during registration."
 msgstr "Las cuentas grupales permiten que un miembro compre un bloque de membresías a la vez. El miembro recibirá un código para distribuir a su grupo para que lo use durante el registro."
 
 #: includes/edit-level.php:52
+#: includes/edit-level.php:64
 msgid "View documentation"
 msgstr "Ver documentación"
 
 #: includes/edit-level.php:60
+#: includes/edit-level.php:72
 msgid "You do not have any membership levels that can be set as the child account for this group."
 msgstr "No tiene ningún nivel de membresía que pueda configurarse como cuenta secundaria para este grupo."
 
 #: includes/edit-level.php:61
+#: includes/edit-level.php:73
+#, php-format
 msgid "Please <a target=\"_blank\" href=\"%s\">create an additional membership level</a> to use as the child account for this group."
 msgstr "<a target=“_blank” href=“%s”>Cree un nivel de membresía adicional</a> para usar como cuenta secundaria para este grupo."
 
 #: includes/edit-level.php:71
+#: includes/edit-level.php:83
 #, fuzzy
 msgid "Membership Level(s)"
 msgstr "Nivel(es) de membresía"
 
 #: includes/edit-level.php:81
+#: includes/edit-level.php:93
 msgid "Select one or more membership levels that can be claimed by group members. Leave blank if this membership level does not offer child accounts."
 msgstr "Seleccione uno o más niveles de membresía que puedan reclamar los miembros del grupo. Déjelo en blanco si este nivel de membresía no ofrece cuentas secundarias."
 
 #: includes/edit-level.php:85
+#: includes/edit-level.php:97
 msgid "Type of Group"
 msgstr "Tipo de grupo"
 
 #: includes/edit-level.php:89
+#: includes/edit-level.php:101
 msgid "Fixed - Set a specific number of allowed seats."
 msgstr "Fijo: establece un número específico de asientos permitidos."
 
 #: includes/edit-level.php:90
+#: includes/edit-level.php:102
 msgid "Variable - Member can choose number of seats at checkout."
 msgstr "Variable: el miembro puede elegir el número de puestos al momento de pagar."
 
 #: includes/edit-level.php:92
+#: includes/edit-level.php:104
 msgid "Set a specific number of seats in the group or allow the member to choose the number of seats they need at checkout."
 msgstr "Establezca una cantidad específica de puestos en el grupo o permita que el miembro elija la cantidad de asientos que necesita al momento de pagar."
 
@@ -204,81 +225,100 @@ msgstr "Establezca una cantidad específica de puestos en el grupo o permita que
 #: includes/manage-group-page.php:344
 #: includes/manage-group-page.php:420
 #: includes/manage-group-page.php:434
+#: includes/edit-level.php:109
 msgid "Total Seats"
 msgstr "Total de puestos"
 
 #: includes/edit-level.php:101
+#: includes/edit-level.php:113
 msgid "The total number of seats that are included in this group. Note: the group account owner does not count toward this total."
 msgstr "La cantidad total de puestos incluidos en este grupo. Nota: el propietario de la cuenta del grupo no se tiene en cuenta para este total."
 
 #: includes/edit-level.php:106
+#: includes/edit-level.php:118
 msgid "Minimum Seats"
 msgstr "Mínima cantidad de puestos"
 
 #: includes/edit-level.php:110
+#: includes/edit-level.php:122
 msgid "The minimum number of seats that can be added at checkout."
 msgstr "El número mínimo de puestos que se pueden agregar al momento del pago."
 
 #: includes/edit-level.php:115
+#: includes/edit-level.php:127
 msgid "Maximum Seats"
 msgstr "Máxima cantidad de puestos"
 
 #: includes/edit-level.php:119
+#: includes/edit-level.php:131
 msgid "The maximum number of seats that can be added at checkout. Note: the group account owner does not count toward this limit."
 msgstr "La cantidad máxima de puestos que se pueden agregar al finalizar la compra. Nota: el propietario de la cuenta grupal no cuenta para este límite."
 
 #: includes/edit-level.php:124
+#: includes/edit-level.php:136
 msgid "Pricing Model"
 msgstr "Modelo de precios"
 
 #: includes/edit-level.php:128
+#: includes/edit-level.php:140
 msgid "None - Group pricing is built into this membership level."
 msgstr "Ninguno: los precios de grupo están integrados en este nivel de membresía."
 
 #: includes/edit-level.php:129
+#: includes/edit-level.php:141
 msgid "Per Seat - Set a specific price per additional seat."
 msgstr "Por puesto: establece un precio específico por puesto adicional."
 
 #: includes/edit-level.php:131
+#: includes/edit-level.php:143
 msgid "The pricing model to use for purchasing seats."
 msgstr "El modelo de precios a utilizar para comprar puestos."
 
 #: includes/edit-level.php:133
+#: includes/edit-level.php:145
 msgid "WARNING: This level does not have any pricing set up. We highly recommend that you set up an initial payment or recurring billing for a better checkout experience."
 msgstr "ADVERTENCIA: Este nivel no tiene ningún precio establecido. Le recomendamos que configure un pago inicial o una facturación periódica para disfrutar de una mejor experiencia de pago."
 
 #: includes/edit-level.php:139
+#: includes/edit-level.php:151
 msgid "Cost Per Seat"
 msgstr "Costo por puesto"
 
 #: includes/edit-level.php:151
+#: includes/edit-level.php:163
 msgid "The additional cost at checkout per seat."
 msgstr "El costo adicional al momento de pagar por cada puesto."
 
 #: includes/edit-level.php:156
+#: includes/edit-level.php:168
 msgid "Price Application"
 msgstr "Solicitud de precio"
 
 #: includes/edit-level.php:160
 #: includes/edit-level.php:162
+#: includes/edit-level.php:174
 msgid "Initial payment and recurring subscription"
 msgstr "Pago inicial y suscripción recurrente"
 
 #: includes/edit-level.php:161
 #: includes/edit-level.php:160
+#: includes/edit-level.php:172
 msgid "Initial payment only"
 msgstr "Pago inicial solamente"
 
 #: includes/edit-level.php:162
 #: includes/edit-level.php:161
+#: includes/edit-level.php:173
 msgid "Recurring subscription only"
 msgstr "Subscripción periódicamente solamente"
 
 #: includes/edit-level.php:164
+#: includes/edit-level.php:176
 msgid "Define whether the seat cost should be applied for the initial payment, recurring payment, or both."
 msgstr "Define si el costo del puesto debe aplicarse al pago inicial, al pago periódico o a ambos."
 
 #: includes/edit-level.php:166
+#: includes/edit-level.php:178
 msgid "WARNING: This level does not have a recurring subscription. Child accounts will assume a monthly billing period unless you configure the subscription on this parent level."
 msgstr "ADVERTENCIA: Este nivel no tiene una suscripción periódica. Las cuentas secundarias asumirán un período de facturación mensual a menos que configure la suscripción en este nivel principal."
 
@@ -371,11 +411,14 @@ msgstr "Este código de grupo es:"
 #: includes/manage-group-page.php:502
 #: includes/emails.php:99
 #: includes/manage-group-page.php:516
+#: includes/manage-group-page.php:523
 msgid "New members can use this code to join your group at no additional cost."
 msgstr "Los nuevos miembros pueden usar este código para unirse a su grupo sin costo adicional."
 
 #: includes/emails.php:94
 #: includes/emails.php:109
+#: includes/emails.php:112
+#, php-format
 msgid "%1$s membership: %2$s"
 msgstr "%1$s membresía: %2$s"
 
@@ -502,6 +545,7 @@ msgstr "Configuración de grupo (solo administrador)"
 #: includes/manage-group-page.php:352
 #: includes/manage-group-page.php:428
 #: includes/manage-group-page.php:442
+#, php-format
 msgid "Change the settings for group ID %1$s managed by %2$s."
 msgstr "Cambie la configuración del ID de grupo %1$s administrado por %2$s."
 
@@ -534,6 +578,9 @@ msgstr "No hay miembros activos en este grupo."
 #: includes/manage-group-page.php:482
 #: includes/manage-group-page.php:620
 #: includes/manage-group-page.php:687
+#: includes/manage-group-page.php:489
+#: includes/manage-group-page.php:634
+#: includes/manage-group-page.php:704
 msgid "Username"
 msgstr "Username"
 
@@ -551,6 +598,10 @@ msgstr "Username"
 #: includes/manage-group-page.php:585
 #: includes/manage-group-page.php:648
 #: includes/manage-group-page.php:688
+#: includes/manage-group-page.php:490
+#: includes/manage-group-page.php:596
+#: includes/manage-group-page.php:662
+#: includes/manage-group-page.php:705
 #, fuzzy
 msgid "Level"
 msgstr "Nivel"
@@ -561,18 +612,21 @@ msgstr "Nivel"
 #: includes/manage-group-page.php:470
 #: includes/manage-group-page.php:472
 #: includes/manage-group-page.php:484
+#: includes/manage-group-page.php:491
 msgid "Remove"
 msgstr "Eliminar"
 
 #: includes/manage-group-page.php:404
 #: includes/manage-group-page.php:479
 #: includes/manage-group-page.php:493
+#: includes/manage-group-page.php:500
 msgid "Remove Selected Members"
 msgstr "Eliminar miembros seleccionados"
 
 #: includes/manage-group-page.php:404
 #: includes/manage-group-page.php:479
 #: includes/manage-group-page.php:493
+#: includes/manage-group-page.php:500
 msgid "Are you sure that you would like to remove these users from your group?"
 msgstr "¿Está seguro de que desea eliminar estos usuarios de su grupo?"
 
@@ -582,77 +636,93 @@ msgstr "¿Está seguro de que desea eliminar estos usuarios de su grupo?"
 #: includes/manage-group-page.php:590
 #: includes/manage-group-page.php:506
 #: includes/manage-group-page.php:604
+#: includes/manage-group-page.php:513
+#: includes/manage-group-page.php:618
 msgid "Invite New Members"
 msgstr "Invitar a nuevos miembros"
 
 #: includes/manage-group-page.php:422
 #: includes/manage-group-page.php:497
 #: includes/manage-group-page.php:511
+#: includes/manage-group-page.php:518
 msgid "This group is not accepting signups."
 msgstr "Este grupo no acepta inscripciones."
 
 #: includes/manage-group-page.php:426
 #: includes/manage-group-page.php:501
 #: includes/manage-group-page.php:515
+#: includes/manage-group-page.php:522
+#, php-format
 msgid "Your Group Code is: %s"
 msgstr "Su código de grupo es: %s"
 
 #: includes/manage-group-page.php:438
 #: includes/manage-group-page.php:513
 #: includes/manage-group-page.php:527
+#: includes/manage-group-page.php:538
+#, php-format
 msgid "For %s membership:"
 msgstr "Para la membresía %s:"
 
 #: includes/manage-group-page.php:456
 #: includes/manage-group-page.php:531
 #: includes/manage-group-page.php:545
+#: includes/manage-group-page.php:556
 msgid "Generate a New Group Code"
 msgstr "Generar un nuevo código de grupo"
 
 #: includes/manage-group-page.php:457
 #: includes/manage-group-page.php:532
 #: includes/manage-group-page.php:546
+#: includes/manage-group-page.php:557
 msgid "Generate a new group code to prevent new members from joining your group with the current code. Your existing group members will remain in your group. This action is permanent and cannot be reversed."
 msgstr "Genera un nuevo código de grupo para evitar que nuevos miembros se unan a tu grupo con el código actual. Los miembros de tu grupo actual permanecerán en él. Esta acción es permanente y no se puede revertir."
 
 #: includes/manage-group-page.php:470
 #: includes/manage-group-page.php:541
 #: includes/manage-group-page.php:555
+#: includes/manage-group-page.php:566
 msgid "Generate New Group Code"
 msgstr "Generar nuevo código de grupo"
 
 #: includes/manage-group-page.php:482
 #: includes/manage-group-page.php:553
 #: includes/manage-group-page.php:567
+#: includes/manage-group-page.php:578
 msgid "Invite New Members via Email"
 msgstr "Invitar a nuevos miembros por correo electrónico"
 
 #: includes/manage-group-page.php:488
 #: includes/manage-group-page.php:558
 #: includes/manage-group-page.php:572
+#: includes/manage-group-page.php:583
 msgid "Email Addresses"
 msgstr "Direcciones de correo electrónico"
 
 #: includes/manage-group-page.php:490
 #: includes/manage-group-page.php:560
 #: includes/manage-group-page.php:574
+#: includes/manage-group-page.php:585
 msgid "Enter one email address per line."
 msgstr "Introduzca una dirección de correo electrónico por línea."
 
 #: includes/manage-group-page.php:535
 #: includes/manage-group-page.php:668
 #: includes/manage-group-page.php:682
+#: includes/manage-group-page.php:699
 msgid "Old Members"
 msgstr "Viejos miembros"
 
 #: includes/manage-group-page.php:567
 #: includes/manage-group-page.php:700
 #: includes/manage-group-page.php:714
+#: includes/manage-group-page.php:748
 msgid "View Your Membership Account"
 msgstr "Ver su cuenta de membresía"
 
 #. translators: %d: Number of seats
 #: includes/parents.php:33
+#, php-format
 msgid "This purchase includes %s additional seat."
 msgid_plural "This purchase includes %s additional seats."
 msgstr[0] ""
@@ -660,24 +730,29 @@ msgstr[1] ""
 
 #. translators: %d: Number of seats
 #: includes/parents.php:46
+#, php-format
 msgid "You are purchasing %s additional seat."
 msgid_plural "You are purchasing %s additional seats."
 msgstr[0] ""
 msgstr[1] ""
 
 #: includes/parents.php:56
+#, php-format
 msgid "The price per seat is %s."
 msgstr "El precio por puesto es %s."
 
 #: includes/parents.php:59
+#, php-format
 msgid "You will be charged an additional %s per seat for the initial payment only."
 msgstr "Se le cobrará un %s adicional por puesto solo por el pago inicial."
 
 #: includes/parents.php:62
+#, php-format
 msgid "You will be charged an additional %s per seat with each recurring payment."
 msgstr "Se le cobrará un %s adicional por puesto con cada pago recurrente."
 
 #: includes/parents.php:76
+#, php-format
 msgid "Group members will be able to claim the %s membership level."
 msgid_plural "Group members will be able to claim the following membership levels: %s."
 msgstr[0] ""
@@ -688,6 +763,7 @@ msgid "Number of Seats"
 msgstr "Cantidad de puestos"
 
 #: includes/parents.php:103
+#, php-format
 msgid "Choose the number of seats to purchase. You can purchase between %s and %s seats."
 msgstr "Seleccione la cantidad de puestos que desea comprar. Puede comprar entre %s y %s puestos."
 
@@ -696,14 +772,17 @@ msgid "The number of seats must be a whole number."
 msgstr "El número de puestos debe ser un número entero."
 
 #: includes/parents.php:169
+#, php-format
 msgid "You must purchase at least %s seats."
 msgstr "Debes comprar al menos %s puestos."
 
 #: includes/parents.php:175
+#, php-format
 msgid "You cannot purchase more than %s seats."
 msgstr "No puedes comprar más de %s puestos."
 
 #: includes/parents.php:185
+#, php-format
 msgid "There are currently %s members in your group. You must purchase at least that many seats."
 msgstr "Actualmente hay %s miembros en tu grupo. Debes comprar al menos esa cantidad de puestos."
 
@@ -712,6 +791,7 @@ msgid "Group Account"
 msgstr "Cuenta de grupo"
 
 #: includes/parents.php:390
+#, php-format
 msgid "Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed)."
 msgstr "Los usuarios pueden unirse a su grupo usando el código %1$s al momento del pago (%2$s/%3$s puestos reclamados)."
 
@@ -762,6 +842,7 @@ msgstr ""
 
 #: includes/manage-group-page.php:600
 #: includes/manage-group-page.php:614
+#: includes/manage-group-page.php:628
 msgid "Create a New Group Member"
 msgstr ""
 
@@ -770,21 +851,26 @@ msgstr ""
 #: includes/manage-group-page.php:621
 #: includes/manage-group-page.php:628
 #: includes/manage-group-page.php:635
+#: includes/manage-group-page.php:642
+#: includes/manage-group-page.php:649
 msgid "Required Field"
 msgstr ""
 
 #: includes/manage-group-page.php:613
 #: includes/manage-group-page.php:627
+#: includes/manage-group-page.php:641
 msgid "Email"
 msgstr ""
 
 #: includes/manage-group-page.php:620
 #: includes/manage-group-page.php:634
+#: includes/manage-group-page.php:648
 msgid "Password"
 msgstr ""
 
 #: includes/manage-group-page.php:653
 #: includes/manage-group-page.php:667
+#: includes/manage-group-page.php:684
 msgid "Create New Member"
 msgstr ""
 
@@ -813,9 +899,16 @@ msgid "Apply Code"
 msgstr ""
 
 #: includes/edit-level.php:46
+#: includes/edit-level.php:58
 msgid "Group Account Settings"
 msgstr ""
 
 #: includes/manage-group-page.php:112
 msgid "Paid Memberships Pro must be enabled to use the Group Accounts Add On."
+msgstr ""
+
+#: includes/manage-group-page.php:482
+#: includes/manage-group-page.php:732
+#: includes/manage-group-page.php:733
+msgid "[deleted]"
 msgstr ""
