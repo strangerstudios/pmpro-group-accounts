@@ -205,6 +205,64 @@ function pmprogroupacct_manage_orderslist_column_body( $column_name, $item ) {
 add_action( 'pmpro_manage_orderlist_custom_column' , 'pmprogroupacct_manage_orderslist_column_body', 10, 2 );
 
 /**
+ * Add group information to the Orders CSV export.
+ * 
+ * @since TBD
+ *
+ * @param array $columns The columns to add to the CSV export as $heading => $callback.
+ * @return array The columns for the Orders list CSV export.
+ */
+function pmprogroupacct_orders_csv_extra_columns( $columns ) {
+	$columns['pmprogroupacct_code'] = 'pmprogroupacct_orders_csv_extra_columns_group_code';
+	$columns['pmprogroupacct_parent'] = 'pmprogroupacct_orders_csv_extra_columns_group_parent';
+	return $columns;
+}
+add_filter( 'pmpro_orders_csv_extra_columns', 'pmprogroupacct_orders_csv_extra_columns' );
+
+/**
+ * Callback function to add the Group Code to the Orders CSV export.
+ * 
+ * @since TBD
+ *
+ * @param MemberOrder $order The Paid Memberships Pro order object.
+ * @return string The group code.
+ */
+function pmprogroupacct_orders_csv_extra_columns_group_code( $order ) {
+	// Get the group ID for this order.
+	$group_id = get_pmpro_membership_order_meta( $order->id, 'pmprogroupacct_group_id', true );
+
+	// If there is a group ID, get and return the group code.
+	if ( ! empty( $group_id ) ) {
+		$group = new PMProGroupAcct_Group( intval( $group_id ) );
+		return $group->group_checkout_code;
+	} else {
+		return '';
+	}
+}
+
+/**
+ * Callback unction to add the Group Parent to the Orders CSV export.
+ * 
+ * @since TBD
+ *
+ * @param MemberOrder $order The Paid Memberships Pro order object.
+ * @return string The group parent's username.
+ */
+function pmprogroupacct_orders_csv_extra_columns_group_parent( $order ) {
+	// Get the group ID for this order.
+	$group_id = get_pmpro_membership_order_meta( $order->id, 'pmprogroupacct_group_id', true );
+
+	// If there is a group ID, get and return the group parent's username.
+	if ( ! empty( $group_id ) ) {
+		$group = new PMProGroupAcct_Group( intval( $group_id ) );
+		$parent_user = get_userdata( $group->group_parent_user_id );
+		return ! empty( $parent_user ) ? $parent_user->user_login : '';
+	} else {
+		return '';
+	}
+}
+
+/**
  * Add links to the plugin row meta
  *
  * @since 1.0
@@ -361,6 +419,9 @@ function pmprogroupacct_members_list_csv_extra_columns_parent_account( $user ) {
 		$parent_user = get_userdata( $group->group_parent_user_id );
 		return ! empty( $parent_user ) ? $parent_user->user_login : '';
 	} else {
-		return '';
+		return;
 	}
+  
+  // If we make it here, lets just return nothing.
+  return;
 }
