@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
-Tested up to: 6.6
-Stable tag: 1.3
+Tested up to: 6.8
+Stable tag: 1.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
