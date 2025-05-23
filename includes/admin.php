@@ -207,7 +207,7 @@ add_action( 'pmpro_manage_orderlist_custom_column' , 'pmprogroupacct_manage_orde
 /**
  * Add group information to the Orders CSV export.
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param array $columns The columns to add to the CSV export as $heading => $callback.
  * @return array The columns for the Orders list CSV export.
@@ -222,7 +222,7 @@ add_filter( 'pmpro_orders_csv_extra_columns', 'pmprogroupacct_orders_csv_extra_c
 /**
  * Callback function to add the Group Code to the Orders CSV export.
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param MemberOrder $order The Paid Memberships Pro order object.
  * @return string The group code.
@@ -243,7 +243,7 @@ function pmprogroupacct_orders_csv_extra_columns_group_code( $order ) {
 /**
  * Callback unction to add the Group Parent to the Orders CSV export.
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param MemberOrder $order The Paid Memberships Pro order object.
  * @return string The group parent's username.
@@ -334,7 +334,7 @@ add_action( 'pmproiucsv_after_member_import', 'pmprogroupacct_pmproiucsv_post_us
 /**
  * Adds a Parent Account column to the Members List.
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param array $columns The columns to display in the Members List.
  * @return array The updated columns to display in the Members List.
@@ -348,7 +348,7 @@ add_filter( 'pmpro_manage_memberslist_columns', 'pmprogroupacct_manage_membersli
 /**
  * Display the group parent in the Members List.
  * 
- * @since TBD
+ * @since 1.4
  * 
  * @param string $column_name The name of the column to display.
  * @param int    $user_id     The ID of the user to display the column for.
@@ -384,7 +384,7 @@ add_filter( 'pmpro_manage_memberslist_custom_column', 'pmprogroupacct_manage_mem
 /**
  * Add a Parent Account column to the Members List CSV export
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param array $columns The columns to add to the CSV export as $heading => $callback.
  * @return array The columns for the Members List CSV export.
@@ -398,7 +398,7 @@ add_filter( 'pmpro_members_list_csv_extra_columns', 'pmprogroupacct_members_list
 /**
  * Callback function to add the Parent Account to the Members List CSV export.
  * 
- * @since TBD
+ * @since 1.4
  *
  * @param object $user The user object for the row with some additional membership data.
  * @return string The group parent's username.

@@ -27,6 +27,12 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.4 - YYYY-MM-DD =
+* ENHANCEMENT: Added parent account information to child accounts on the Members List admin table as well as the Member's List export. (@dwanjuki)
+* ENHANCEMENT: Added group code and parent account information to the Orders List admin table as well as the Orders List export. (@dwanjuki)
+* ENHANCEMENT: Added support for the "copy" a membership level logic, to copy the group account settings for parent levels. (@dwanjuki)
+* BUG FIX: Fixed various PHP warnings when viewing the Manage Group page and child accounts or levels were deleted. This will now show "[deleted]" in these cases. (@andrewlimaza, @dwanjuki)
+
 = 1.3 - 2025-03-04 =
 * FEATURE: Added support for creating groups and adding members to a group during member imports when using the Import Members From CSV Add On. #31 (@MaximilianoRicoTabo)
 * ENHANCEMENT: Now using the new `PMPro_Email_Template` class to show email template variables when editing email templates in PMPro v3.4+. #56 (@MaximilianoRicoTabo)
