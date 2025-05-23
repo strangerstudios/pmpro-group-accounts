@@ -27,7 +27,7 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
-= 1.4 - YYYY-MM-DD =
+= 1.4 - 2025-05-23 =
 * ENHANCEMENT: Added parent account information to child accounts on the Members List admin table as well as the Member's List export. (@dwanjuki)
 * ENHANCEMENT: Added group code and parent account information to the Orders List admin table as well as the Orders List export. (@dwanjuki)
 * ENHANCEMENT: Added support for the "copy" a membership level logic, to copy the group account settings for parent levels. (@dwanjuki)
