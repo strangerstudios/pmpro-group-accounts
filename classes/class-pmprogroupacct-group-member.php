@@ -95,13 +95,6 @@ class PMProGroupAcct_Group_Member {
 
 		$prepared = array();
 		$where    = array();
-		$orderby  = isset( $args['orderby'] ) ? $args['orderby'] : '`id` DESC';
-		$limit    = isset( $args['limit'] ) ? (int) $args['limit'] : 100;
-
-		// Detect unsupported orderby usage.
-		if ( $orderby !== preg_replace( '/[^a-zA-Z0-9\s,`]/', ' ', $orderby ) ) {
-			return [];
-		}
 
 		// Filter by ID.
 		if ( isset( $args['id'] ) ) {
@@ -136,11 +129,6 @@ class PMProGroupAcct_Group_Member {
 		// Maybe filter the data.
 		if ( ! empty( $where ) ) {
 			$sql_query .= ' WHERE ' . implode( ' AND ', $where );
-		}
-	
-		// Add the order and limit if we're not just counting.
-		if ( empty( $args['return_count'] ) ) {
-			$sql_query .= " ORDER BY {$orderby} LIMIT {$limit}";
 		}
 	
 		// Prepare the query.
