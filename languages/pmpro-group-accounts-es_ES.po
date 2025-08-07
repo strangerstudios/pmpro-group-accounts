@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.4\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.4.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-23T11:58:47+00:00\n"
+"POT-Creation-Date: 2025-08-07T15:30:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -370,18 +370,21 @@ msgstr "Estado"
 #: includes/emails.php:12
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:89
 #: includes/emails.php:28
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:91
 msgid "!!pmprogroupacct_parent_display_name!! has invited you to !!blog_name!!"
 msgstr "!!pmprogroupacct_parent_display_name!! te ha invitado a !!blog_name!!"
 
 #: includes/emails.php:13
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:67
 #: includes/emails.php:29
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:69
 msgid "Group Accounts - Invite Member"
 msgstr "Cuentas de grupo: Invitar a un miembro"
 
 #: includes/emails.php:14
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:100
 #: includes/emails.php:30
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:102
 msgid ""
 "<p>You have been invited to !!blog_name!! by !!pmprogroupacct_parent_display_name!!.</p>\n"
 "\n"
@@ -398,6 +401,7 @@ msgstr ""
 #: includes/emails.php:19
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:78
 #: includes/emails.php:35
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:80
 msgid "This email is sent when a group account owner completes the form to invite other users to their group via email."
 msgstr "Este correo electrónico se envía cuando el propietario de una cuenta de grupo completa el formulario para invitar a otros usuarios a su grupo por correo electrónico."
 
@@ -875,18 +879,22 @@ msgid "Create New Member"
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:116
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
 msgid "The display name of the parent user."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:117
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:119
 msgid "The link to the checkout page for the group."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:120
 msgid "The name of the site."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:162
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:164
 msgid "User"
 msgstr ""
 

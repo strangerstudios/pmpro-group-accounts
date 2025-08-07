@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.4\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.4.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-23T11:58:47+00:00\n"
+"POT-Creation-Date: 2025-08-07T15:30:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -46,22 +46,22 @@ msgstr ""
 msgid "Group Accounts"
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:67
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:69
 #: includes/emails.php:29
 msgid "Group Accounts - Invite Member"
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:78
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:80
 #: includes/emails.php:35
 msgid "This email is sent when a group account owner completes the form to invite other users to their group via email."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:89
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:91
 #: includes/emails.php:28
 msgid "!!pmprogroupacct_parent_display_name!! has invited you to !!blog_name!!"
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:100
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:102
 #: includes/emails.php:30
 msgid ""
 "<p>You have been invited to !!blog_name!! by !!pmprogroupacct_parent_display_name!!.</p>\n"
@@ -71,19 +71,19 @@ msgid ""
 "<p>!!pmprogroupacct_invite_link!!</p>"
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:116
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
 msgid "The display name of the parent user."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:117
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:119
 msgid "The link to the checkout page for the group."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:120
 msgid "The name of the site."
 msgstr ""
 
-#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:162
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:164
 msgid "User"
 msgstr ""
 
