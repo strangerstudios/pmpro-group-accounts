@@ -173,8 +173,10 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	 */
 	public static function get_test_email_constructor_args() {
 		global $current_user;
-		$groupacct = new PMProGroupAcct_Group(1);
-		return array( $current_user, "1", $groupacct->get_test_group(), $current_user->user_email );
+		$all_levels = pmpro_getAllLevels( true );
+		$test_level = current( $all_levels );
+		$groupacct = new PMProGroupAcct_Group( 0 ); // Passing 0 just to get an empty group object.
+		return array( $current_user, $test_level->id, $groupacct, $current_user->user_email );
 	}
 }
 /**
