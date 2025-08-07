@@ -167,7 +167,7 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	/**
 	 * Returns the arguments to send the test email from the abstract class.
 	 *
-	 * @since TBD
+	 * @since 1.4.1
 	 *
 	 * @return array The arguments to send the test email from the abstract class.
 	 */

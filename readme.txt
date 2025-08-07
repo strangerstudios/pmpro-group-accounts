@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 1.4
+Stable tag: 1.4.1
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,12 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.4.1 - 2025-08-07 =
+* ENHANCEMENT: Now allowing sending test emails when editing the "Invite Member" email template. #57 (@MaximilianoRicoTabo)
+* ENHANCEMENT: Improved performance of the `pmprogroupacct_level_can_be_claimed_using_group_codes()` function. #67 (@dalemugford)
+* BUG FIX: Fixed an issue where the number of group members listed on the "Manage Group" page would be limited to 100. #68 (@dparker1005)
+* BUG FIX: Fixed an issue where parent users would retain their current number of group seats when repurchasing their current level with 0 seats selected. #64 (@kvnbra)
+
 = 1.4 - 2025-05-23 =
 * ENHANCEMENT: Added parent account information to child accounts on the Members List admin table as well as the Member's List export. (@dwanjuki)
 * ENHANCEMENT: Added group code and parent account information to the Orders List admin table as well as the Orders List export. (@dwanjuki)
