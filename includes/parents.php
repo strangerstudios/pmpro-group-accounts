@@ -292,11 +292,6 @@ function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
 	// Get the number of seats being purchased.
 	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
 
-	// There were no seats purchased or included. Bail.
-	if ( ! $seats ) {
-		return;
-	}
-
 	// Check if there is already a group for this user and level.
 	$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $level->id );
 	if ( ! empty( $existing_group ) ) {
@@ -304,6 +299,11 @@ function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
 		$existing_group->update_group_total_seats( $seats );
 		return;
 	} else {
+		// There were no seats purchased or included. Bail.
+		if ( ! $seats ) {
+			return;
+		}
+
 		// There is not already a group for this user and level. Let's create one.
 		PMProGroupAcct_Group::create( $user_id, $level->id, $seats );
 	}
