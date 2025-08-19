@@ -347,8 +347,22 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 				// There is a group for this parent and level. Let's get all the active members for this group and cancel their group level.
 				$active_members = $existing_group->get_active_members();
 				foreach ( $active_members as $active_member ) {
-					pmpro_cancelMembershipLevel( $active_member->group_child_level_id, $active_member->group_child_user_id );
-					$cancelled_membership = true;
+					// Check whether we have Action Scheduler to be able to run cancellations asynchronously.
+					if ( class_exists( 'PMPro_Action_Scheduler' ) ) {
+						// We have Action Scheduler. Use it to try to avoid timeouts.
+						PMPro_Action_Scheduler::instance()->maybe_add_task(
+							'pmprogroupacct_cancel_user_membership',
+							array(
+								'user_id'       => $active_member->group_child_user_id,
+								'level_id' => $active_member->group_child_level_id,
+							),
+							'pmprogroupacct_tasks'
+						);
+					} else {
+						// We don't have Action Scheduler. Just try to cancel the membership now.
+						pmpro_cancelMembershipLevel( $active_member->group_child_level_id, $active_member->group_child_user_id );
+						$cancelled_membership = true;
+					}
 				}
 			}
 		}
@@ -362,6 +376,21 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 }
 // Hook at a late priority since we may change further levels and need to run pmpro_do_action_after_all_membership_level_changes() again.
 add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_parent', 20, 1 );
+
+/**
+ * Callback to cancel a specific membership level for a user.
+ *
+ * @param int $user_id The user ID to cancel the membership for.
+ * @param int $level_id The membership level ID to cancel.
+ */
+function pmprogroupacct_cancel_user_membership( $user_id, $level_id ) {
+	// Cancel the user's membership level.
+	pmpro_cancelMembershipLevel( $level_id, $user_id );
+
+	// Run any actions needed after all membership level changes.
+	pmpro_do_action_after_all_membership_level_changes();
+}
+add_action( 'pmprogroupacct_cancel_user_membership', 'pmprogroupacct_cancel_user_membership', 10, 2 );
 
 /**
  * Add an invoice bullet if the level purchased with the invoice that we are showing
