@@ -351,12 +351,12 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 					if ( class_exists( 'PMPro_Action_Scheduler' ) ) {
 						// We have Action Scheduler. Use it to try to avoid timeouts.
 						PMPro_Action_Scheduler::instance()->maybe_add_task(
-							'pmprogroupacct_cancel_user_membership',
+							'pmpro_groupacct_cancel_user_membership',
 							array(
 								'user_id'       => $active_member->group_child_user_id,
 								'level_id' => $active_member->group_child_level_id,
 							),
-							'pmprogroupacct_tasks'
+							'pmpro_groupacct_tasks'
 						);
 					} else {
 						// We don't have Action Scheduler. Just try to cancel the membership now.
@@ -390,7 +390,7 @@ function pmprogroupacct_cancel_user_membership( $user_id, $level_id ) {
 	// Run any actions needed after all membership level changes.
 	pmpro_do_action_after_all_membership_level_changes();
 }
-add_action( 'pmprogroupacct_cancel_user_membership', 'pmprogroupacct_cancel_user_membership', 10, 2 );
+add_action( 'pmpro_groupacct_cancel_user_membership', 'pmprogroupacct_cancel_user_membership', 10, 2 );
 
 /**
  * Add an invoice bullet if the level purchased with the invoice that we are showing
