@@ -62,7 +62,8 @@ function pmprogroupacct_db_delta() {
 			`status_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			PRIMARY KEY (`id`),
 			UNIQUE KEY `user_group` (`group_child_user_id`,`group_child_level_id`,`group_id`),
-			KEY `group_child_status` (`group_child_status`)
+			KEY `group_child_status` (`group_child_status`),
+			KEY `status_updated` (`status_updated`)
 		);
 	";
 	dbDelta( $sqlQuery );
