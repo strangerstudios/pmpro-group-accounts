@@ -230,7 +230,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The number of seats has not been updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the total seats is a number.
@@ -252,12 +252,12 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_group_code'] ) && ! empty( $_REQUEST['pmprogroupacct_group_code'] ) ) {
 		// Make sure that the current user has permission to update this group.
 		if ( ! $is_admin ) {
-			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
+			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
+			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The group code was not updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Only make changes if this is a different group code.
@@ -591,7 +591,6 @@ function pmprogroupacct_shortcode_manage_group() {
 									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
 										<label for="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
 										<input type="text" name="pmprogroupacct_group_code" id="pmprogroupacct_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_group_code' ); ?>" value="<?php echo esc_attr( $group->group_checkout_code ); ?>">
-										<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>">
 									</div> <!-- end .pmpro_form_field -->
 								</div> <!-- end .pmpro_form_fields -->
 								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
