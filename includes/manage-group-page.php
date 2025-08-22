@@ -238,11 +238,47 @@ function pmprogroupacct_shortcode_manage_group() {
 			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
-		// Update the group settings.
-		$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
+		// Only make changes if the number of seats is different.
+		if ( (int)$_REQUEST['pmprogroupacct_group_total_seats'] !== $group->group_total_seats ) {
+			// Update the group settings.
+			$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
 
-		// Show a success message.
-		$seats_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group settings updated.', 'pmpro-group-accounts' ) . '</div>';
+			// Show a success message.
+			$seats_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group seats updated.', 'pmpro-group-accounts' ) . '</div>';
+		}
+	}
+
+	$group_code_message = '';
+	if ( isset( $_REQUEST['pmprogroupacct_group_code'] ) && ! empty( $_REQUEST['pmprogroupacct_group_code'] ) ) {
+		// Make sure that the current user has permission to update this group.
+		if ( ! $is_admin ) {
+			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that the nonce is valid.
+		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
+			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The member was not removed.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Only make changes if this is a different group code.
+		$new_group_code = sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] );
+		if ( $new_group_code !== $group->group_checkout_code ) {
+			// Make sure that no other group has this code.
+			$existing_group = PMProGroupAcct_Group::get_group_by_checkout_code( $new_group_code );
+			if ( empty( $existing_group ) ) {
+				// Update the group checkout code.
+				$group->update_group_checkout_code( $new_group_code );
+				$group_code_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group code updated.', 'pmpro-group-accounts' ) . '</div>';
+			} else {
+				// Link to the "manage group" page for the existing group.
+				$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );
+				if ( ! empty( $manage_group_url ) ) {
+					$group_code_message = '<div class="pmpro_message pmpro_error">' . wp_kses_post( sprintf( __( 'The group code "%1$s" is already being used by another group. Please choose a different code or <a href="%2$s">manage group ID %3$d</a>.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_url( add_query_arg( 'pmprogroupacct_group_id', $existing_group->id, $manage_group_url ) ), esc_html( $existing_group->id ) ) ) . '</div>';
+				} else {
+					$group_code_message = '<div class="pmpro_message pmpro_error">' . sprintf( esc_html__( 'The group code "%1$s" is already being used by another group. Please choose a different code or manage group ID %2$d.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_html( $existing_group->id ) ) . '</div>';
+				}
+			}
+		}
 	}
 
 	// If the user is trying to invite new members, invite them.
@@ -525,6 +561,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro' ) ); ?>">
 		<section id="pmprogroupacct_manage_group" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_section', 'pmprogroupacct_manage_group' ) ); ?>">
 			<?php echo wp_kses_post( $seats_message ); ?>
+			<?php echo wp_kses_post( $group_code_message ); ?>
 			<?php echo wp_kses_post( $action_message ); ?>
 			<?php echo empty( $generate_code_message ) ? '' : wp_kses_post( $generate_code_message ); ?>
 			<?php echo wp_kses_post( $invite_message ); ?>
@@ -537,21 +574,24 @@ function pmprogroupacct_shortcode_manage_group() {
 				<div id="pmprogroupacct_manage_group_settings" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card', 'pmprogroupacct_manage_group_settings' ) ); ?>">
 					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Group Settings (Admin Only)', 'pmpro-group-accounts' ); ?></h2>
 					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+						<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_subtitle' ) ); ?>">
+							<?php
+							$group_parent = get_userdata( $group->group_parent_user_id );
+							printf( esc_html__( 'Manage the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $group_parent ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
+							?>
+						</p>
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
 						<form id="pmprogroupacct_manage_group_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_seats' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 							<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
 								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
 									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
 										<label for="pmprogroupacct_group_total_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
 										<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number', 'pmprogroupacct_group_total_seats' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+									</div> <!-- end .pmpro_form_field -->
+									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+										<label for="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
+										<input type="text" name="pmprogroupacct_group_code" id="pmprogroupacct_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_group_code' ); ?>" value="<?php echo esc_attr( $group->group_checkout_code ); ?>">
 										<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>">
-										<?php
-											// Get the group parent.
-											$group_parent = get_userdata( $group->group_parent_user_id );
-
-											/* translators: %1$s is the group ID, %2$s is a link to edit the group owner with their display name. */
-											printf( esc_html__( 'Change the settings for group ID %1$s managed by %2$s.', 'pmpro-group-accounts' ), esc_html( $group->id ), '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $group_parent ) ) . '">' . esc_html( $group_parent->display_name ) . '</a>' );
-										?>
-										</p>
 									</div> <!-- end .pmpro_form_field -->
 								</div> <!-- end .pmpro_form_fields -->
 								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">

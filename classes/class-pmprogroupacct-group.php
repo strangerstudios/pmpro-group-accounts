@@ -282,12 +282,29 @@ class PMProGroupAcct_Group {
 	 * @since 1.0
 	 */
 	public function regenerate_group_checkout_code() {
+		$this->update_group_checkout_code( self::generate_group_checkout_code() );
+	}
+
+	/**
+	 * Update the checkout code for this group.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $group_checkout_code The new checkout code for the group.
+	 */
+	public function update_group_checkout_code( $group_checkout_code ) {
 		global $wpdb;
-		$this->group_checkout_code = self::generate_group_checkout_code();
+
+		// Validate the passed data.
+		if ( empty( $group_checkout_code ) || ! is_string( $group_checkout_code ) ) {
+			return;
+		}
+
+		$this->group_checkout_code = $group_checkout_code;
 		$wpdb->update(
 			$wpdb->pmprogroupacct_groups,
 			array(
-				'group_checkout_code' => $this->group_checkout_code,
+				'group_checkout_code' => $group_checkout_code,
 			),
 			array(
 				'id' => $this->id,
