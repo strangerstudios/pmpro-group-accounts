@@ -545,6 +545,42 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 	}
 
+	// If an admin is trying to restore membership for old users, process those changes.
+	$restore_membership_message = '';
+	if ( ! empty( $_REQUEST['pmprogroupacct_old_members_action_member_ids'] ) ) {
+		// Make sure that the nonce is valid.
+		if ( empty( $_REQUEST['pmprogroupacct_old_members_action_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_old_members_action_nonce'], 'pmprogroupacct_old_members_action' ) ) {
+			$restore_membership_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that the user is an admin.
+		if ( empty( $restore_membership_message ) && ! $is_admin ) {
+			$restore_membership_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to restore memberships for this group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that there is enough seats available in the group.
+		if ( empty( $restore_membership_message ) && ( $group->group_total_seats < $group->get_active_members( true ) + count( $_REQUEST['pmprogroupacct_old_members_action_member_ids'] ) ) ) {
+			$restore_membership_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Not enough seats available in this group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Process the restore membership action.
+		if ( empty( $restore_membership_message ) ) {
+			$member_ids = array_map( 'intval', $_REQUEST['pmprogroupacct_old_members_action_member_ids'] );
+			foreach ( $member_ids as $member_id ) {
+				// Get the member object.
+				$member = new PMProGroupAcct_Group_Member( $member_id );
+				if ( ! empty( $member ) ) {
+					// Restore the user's membership.
+					pmpro_changeMembershipLevel( $member->group_child_level_id, $member->group_child_user_id );
+					$member->update_group_child_status( 'active' );
+				}
+			}
+
+			// Show a success message.
+			$restore_membership_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Memberships restored for selected users.', 'pmpro-group-accounts' ) . '</div>';
+		}
+	}
+
 	// Get the active members in this group.
 	$active_members = $group->get_active_members();
 
@@ -566,6 +602,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			<?php echo empty( $generate_code_message ) ? '' : wp_kses_post( $generate_code_message ); ?>
 			<?php echo wp_kses_post( $invite_message ); ?>
 			<?php echo wp_kses_post( $create_member_message ); ?>
+			<?php echo wp_kses_post( $restore_membership_message ); ?>
 
 			<?php
 			// We want admins to have more settings, like the ability to change the number of seats.
@@ -922,45 +959,72 @@ function pmprogroupacct_shortcode_manage_group() {
 				<div id="pmprogroupacct_manage_group_old_members" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ); ?>">
 					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Old Members', 'pmpro-group-accounts' ); ?></h2>
 					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
-						<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
-							<thead>
-								<tr>
-									<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
-									<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								foreach ( $old_members as $member ) {
-									$user = get_userdata( $member->group_child_user_id );
-									if ( ! empty ( $user ) ) {
-										$user_login = $user->user_login;
-									} else {
-										$user_login = false;
-									}
-
-									$level = pmpro_getLevel( $member->group_child_level_id );
-									if ( ! empty( $level ) ) {
-										$level_name = $level->name;
-									} else {
-										$level_name = false;
-									}
-
-									// Skip this record if both the username and level name are false/deleted.
-									if ( ! $level_name && ! $user_login ) {
-										continue;
-									}
-
-									?>
+						<form method="post" id="pmprogroupacct_manage_group_old_members">
+							<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>" width="100%" cellpadding="0" cellspacing="0" border="0">
+								<thead>
 									<tr>
-										<td><?php echo ! empty( $user_login ) ? esc_html( $user_login ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
-										<td><?php echo ! empty( $level_name ) ? esc_html( $level_name ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+										<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
+										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+										<?php
+										// If the current user is an admin, allow them to re-add old members.
+										if ( $is_admin ) {
+											?>
+											<th><?php esc_html_e( 'Action', 'pmpro-group-accounts' ); ?></th>
+											<?php
+										}
+										?>
 									</tr>
+								</thead>
+								<tbody>
 									<?php
-								}
+									foreach ( $old_members as $member ) {
+										$user = get_userdata( $member->group_child_user_id );
+										if ( ! empty ( $user ) ) {
+											$user_login = $user->user_login;
+										} else {
+											$user_login = false;
+										}
+
+										$level = pmpro_getLevel( $member->group_child_level_id );
+										if ( ! empty( $level ) ) {
+											$level_name = $level->name;
+										} else {
+											$level_name = false;
+										}
+
+										// Skip this record if both the username and level name are false/deleted.
+										if ( ! $level_name && ! $user_login ) {
+											continue;
+										}
+
+										?>
+										<tr>
+											<td><?php echo ! empty( $user_login ) ? esc_html( $user_login ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+											<td><?php echo ! empty( $level_name ) ? esc_html( $level_name ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+											<?php
+											if ( $is_admin ) {
+												?>
+												<td><input type="checkbox" name="pmprogroupacct_old_members_action_member_ids[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
+												<?php
+											}
+											?>
+										</tr>
+										<?php
+									}
+									?>
+								</tbody>
+							</table>
+							<?php
+							if ( $is_admin ) {
 								?>
-							</tbody>
-						</table>
+								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+									<?php wp_nonce_field( 'pmprogroupacct_old_members_action', 'pmprogroupacct_old_members_action_nonce' ); ?>
+									<input type="submit" name="pmprogroupacct_old_members_restore_access_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Restore Membership for Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php echo ( esc_html__( 'Are you sure that you would like to restore group access for these users?', 'pmpro-group-accounts' ) . '\n\n' . esc_html__( 'This will assign a new membership level to each user which may cause their other membership levels to be removed and payment subscriptions to be terminated.', 'pmpro-group-accounts' ) ); ?>' );">
+								</div> <!-- end .pmpro_form_submit -->
+								<?php
+							}
+							?>
+						</form>
 					</div> <!-- end .pmpro_card_content -->
 				</div> 
 				<?php
