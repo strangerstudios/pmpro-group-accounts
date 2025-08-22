@@ -140,7 +140,12 @@ class PMProGroupAcct_Group_Member {
 		if ( ! empty( $where ) ) {
 			$sql_query .= ' WHERE ' . implode( ' AND ', $where );
 		}
-	
+
+		// If we're not counting, add the order by the status_updated column.
+		if ( empty( $args['return_count'] ) ) {
+			$sql_query .= ' ORDER BY status_updated DESC';
+		}
+
 		// Prepare the query.
 		if ( ! empty( $prepared ) ) {
 			$sql_query = $wpdb->prepare( $sql_query, $prepared );
