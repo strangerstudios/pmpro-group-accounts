@@ -18,6 +18,11 @@ function pmprogroupacct_check_for_upgrades() {
 		pmprogroupacct_db_delta();
 		update_option( 'pmprogroupacct_db_version', 1 );
 	}
+
+	if ( $db_version < 1.5 ) {
+		pmprogroupacct_db_delta();
+		update_option( 'pmprogroupacct_db_version', 1.5 );
+	}
 }
 
 /**
@@ -54,9 +59,11 @@ function pmprogroupacct_db_delta() {
 			`group_child_level_id` int(11) unsigned NOT NULL,
 			`group_id` bigint(20) unsigned NOT NULL,
 			`group_child_status` varchar(20) NOT NULL DEFAULT 'active',
+			`status_updated` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			PRIMARY KEY (`id`),
 			UNIQUE KEY `user_group` (`group_child_user_id`,`group_child_level_id`,`group_id`),
-			KEY `group_child_status` (`group_child_status`)
+			KEY `group_child_status` (`group_child_status`),
+			KEY `status_updated` (`status_updated`)
 		);
 	";
 	dbDelta( $sqlQuery );
