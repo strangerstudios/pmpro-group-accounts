@@ -53,6 +53,15 @@ class PMProGroupAcct_Group_Member {
 	protected $group_child_status;
 
 	/**
+	 * The datetime when the group member's status was last updated.
+	 *
+	 * @since TBD
+	 *
+	 * @var string
+	 */
+	protected $status_updated;
+
+	/**
 	 * Get a group member object by ID.
 	 *
 	 * @since 1.0
@@ -76,6 +85,7 @@ class PMProGroupAcct_Group_Member {
 				$this->group_child_level_id = (int)$data->group_child_level_id;
 				$this->group_id             = (int)$data->group_id;
 				$this->group_child_status   = $data->group_child_status;
+				$this->status_updated       = $data->status_updated;
 			}
 		}
 	}
@@ -271,11 +281,13 @@ class PMProGroupAcct_Group_Member {
 			$wpdb->pmprogroupacct_group_members,
 			array(
 				'group_child_status' => $group_child_status,
+				'status_updated'     => date( 'Y-m-d H:i:s' ),
 			),
 			array(
 				'id' => $this->id,
 			),
 			array(
+				'%s',
 				'%s',
 			),
 			array(

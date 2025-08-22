@@ -655,6 +655,7 @@ function pmprogroupacct_shortcode_manage_group() {
 									<tr>
 										<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
 										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+										<th><?php esc_html_e( 'Joined', 'pmpro-group-accounts' ); ?></th>
 										<th><?php esc_html_e( 'Action', 'pmpro-group-accounts' ); ?></th>
 									</tr>
 								</thead>
@@ -674,6 +675,7 @@ function pmprogroupacct_shortcode_manage_group() {
 										<tr>
 											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user_login ); ?></th>
 											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
+											<td data-title="<?php esc_attr_e( 'Joined', 'pmpro-group-accounts' ); ?>"><?php echo ( '0000-00-00 00:00:00' == $member->status_updated ) ? '&#8212;' : esc_html( wp_date( get_option( 'date_format' ), strtotime( $member->status_updated ) ) ); ?></td>
 											<td data-title="<?php esc_attr_e( 'Action', 'pmpro-group-accounts' ); ?>"><input type="checkbox" name="pmprogroupacct_action_user_ids[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
 										</tr>
 										<?php
@@ -965,6 +967,7 @@ function pmprogroupacct_shortcode_manage_group() {
 									<tr>
 										<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
 										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+										<th><?php esc_html_e( 'Removed', 'pmpro-group-accounts' ); ?></th>
 										<?php
 										// If the current user is an admin, allow them to re-add old members.
 										if ( $is_admin ) {
@@ -1001,6 +1004,7 @@ function pmprogroupacct_shortcode_manage_group() {
 										<tr>
 											<td><?php echo ! empty( $user_login ) ? esc_html( $user_login ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
 											<td><?php echo ! empty( $level_name ) ? esc_html( $level_name ) : esc_html__( '[deleted]', 'pmpro-group-accounts' ); ?></td>
+											<td><?php echo ( '0000-00-00 00:00:00' == $member->status_updated ) ? '&#8212;' : esc_html( wp_date( get_option( 'date_format' ), strtotime( $member->status_updated ) ) ); ?></td>
 											<?php
 											if ( $is_admin ) {
 												?>
