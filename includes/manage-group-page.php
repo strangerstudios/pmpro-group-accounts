@@ -569,7 +569,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			foreach ( $member_ids as $member_id ) {
 				// Get the member object.
 				$member = new PMProGroupAcct_Group_Member( $member_id );
-				if ( ! empty( $member ) ) {
+				if ( ! empty( $member->group_child_level_id ) && ! empty( $member->group_child_user_id ) ) {
 					// Restore the user's membership.
 					pmpro_changeMembershipLevel( $member->group_child_level_id, $member->group_child_user_id );
 					$member->update_group_child_status( 'active' );
@@ -1019,7 +1019,7 @@ function pmprogroupacct_shortcode_manage_group() {
 								?>
 								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
 									<?php wp_nonce_field( 'pmprogroupacct_old_members_action', 'pmprogroupacct_old_members_action_nonce' ); ?>
-									<input type="submit" name="pmprogroupacct_old_members_restore_access_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Restore Membership for Selected Members', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php echo ( esc_html__( 'Are you sure that you would like to restore group access for these users?', 'pmpro-group-accounts' ) . '\n\n' . esc_html__( 'This will assign a new membership level to each user which may cause their other membership levels to be removed and payment subscriptions to be terminated.', 'pmpro-group-accounts' ) ); ?>' );">
+									<input type="submit" name="pmprogroupacct_old_members_restore_access_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Restore Membership for Selected Members (Admin Only)', 'pmpro-group-accounts' ); ?>" onclick="return confirm( '<?php echo ( esc_html__( 'Are you sure that you would like to restore group access for these users?', 'pmpro-group-accounts' ) . '\n\n' . esc_html__( 'This will assign a new membership level to each user which may cause their other membership levels to be removed and payment subscriptions to be terminated.', 'pmpro-group-accounts' ) ); ?>' );">
 								</div> <!-- end .pmpro_form_submit -->
 								<?php
 							}
