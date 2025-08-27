@@ -189,7 +189,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			}
 		} elseif ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'transfer' ) {
 			// Make sure the current user is an admin.
-			if ( empty( $action_message) && ! $is_admin ) {
+			if ( empty( $action_message ) && ! $is_admin ) {
 				$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to transfer group members.', 'pmpro-group-accounts' ) . '</div>';
 			}
 
@@ -621,7 +621,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				<?php
 				// We're going to show a paginated list of group members.
 				$member_type = ( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ) ? 'inactive' : 'active';
-				$limit = apply_filters( 'pmpro_group_accounts_manage_group_members_per_page', 10 );
+				$limit = apply_filters( 'pmpro_group_accounts_manage_group_members_per_page', 2 );
 				$page  = empty( $_GET['pmprogroupacct_pn'] ) ? 1 : intval( $_GET['pmprogroupacct_pn'] );
 				$offset = ( $page - 1 ) * $limit;
 
@@ -674,7 +674,7 @@ function pmprogroupacct_shortcode_manage_group() {
 							</select>
 							<br>
 							<label for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search Members:', 'pmpro-group-accounts' ); ?></label>
-							<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ); ?>" placeholder="<?php esc_attr_e( 'Search by username', 'pmpro-group-accounts' ); ?>"/>
+							<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search by username', 'pmpro-group-accounts' ); ?>"/>
 							<br>
 							<input type="submit" value="<?php esc_attr_e( 'Filter', 'pmpro-group-accounts' ); ?>"/>
 						</form>
@@ -779,7 +779,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 										var submitButton = document.querySelector('input[name="pmprogroupacct_bulk_member_action_submit"]');
 										if (submitButton) {
-											// Remove any existing event liste
+											// Remove any existing event lister
 											submitButton.addEventListener('click', function(event) {
 												var selectedAction = bulkActionSelect.value;
 												if (selectedAction && confirmMessages[selectedAction]) {
@@ -803,7 +803,7 @@ function pmprogroupacct_shortcode_manage_group() {
 										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
 										<th><?php echo esc_html( 'active' === $member_type ? esc_html__( 'Joined', 'pmpro-group-accounts' ) : esc_html__( 'Removed', 'pmpro-group-accounts' ) ); ?></th>
 										<?php
-										if ( ! empty( $bulk_member_actions) ) {
+										if ( ! empty( $bulk_member_actions ) ) {
 											?>
 											<th><?php esc_html_e( 'Action', 'pmpro-group-accounts' ); ?></th>
 											<?php
@@ -829,7 +829,7 @@ function pmprogroupacct_shortcode_manage_group() {
 											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
 											<td data-title="<?php esc_attr_e( 'Joined', 'pmpro-group-accounts' ); ?>"><?php echo ( '0000-00-00 00:00:00' == $member->status_updated ) ? '&#8212;' : esc_html( wp_date( get_option( 'date_format' ), strtotime( $member->status_updated ) ) ); ?></td>
 											<?php
-											if ( ! empty( $bulk_member_actions) ) {
+											if ( ! empty( $bulk_member_actions ) ) {
 												?>
 												<td data-title="<?php esc_attr_e( 'Action', 'pmpro-group-accounts' ); ?>"><input type="checkbox" name="pmprogroupacct_action_user_ids[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
 												<?php
