@@ -102,6 +102,8 @@ class PMProGroupAcct_Group_Member {
 		global $wpdb;
 
 		$sql_query = empty( $args['return_count'] ) ? "SELECT id FROM {$wpdb->pmprogroupacct_group_members}" : "SELECT COUNT(id) FROM {$wpdb->pmprogroupacct_group_members}";
+		$limit     = empty( $args['limit'] ) ? 0 : (int) $args['limit'];
+		$offset     = empty( $args['offset'] ) ? 0 : (int) $args['offset'];
 
 		$prepared = array();
 		$where    = array();
@@ -141,9 +143,15 @@ class PMProGroupAcct_Group_Member {
 			$sql_query .= ' WHERE ' . implode( ' AND ', $where );
 		}
 
-		// If we're not counting, add the order by the status_updated column.
+		// If we're not counting, add the order by the status_updated column and add pagination.
 		if ( empty( $args['return_count'] ) ) {
 			$sql_query .= ' ORDER BY status_updated DESC';
+
+			if ( ! empty( $limit ) ) {
+				$sql_query .= ' LIMIT %d OFFSET %d';
+				$prepared[] = $limit;
+				$prepared[] = $offset;
+			}
 		}
 
 		// Prepare the query.
