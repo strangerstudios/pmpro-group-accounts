@@ -235,6 +235,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				foreach ( $group_members_to_update as $group_member ) {
 					// Restore the user's membership.
 					pmpro_changeMembershipLevel( $group_member->group_child_level_id, $group_member->group_child_user_id );
+					pmpro_do_action_after_all_membership_level_changes(); // Call the action to process any group removals from levels lost.
 					$group_member->update_group_child_status( 'active' );
 				}
 
