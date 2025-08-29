@@ -621,7 +621,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				<?php
 				// We're going to show a paginated list of group members.
 				$member_type = ( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ) ? 'inactive' : 'active';
-				$limit = apply_filters( 'pmpro_group_accounts_manage_group_members_per_page', 2 );
+				$limit = apply_filters( 'pmpro_group_accounts_manage_group_members_per_page', 10 );
 				$page  = empty( $_GET['pmprogroupacct_pn'] ) ? 1 : intval( $_GET['pmprogroupacct_pn'] );
 				$offset = ( $page - 1 ) * $limit;
 
@@ -643,6 +643,8 @@ function pmprogroupacct_shortcode_manage_group() {
 					if ( $user ) {
 						// Add the user filter to $get_members_to_show_args.
 						$get_members_to_show_args['group_child_user_id'] = $user->ID;
+					} else {
+						$get_members_to_show_args['group_child_user_id'] = -1; // No user found, so set to -1 to return no results.
 					}
 				}
 
@@ -660,155 +662,177 @@ function pmprogroupacct_shortcode_manage_group() {
 				?>
 				<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo esc_html( number_format_i18n( $active_member_count ) ) . '/' . esc_html( number_format_i18n( (int)$group->group_total_seats ) ); ?>)</h2>
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+					<form id="pmprogroupacct_filter_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ); ?>" action="<?php echo esc_url( pmpro_url( 'pmprogroupacct_manage_group' ) ) ?>" method="get">
+						<input type="hidden" name="pmprogroupacct_group_id" value="<?php echo esc_attr( $group->id ); ?>" />
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_actions_nav' ) ); ?>">
+							<div class="pmpro_actions_nav-left">
+								<label class="screen-reader-text" for="pmprogroupacct_manage_group_member_type"><?php esc_html_e( 'Show', 'pmpro-group-accounts' ); ?></label>
+								<select id="pmprogroupacct_manage_group_member_type" name="pmprogroupacct_manage_group_member_type" class="<?php echo pmpro_get_element_class( 'pmpro_form_select', 'pmprogroupacct_manage_group_member_type' ); ?>" onchange="this.form.submit();">
+									<option value="active" <?php selected( empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) || 'active' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Active Members', 'pmpro-group-accounts' ); ?></option>
+									<option value="inactive" <?php selected( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Old Members', 'pmpro-group-accounts' ); ?></option>
+								</select>
+							</div>
+							<div class="pmpro_actions_nav-right">
+								<label class="screen-reader-text" for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search for username or email', 'pmpro-group-accounts' ); ?></label>
+								<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search...', 'pmpro-group-accounts' ); ?>"/>
+
+								<input type="submit" value="<?php esc_attr_e( 'Search', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'button' ) ); ?>"/>
+							</div>
+						</div>
+					</form>
 					<?php
 					if ( empty( $members_to_show ) ) {
 						echo '<p>' . esc_html__( 'There are no members to show.', 'pmpro-group-accounts' ) . '</p>';
 					} else {
-					?>
-						<form id="pmprogroupacct_filter_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ); ?>" action="<?php echo esc_url( pmpro_url( 'pmprogroupacct_manage_group' ) ) ?>" method="get">
-							<input type="hidden" name="pmprogroupacct_group_id" value="<?php echo esc_attr( $group->id ); ?>" />
-							<label for="pmprogroupacct_manage_group_member_type"><?php esc_html_e( 'Show: ', 'pmpro-group-accounts' ); ?></label>
-							<select id="pmprogroupacct_manage_group_member_type" name="pmprogroupacct_manage_group_member_type" class="<?php echo pmpro_get_element_class( 'pmpro_form_select', 'pmprogroupacct_manage_group_member_type' ); ?>">
-								<option value="active" <?php selected( empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) || 'active' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Active Members', 'pmpro-group-accounts' ); ?></option>
-								<option value="inactive"<?php selected( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Old Members', 'pmpro-group-accounts' ); ?></option>
-							</select>
-							<br>
-							<label for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search Members:', 'pmpro-group-accounts' ); ?></label>
-							<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search by username', 'pmpro-group-accounts' ); ?>"/>
-							<br>
-							<input type="submit" value="<?php esc_attr_e( 'Filter', 'pmpro-group-accounts' ); ?>"/>
-						</form>
-						<p><?php echo esc_html( sprintf( __( 'Showing %d - %d of %d members', 'pmpro-group-accounts' ), $offset + 1, $offset + count( $members_to_show ), $member_type_count ) ); ?></p>
+						?>
 						<form id="pmprogroupacct_manage_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-							<?php
-							// Build the bulk member actions.
-							$bulk_member_actions = array();
-							if ( 'active' === $member_type ) {
-								// Remove members.
-								$bulk_member_actions[] = array(
-									'label'   => __( 'Remove', 'pmpro-group-accounts' ),
-									'confirm' => __( 'Are you sure you want to remove these users from the group?', 'pmpro-group-accounts' ),
-									'action'  => 'remove',
-								);
-
-								if ( $is_admin ) {
-									// Transfer members.
+							<div class="pmpro_actions_nav">
+								<?php
+								// Build the bulk member actions.
+								$bulk_member_actions = array();
+								if ( 'active' === $member_type ) {
+									// Remove members.
 									$bulk_member_actions[] = array(
-										'label'            => __( 'Transfer', 'pmpro-group-accounts' ),
-										'confirm'          => __( 'Are you sure you want to transfer these users to another group?', 'pmpro-group-accounts' ),
-										'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'input' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
-										'action'           => 'transfer',
+										'label'   => __( 'Remove', 'pmpro-group-accounts' ),
+										'confirm' => __( 'Are you sure you want to remove these users from the group?', 'pmpro-group-accounts' ),
+										'action'  => 'remove',
+									);
+
+									if ( $is_admin ) {
+										// Transfer members.
+										$bulk_member_actions[] = array(
+											'label'            => __( 'Transfer', 'pmpro-group-accounts' ),
+											'confirm'          => __( 'Are you sure you want to transfer these users to another group?', 'pmpro-group-accounts' ),
+											'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'input' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
+											'action'           => 'transfer',
+										);
+									}
+								} elseif ( $is_admin ) {
+									// Restore membership.
+									$bulk_member_actions[] = array(
+										'label'       => __( 'Restore', 'pmpro-group-accounts' ),
+										'confirm'     => __( 'Are you sure you want to restore these users to the group?', 'pmpro-group-accounts' ),
+										'action'      => 'restore',
 									);
 								}
-							} elseif ( $is_admin ) {
-								// Restore membership.
-								$bulk_member_actions[] = array(
-									'label'       => __( 'Restore', 'pmpro-group-accounts' ),
-									'confirm'     => __( 'Are you sure you want to restore these users to the group?', 'pmpro-group-accounts' ),
-									'action'      => 'restore',
-								);
-							}
 
-							// Display the bulk member actions in a select dropdown if there are any.
-							if ( ! empty( $bulk_member_actions ) ) {
-								?>
-								<div class="pmprogroupacct_bulk_member_actions">
-									<select name="pmprogroupacct_bulk_member_action" id="pmprogroupacct_bulk_member_action">
-										<option value=""><?php esc_html_e( 'Bulk actions', 'pmpro-group-accounts' ); ?></option>
+								// Display the bulk member actions in a select dropdown if there are any.
+								if ( ! empty( $bulk_member_actions ) ) {
+									?>
+									<div class="pmpro_actions_nav-left">
+										<label class="screen-reader-text" for="pmprogroupacct_bulk_member_action"><?php esc_html_e( 'Select bulk action', 'pmpro-group-accounts' ); ?></label>
+										<select name="pmprogroupacct_bulk_member_action" id="pmprogroupacct_bulk_member_action">
+											<option value=""><?php esc_html_e( 'Bulk actions', 'pmpro-group-accounts' ); ?></option>
+											<?php
+											foreach ( $bulk_member_actions as $action ) {
+												?>
+												<option value="<?php echo esc_attr( $action['action'] ); ?>" data-confirm="<?php echo esc_attr( $action['confirm'] ); ?>"><?php echo esc_html( $action['label'] ); ?></option>
+												<?php
+											}
+											?>
+										</select>
 										<?php
 										foreach ( $bulk_member_actions as $action ) {
-											?>
-											<option value="<?php echo esc_attr( $action['action'] ); ?>" data-confirm="<?php echo esc_attr( $action['confirm'] ); ?>"><?php echo esc_html( $action['label'] ); ?></option>
-											<?php
+											if ( ! empty( $action['conditional_html'] ) ) {
+												?>
+												<div class="pmprogroupacct_bulk_member_action_conditional pmprogroupacct_bulk_member_action_conditional_<?php echo esc_attr( $action['action'] ); ?>" style="display:none;">
+													<?php
+													echo wp_kses(
+														$action['conditional_html'], array(
+															'input' => array(
+																'type' => array(),
+																'name' => array(),
+																'class' => array(),
+																'placeholder' => array(),
+															)
+														)
+													);
+												?>
+												</div>
+												<?php
+											}
 										}
 										?>
-									</select>
-									<?php
-									foreach ( $bulk_member_actions as $action ) {
-										if ( ! empty( $action['conditional_html'] ) ) {
-											?>
-											<div class="pmprogroupacct_bulk_member_action_conditional pmprogroupacct_bulk_member_action_conditional_<?php echo esc_attr( $action['action'] ); ?>" style="display:none;">
-												<?php
-												echo wp_kses(
-													$action['conditional_html'], array(
-														'input' => array(
-															'type' => array(),
-															'name' => array(),
-															'class' => array(),
-															'placeholder' => array(),
-														)
-													)
-												);
-											?>
-											</div>
-											<?php
-										}
-									}
-									?>
-									<input type="submit" name="pmprogroupacct_bulk_member_action_submit" value="<?php esc_attr_e( 'Apply', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'button' ) ); ?>" />
-								</div>
-								<script>
-									// Logic to show conditional fields and switch confirm text.
-									document.addEventListener('DOMContentLoaded', function() {
-										var bulkActionSelect = document.getElementById('pmprogroupacct_bulk_member_action');
-										var conditionalDivs = document.querySelectorAll('.pmprogroupacct_bulk_member_action_conditional');
+										<input type="submit" name="pmprogroupacct_bulk_member_action_submit" value="<?php esc_attr_e( 'Apply', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'button' ) ); ?>" />
+									</div>
+									<script>
+										// Logic to show conditional fields and switch confirm text.
+										document.addEventListener('DOMContentLoaded', function() {
+											var bulkActionSelect = document.getElementById('pmprogroupacct_bulk_member_action');
+											var conditionalDivs = document.querySelectorAll('.pmprogroupacct_bulk_member_action_conditional');
 
-										bulkActionSelect.addEventListener('change', function() {
-											var selectedAction = this.value;
+											bulkActionSelect.addEventListener('change', function() {
+												var selectedAction = this.value;
 
-											conditionalDivs.forEach(function(div) {
-												div.style.display = 'none';
-											});
+												conditionalDivs.forEach(function(div) {
+													div.style.display = 'none';
+												});
 
-											if (selectedAction) {
-												var activeDiv = document.querySelector('.pmprogroupacct_bulk_member_action_conditional_' + selectedAction);
-												if (activeDiv) {
-													activeDiv.style.display = 'inline-block';
-												}
-											}
-										});
-
-										// Localize the confirmation messages into JS so that they can be attached to the submit button.
-										var confirmMessages = <?php
-											$confirm_messages = array();
-											foreach ( $bulk_member_actions as $action ) {
-												$confirm_messages[ $action['action'] ] = $action['confirm'];
-											}
-											echo wp_json_encode( $confirm_messages );
-										?>;
-
-										var submitButton = document.querySelector('input[name="pmprogroupacct_bulk_member_action_submit"]');
-										if (submitButton) {
-											// Remove any existing event lister
-											submitButton.addEventListener('click', function(event) {
-												var selectedAction = bulkActionSelect.value;
-												if (selectedAction && confirmMessages[selectedAction]) {
-													if (!confirm(confirmMessages[selectedAction])) {
-														event.preventDefault();
+												if (selectedAction) {
+													var activeDiv = document.querySelector('.pmprogroupacct_bulk_member_action_conditional_' + selectedAction);
+													if (activeDiv) {
+														activeDiv.style.display = 'inline-block';
 													}
 												}
 											});
-										}
-									});
-								</script>
-								<?php
-								// Add the nonce.
-								wp_nonce_field( 'pmprogroupacct_member_action', 'pmprogroupacct_member_action_nonce' );
-							}
-							?>
+
+											// Localize the confirmation messages into JS so that they can be attached to the submit button.
+											var confirmMessages = <?php
+												$confirm_messages = array();
+												foreach ( $bulk_member_actions as $action ) {
+													$confirm_messages[ $action['action'] ] = $action['confirm'];
+												}
+												echo wp_json_encode( $confirm_messages );
+											?>;
+
+											var submitButton = document.querySelector('input[name="pmprogroupacct_bulk_member_action_submit"]');
+											if (submitButton) {
+												// Remove any existing event lister
+												submitButton.addEventListener('click', function(event) {
+													var selectedAction = bulkActionSelect.value;
+													if (selectedAction && confirmMessages[selectedAction]) {
+														if (!confirm(confirmMessages[selectedAction])) {
+															event.preventDefault();
+														}
+													}
+												});
+											}
+
+											// Set up the select all checkbox
+											var selectAllCheckbox = document.getElementById('pmprogroupacct_select_all_members');
+											if (selectAllCheckbox) {
+												selectAllCheckbox.addEventListener('change', function() {
+													var memberCheckboxes = document.querySelectorAll('input[name="pmprogroupacct_action_user_ids[]"]');
+													memberCheckboxes.forEach(function(checkbox) {
+														checkbox.checked = selectAllCheckbox.checked;
+													});
+												});
+											}
+										});
+									</script>
+									<?php
+									// Add the nonce.
+									wp_nonce_field( 'pmprogroupacct_member_action', 'pmprogroupacct_member_action_nonce' );
+								}
+								// Show member count to the right of the actions. Use core WP class to float the text to the right.
+								?>
+								<div class="pmpro_actions_nav-right">
+									<span class="displaying-num"><?php echo esc_html( sprintf( __( 'Showing %d - %d of %d members', 'pmpro-group-accounts' ), $offset + 1, $offset + count( $members_to_show ), $member_type_count ) ); ?></span>
+								</div>
+							</div> <!-- end .tablenav .top -->
 							<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>">
 								<thead>
 									<tr>
-										<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
-										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
-										<th><?php echo esc_html( 'active' === $member_type ? esc_html__( 'Joined', 'pmpro-group-accounts' ) : esc_html__( 'Removed', 'pmpro-group-accounts' ) ); ?></th>
 										<?php
 										if ( ! empty( $bulk_member_actions ) ) {
 											?>
-											<th><?php esc_html_e( 'Action', 'pmpro-group-accounts' ); ?></th>
+											<th><label class="screen-reader-text" for="pmprogroupacct_select_all_members"><?php esc_html_e( 'Select All Members', 'pmpro-group-accounts' ); ?></label><input type="checkbox" id="pmprogroupacct_select_all_members" /></th>
 											<?php
 										}
 										?>
+										<th><?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?></th>
+										<th><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></th>
+										<th><?php echo esc_html( 'active' === $member_type ? esc_html__( 'Joined', 'pmpro-group-accounts' ) : esc_html__( 'Removed', 'pmpro-group-accounts' ) ); ?></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -825,9 +849,6 @@ function pmprogroupacct_shortcode_manage_group() {
 										$level = pmpro_getLevel( $member->group_child_level_id );
 										?>
 										<tr>
-											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user_login ); ?></th>
-											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
-											<td data-title="<?php esc_attr_e( 'Joined', 'pmpro-group-accounts' ); ?>"><?php echo ( '0000-00-00 00:00:00' == $member->status_updated ) ? '&#8212;' : esc_html( wp_date( get_option( 'date_format' ), strtotime( $member->status_updated ) ) ); ?></td>
 											<?php
 											if ( ! empty( $bulk_member_actions ) ) {
 												?>
@@ -835,6 +856,9 @@ function pmprogroupacct_shortcode_manage_group() {
 												<?php
 											}
 											?>
+											<th data-title="<?php esc_attr_e( 'Username', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $user_login ); ?></th>
+											<td data-title="<?php esc_attr_e( 'Level', 'pmpro-group-accounts' ); ?>"><?php echo esc_html( $level->name ); ?></td>
+											<td data-title="<?php esc_attr_e( 'Joined', 'pmpro-group-accounts' ); ?>"><?php echo ( '0000-00-00 00:00:00' == $member->status_updated ) ? '&#8212;' : esc_html( wp_date( get_option( 'date_format' ), strtotime( $member->status_updated ) ) ); ?></td>
 										</tr>
 										<?php
 									}
