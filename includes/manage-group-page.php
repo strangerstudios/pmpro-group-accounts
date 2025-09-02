@@ -140,12 +140,12 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action_submit'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_member_action_nonce'], 'pmprogroupacct_member_action' ) ) {
-			$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. No changes were made.', 'pmpro-group-accounts' ) . '</div>';
+			$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. No changes were made.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that we have user IDs.
 		if ( empty( $action_message ) && empty( $_REQUEST['pmprogroupacct_action_user_ids'] ) ) {
-			$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No users selected.', 'pmpro-group-accounts' ) . '</div>';
+			$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No users selected.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Get the group members.
@@ -158,16 +158,16 @@ function pmprogroupacct_shortcode_manage_group() {
 			// Make sure that each group member exists and that they have the group_id being edited.
 			foreach ( $group_members_to_update as $group_member ) {
 				if ( empty( $group_member->id ) ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'One or more of the selected records does not exist.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records does not exist.', 'pmpro-group-accounts' ) . '</div>';
 					break;
 				} elseif ( empty( $group_member->group_child_user_id ) ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'One or more of the selected records has an invalid user ID.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records has an invalid user ID.', 'pmpro-group-accounts' ) . '</div>';
 					break;
 				} elseif ( empty( $group_member->group_child_level_id ) ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'One or more of the selected records has an invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records has an invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
 					break;
 				} elseif ( $group_member->group_id !== $group->id ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'One or more of the selected records is part of a different group.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records is part of a different group.', 'pmpro-group-accounts' ) . '</div>';
 					break;
 				}
 			}
@@ -185,12 +185,12 @@ function pmprogroupacct_shortcode_manage_group() {
 						$group_member->update_group_child_status( 'inactive' );
 					}
 				}
-				$action_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group members removed.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group members removed.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		} elseif ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'transfer' ) {
 			// Make sure the current user is an admin.
 			if ( empty( $action_message ) && ! $is_admin ) {
-				$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to transfer group members.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to transfer group members.', 'pmpro-group-accounts' ) . '</div>';
 			}
 
 			// If there wasn't an error, get the group to transfer to.
@@ -199,11 +199,11 @@ function pmprogroupacct_shortcode_manage_group() {
 				$transfer_group_code = empty( $_REQUEST['pmprogroupacct_transfer_group_code'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_transfer_group_code'] );
 				$transfer_group = PMProGroupAcct_Group::get_group_by_checkout_code( $transfer_group_code );
 				if ( empty( $transfer_group ) ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid group code.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid group code.', 'pmpro-group-accounts' ) . '</div>';
 				} elseif ( $transfer_group->group_parent_level_id !== $group->group_parent_level_id ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You can only transfer group members to a group with the same level.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You can only transfer group members to a group with the same level.', 'pmpro-group-accounts' ) . '</div>';
 				} elseif ( $transfer_group->group_total_seats < $transfer_group->get_active_members( true ) + count( $group_members_to_update ) ) {
-					$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'There are not enough seats available in the group you are trying to transfer members to.', 'pmpro-group-accounts' ) . '</div>';
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'There are not enough seats available in the group you are trying to transfer members to.', 'pmpro-group-accounts' ) . '</div>';
 				}
 			}
 
@@ -217,17 +217,17 @@ function pmprogroupacct_shortcode_manage_group() {
 					// Add the group member to the new group.
 					PMProGroupAcct_Group_Member::create( $group_member->group_child_user_id, $group_member->group_child_level_id, $transfer_group->id );
 				}
-				$action_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group members transferred.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group members transferred.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		} elseif( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'restore' ) {
 			// Make sure the current user is an admin.
 			if ( empty( $action_message ) && ! $is_admin ) {
-				$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to restore group members.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to restore group members.', 'pmpro-group-accounts' ) . '</div>';
 			}
 
 			// Make sure that there is enough seats available in the group.
 			if ( empty( $action_message ) && ( $group->group_total_seats < $group->get_active_members( true ) + count( $group_members_to_update ) ) ) {
-				$action_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Not enough seats available in this group.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Not enough seats available in this group.', 'pmpro-group-accounts' ) . '</div>';
 			}
 
 			// Process the restore membership action.
@@ -240,7 +240,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				}
 
 				// Show a success message.
-				$action_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Memberships restored for selected users.', 'pmpro-group-accounts' ) . '</div>';
+				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Memberships restored for selected users.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		}
 	}
@@ -250,17 +250,17 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
 		// Make sure that the current user has permission to update this group.
 		if ( ! $is_admin ) {
-			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The number of seats has not been updated.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. The number of seats has not been updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the total seats is a number.
 		if ( ! is_numeric( $_REQUEST['pmprogroupacct_group_total_seats'] ) ) {
-			$seats_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Total seats must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Only make changes if the number of seats is different.
@@ -269,7 +269,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			$group->update_group_total_seats( (int)$_REQUEST['pmprogroupacct_group_total_seats'] );
 
 			// Show a success message.
-			$seats_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group seats updated.', 'pmpro-group-accounts' ) . '</div>';
+			$seats_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group seats updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 	}
 
@@ -277,12 +277,12 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_group_code'] ) && ! empty( $_REQUEST['pmprogroupacct_group_code'] ) ) {
 		// Make sure that the current user has permission to update this group.
 		if ( ! $is_admin ) {
-			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
+			$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to update this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
-			$group_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Unable to validate your request. The group code was not updated.', 'pmpro-group-accounts' ) . '</div>';
+			$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. The group code was not updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Only make changes if this is a different group code.
@@ -293,14 +293,14 @@ function pmprogroupacct_shortcode_manage_group() {
 			if ( empty( $existing_group ) ) {
 				// Update the group checkout code.
 				$group->update_group_checkout_code( $new_group_code );
-				$group_code_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Group code updated.', 'pmpro-group-accounts' ) . '</div>';
+				$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group code updated.', 'pmpro-group-accounts' ) . '</div>';
 			} else {
 				// Link to the "manage group" page for the existing group.
 				$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );
 				if ( ! empty( $manage_group_url ) ) {
-					$group_code_message = '<div class="pmpro_message pmpro_error">' . wp_kses_post( sprintf( __( 'The group code "%1$s" is already being used by another group. Please choose a different code or <a href="%2$s">manage group ID %3$d</a>.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_url( add_query_arg( 'pmprogroupacct_group_id', $existing_group->id, $manage_group_url ) ), esc_html( $existing_group->id ) ) ) . '</div>';
+					$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . wp_kses_post( sprintf( __( 'The group code "%1$s" is already being used by another group. Please choose a different code or <a href="%2$s">manage group ID %3$d</a>.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_url( add_query_arg( 'pmprogroupacct_group_id', $existing_group->id, $manage_group_url ) ), esc_html( $existing_group->id ) ) ) . '</div>';
 				} else {
-					$group_code_message = '<div class="pmpro_message pmpro_error">' . sprintf( esc_html__( 'The group code "%1$s" is already being used by another group. Please choose a different code or manage group ID %2$d.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_html( $existing_group->id ) ) . '</div>';
+					$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . sprintf( esc_html__( 'The group code "%1$s" is already being used by another group. Please choose a different code or manage group ID %2$d.', 'pmpro-group-accounts' ), esc_html( $new_group_code ), esc_html( $existing_group->id ) ) . '</div>';
 				}
 			}
 		}
@@ -311,27 +311,27 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( isset( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_invite_new_members_nonce'], 'pmprogroupacct_invite_new_members' ) ) {
-			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that a level ID was passed.
 		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
-			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</div>';
+			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the level ID is an integer.
 		if ( ! empty( $invite_message ) && ! is_numeric( $_REQUEST['pmprogroupacct_invite_new_members_level_id'] ) ) {
-			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Level ID must be a number.', 'pmpro-group-accounts' ) . '</div>';
+			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Level ID must be a number.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the level ID can be claimed using this group code.
 		if ( ! empty( $invite_message ) && ! in_array( (int)$_REQUEST['pmprogroupacct_invite_new_members_level_id'], array_map( 'intval', $group_settings['child_level_ids'] ), true ) ) {
-			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'This level cannot be claimed using this group code.', 'pmpro-group-accounts' ) . '</div>';
+			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'This level cannot be claimed using this group code.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that email addresses were passed.
 		if ( ! empty( $invite_message ) && empty( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
-			$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
+			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the email addresses are valid. Each should be on a new line.
@@ -357,7 +357,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				}
 			}
 			if ( empty( $valid_emails ) ) {
-				$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No valid email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
+				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No valid email addresses were passed.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		}
 
@@ -392,12 +392,12 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			$sent_emails = array_diff( $valid_emails, $failed_emails );
 			if ( empty( $sent_emails ) ) {
-				$invite_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Failed to send emails.', 'pmpro-group-accounts' ) . '</div>';
+				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Failed to send emails.', 'pmpro-group-accounts' ) . '</div>';
 			} elseif ( empty( $failed_emails ) && empty( $invalid_emails ) ) {
-				$invite_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</div>';
+				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</div>';
 			} else {
 				// Some emails were sent, but others were not. List the emails that were sent, the emails that failed to send, and the invalid emails.
-				$invite_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
+				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
 				foreach ( $sent_emails as $sent_email ) {
 					$invite_message .= '<li>' . esc_html( $sent_email ) . '</li>';
 				}
@@ -426,41 +426,41 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( ! empty( $_REQUEST['pmprogroupacct_create_member_submit'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( empty( $_REQUEST['pmprogroupacct_create_member_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_create_member_nonce'], 'pmprogroupacct_create_member' ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that there is an available seat in the group.
 		if ( ! empty( $create_member_message ) && $group->is_accepting_signups() ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No available seats in this group.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No available seats in this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that we have an email.
 		$email = empty( $_REQUEST['pmprogroupacct_create_member_email'] ) ? '' : sanitize_email( $_REQUEST['pmprogroupacct_create_member_email'] );
 		if ( empty( $create_member_message ) && empty( $email ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No email address provided.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No email address provided.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the email is valid.
 		if ( empty( $create_member_message ) && ! is_email( $email ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid email address.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid email address.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that we have a username.
 		$username = empty( $_REQUEST['pmprogroupacct_create_member_username'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_username'] );
 		if ( empty( $create_member_message ) && empty( $username ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid username.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid username.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that we have a password.
 		$password = empty( $_REQUEST['pmprogroupacct_create_member_password'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_password'] );
 		if ( empty( $create_member_message ) && empty( $password ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid password.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid password.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure we have a valid level ID for this group.
 		$level_id = empty( $_REQUEST['pmprogroupacct_create_member_level_id'] ) ? '' : intval( $_REQUEST['pmprogroupacct_create_member_level_id'] );
 		if ( empty( $create_member_message ) && ( empty( $level_id ) || ! in_array( $level_id, $group_settings['child_level_ids'], true ) ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// If we still don't have an error, create the user.
@@ -470,7 +470,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			// If user creation failed, show an error message.
 			if ( is_wp_error( $user_id ) ) {
-				$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Error creating user.', 'pmpro-group-accounts' ) . ' ' . $user_id->get_error_message() . '</div>';
+				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Error creating user.', 'pmpro-group-accounts' ) . ' ' . $user_id->get_error_message() . '</div>';
 			}
 		}
 
@@ -481,14 +481,14 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			// If changing the level failed, show an error message.
 			if ( empty( $change_level ) ) {
-				$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Error changing user level.', 'pmpro-group-accounts' );
+				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Error changing user level.', 'pmpro-group-accounts' );
 			}
 		}
 
 		// If we still don't have an error, add the user to the group.
 		if ( empty( $create_member_message ) ) {
 			PMProGroupAcct_Group_Member::create( $user_id, $level_id, $group->id );
-			$create_member_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'User created and added to group.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'User created and added to group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 	}
 
@@ -496,22 +496,22 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( ! empty( $_REQUEST['pmprogroupacct_add_existing_member_submit'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( empty( $_REQUEST['pmprogroupacct_add_existing_member_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_add_existing_member_nonce'], 'pmprogroupacct_add_existing_member' ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that the current user has permission to add existing members.
 		if ( empty( $create_member_message ) && ! $is_admin ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'You do not have permission to add existing members to this group.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to add existing members to this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that a user ID was passed.
 		if ( empty( $create_member_message ) && empty( $_REQUEST['pmprogroupacct_add_existing_member_username'] ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No username was passed.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No username was passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that a level ID was passed.
 		if ( empty( $create_member_message ) && empty( $_REQUEST['pmprogroupacct_add_existing_member_level_id'] ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No level ID was passed.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure this is a valid user.
@@ -520,7 +520,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			$username = sanitize_text_field( $_REQUEST['pmprogroupacct_add_existing_member_username'] );
 			$user = get_user_by( 'login', $username );
 			if ( empty( $user ) || empty( $user->ID ) ) {
-				$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid user.', 'pmpro-group-accounts' ) . '</div>';
+				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid user.', 'pmpro-group-accounts' ) . '</div>';
 			} else {
 				$user_id = $user->ID;
 			}
@@ -528,7 +528,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 		// Make sure that we have a valid level ID for this group.
 		if ( empty( $create_member_message ) && ! in_array( intval( $_REQUEST['pmprogroupacct_add_existing_member_level_id'] ), $group_settings['child_level_ids'], true ) ) {
-			$create_member_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid level ID.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Add the user to the group.
@@ -557,7 +557,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	if ( ! empty( $_REQUEST['pmprogroupacct_generate_new_group_code'] ) ) {
 		// Make sure that the nonce is valid.
 		if ( empty( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'], 'pmprogroupacct_generate_new_group_code' ) ) {
-			$generate_code_message = '<div class="pmpro_message pmpro_error">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
+			$generate_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Generate a new group code.
@@ -565,7 +565,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			$group->regenerate_group_checkout_code();
 
 			// Show a success message.
-			$generate_code_message = '<div class="pmpro_message pmpro_success">' . esc_html__( 'New group code generated.', 'pmpro-group-accounts' ) . '</div>';
+			$generate_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'New group code generated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 	}
 
@@ -595,21 +595,21 @@ function pmprogroupacct_shortcode_manage_group() {
 							?>
 						</p>
 						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
-						<form id="pmprogroupacct_manage_group_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_seats' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+						<form id="pmprogroupacct_manage_group_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_seats' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 							<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
-								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
-									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>">
 										<label for="pmprogroupacct_group_total_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Total Seats', 'pmpro-group-accounts' ); ?></label>
-										<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number', 'pmprogroupacct_group_total_seats' ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
+										<input type="number" max="4294967295" name="pmprogroupacct_group_total_seats" id="pmprogroupacct_group_total_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number', 'pmprogroupacct_group_total_seats' ) ); ?>" value="<?php echo esc_attr( $group->group_total_seats ); ?>">
 									</div> <!-- end .pmpro_form_field -->
-									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field' ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>">
 										<label for="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Group Code', 'pmpro-group-accounts' ); ?></label>
-										<input type="text" name="pmprogroupacct_group_code" id="pmprogroupacct_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_group_code' ); ?>" value="<?php echo esc_attr( $group->group_checkout_code ); ?>">
+										<input type="text" name="pmprogroupacct_group_code" id="pmprogroupacct_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input', 'pmprogroupacct_group_code' ) ); ?>" value="<?php echo esc_attr( $group->group_checkout_code ); ?>">
 									</div> <!-- end .pmpro_form_field -->
 								</div> <!-- end .pmpro_form_fields -->
-								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_submit' ) ); ?>">
 									<input type="hidden" name="pmprogroupacct_update_group_settings_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_update_group_settings' ) ); ?>">
-									<input type="submit" name="pmprogroupacct_update_group_settings_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Update Settings', 'pmpro-group-accounts' ); ?>">
+									<input type="submit" name="pmprogroupacct_update_group_settings_submit" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" value="<?php esc_attr_e( 'Update Settings', 'pmpro-group-accounts' ); ?>">
 								</div> <!-- end .pmpro_form_submit -->
 							</fieldset> <!-- end .pmpro_form_fieldset -->
 						</form>
@@ -663,21 +663,28 @@ function pmprogroupacct_shortcode_manage_group() {
 				?>
 				<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_title pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Group Members', 'pmpro-group-accounts' ); ?> (<?php echo esc_html( number_format_i18n( $active_member_count ) ) . '/' . esc_html( number_format_i18n( (int)$group->group_total_seats ) ); ?>)</h2>
 				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
-					<form id="pmprogroupacct_filter_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ); ?>" action="<?php echo esc_url( pmpro_url( 'pmprogroupacct_manage_group' ) ) ?>" method="get">
+					<form id="pmprogroupacct_filter_group_members" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ) ); ?>" action="<?php echo esc_url( pmpro_url( 'pmprogroupacct_manage_group' ) ) ?>" method="get">
 						<input type="hidden" name="pmprogroupacct_group_id" value="<?php echo esc_attr( $group->id ); ?>" />
-						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_actions_nav' ) ); ?>">
-							<div class="pmpro_actions_nav-left">
-								<label class="screen-reader-text" for="pmprogroupacct_manage_group_member_type"><?php esc_html_e( 'Show', 'pmpro-group-accounts' ); ?></label>
-								<select id="pmprogroupacct_manage_group_member_type" name="pmprogroupacct_manage_group_member_type" class="<?php echo pmpro_get_element_class( 'pmpro_form_select', 'pmprogroupacct_manage_group_member_type' ); ?>" onchange="this.form.submit();">
-									<option value="active" <?php selected( empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) || 'active' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Active Members', 'pmpro-group-accounts' ); ?></option>
-									<option value="inactive" <?php selected( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Old Members', 'pmpro-group-accounts' ); ?></option>
-								</select>
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_filters' ) ); ?>">
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_filter-left' ) ); ?>">
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ) ); ?>">
+										<label class="screen-reader-text" for="pmprogroupacct_manage_group_member_type"><?php esc_html_e( 'Show', 'pmpro-group-accounts' ); ?></label>
+										<select id="pmprogroupacct_manage_group_member_type" name="pmprogroupacct_manage_group_member_type" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select', 'pmprogroupacct_manage_group_member_type' ) ); ?>" onchange="this.form.submit();">
+											<option value="active" <?php selected( empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) || 'active' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Active Members', 'pmpro-group-accounts' ); ?></option>
+											<option value="inactive" <?php selected( ! empty( $_REQUEST['pmprogroupacct_manage_group_member_type'] ) && 'inactive' === $_REQUEST['pmprogroupacct_manage_group_member_type'] ); ?>><?php esc_html_e( 'Show Old Members', 'pmpro-group-accounts' ); ?></option>
+										</select>
+									</div>
+								</div>
 							</div>
-							<div class="pmpro_actions_nav-right">
-								<label class="screen-reader-text" for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search for username or email', 'pmpro-group-accounts' ); ?></label>
-								<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search...', 'pmpro-group-accounts' ); ?>"/>
-
-								<input type="submit" value="<?php esc_attr_e( 'Search', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'button' ) ); ?>"/>
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_filter-right' ) ); ?>">
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields pmpro_form_fields-inline' ) ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-search' ) ); ?>">
+										<label class="screen-reader-text" for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search for username or email', 'pmpro-group-accounts' ); ?></label>
+										<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search...', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-search', 'pmprogroupacct_group_member_search' ) ); ?>"/>
+									</div>
+									<input type="submit" value="<?php esc_attr_e( 'Search', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
+								</div>
 							</div>
 						</div>
 					</form>
@@ -686,8 +693,8 @@ function pmprogroupacct_shortcode_manage_group() {
 						echo '<p>' . esc_html__( 'There are no members to show.', 'pmpro-group-accounts' ) . '</p>';
 					} else {
 						?>
-						<form id="pmprogroupacct_manage_group_members" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
-							<div class="pmpro_actions_nav">
+						<form id="pmprogroupacct_manage_group_members" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_members' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_filters' ) ); ?>">
 								<?php
 								// Build the bulk member actions.
 								$bulk_member_actions = array();
@@ -704,7 +711,7 @@ function pmprogroupacct_shortcode_manage_group() {
 										$bulk_member_actions[] = array(
 											'label'            => __( 'Transfer', 'pmpro-group-accounts' ),
 											'confirm'          => __( 'Are you sure you want to transfer these users to another group?', 'pmpro-group-accounts' ),
-											'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'input' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
+											'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-checkbox' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
 											'action'           => 'transfer',
 										);
 									}
@@ -720,41 +727,45 @@ function pmprogroupacct_shortcode_manage_group() {
 								// Display the bulk member actions in a select dropdown if there are any.
 								if ( ! empty( $bulk_member_actions ) ) {
 									?>
-									<div class="pmpro_actions_nav-left">
-										<label class="screen-reader-text" for="pmprogroupacct_bulk_member_action"><?php esc_html_e( 'Select bulk action', 'pmpro-group-accounts' ); ?></label>
-										<select name="pmprogroupacct_bulk_member_action" id="pmprogroupacct_bulk_member_action">
-											<option value=""><?php esc_html_e( 'Bulk actions', 'pmpro-group-accounts' ); ?></option>
-											<?php
-											foreach ( $bulk_member_actions as $action ) {
-												?>
-												<option value="<?php echo esc_attr( $action['action'] ); ?>" data-confirm="<?php echo esc_attr( $action['confirm'] ); ?>"><?php echo esc_html( $action['label'] ); ?></option>
-												<?php
-											}
-											?>
-										</select>
-										<?php
-										foreach ( $bulk_member_actions as $action ) {
-											if ( ! empty( $action['conditional_html'] ) ) {
-												?>
-												<div class="pmprogroupacct_bulk_member_action_conditional pmprogroupacct_bulk_member_action_conditional_<?php echo esc_attr( $action['action'] ); ?>" style="display:none;">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_filters-left' ) ); ?>">
+										<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields pmpro_form_fields-inline' ) ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ) ); ?>">
+												<label class="screen-reader-text" for="pmprogroupacct_bulk_member_action"><?php esc_html_e( 'Select bulk action', 'pmpro-group-accounts' ); ?></label>
+												<select name="pmprogroupacct_bulk_member_action" id="pmprogroupacct_bulk_member_action" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>">
+													<option value=""><?php esc_html_e( 'Bulk actions', 'pmpro-group-accounts' ); ?></option>
 													<?php
-													echo wp_kses(
-														$action['conditional_html'], array(
-															'input' => array(
-																'type' => array(),
-																'name' => array(),
-																'class' => array(),
-																'placeholder' => array(),
-															)
-														)
-													);
-												?>
-												</div>
-												<?php
-											}
-										}
-										?>
-										<input type="submit" name="pmprogroupacct_bulk_member_action_submit" value="<?php esc_attr_e( 'Apply', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'button' ) ); ?>" />
+													foreach ( $bulk_member_actions as $action ) {
+														?>
+														<option value="<?php echo esc_attr( $action['action'] ); ?>" data-confirm="<?php echo esc_attr( $action['confirm'] ); ?>"><?php echo esc_html( $action['label'] ); ?></option>
+														<?php
+													}
+													?>
+												</select>
+											</div>
+											<?php
+												foreach ( $bulk_member_actions as $action ) {
+													if ( ! empty( $action['conditional_html'] ) ) {
+														?>
+														<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmprogroupacct_bulk_member_action_conditional 	pmprogroupacct_bulk_member_action_conditional_' . $action['action'] ) ); ?>" style="display:none;">
+															<?php
+															echo wp_kses(
+																$action['conditional_html'], array(
+																	'input' => array(
+																		'type' => array(),
+																		'name' => array(),
+																		'class' => array(),
+																		'placeholder' => array(),
+																	)
+																)
+															);
+														?>
+														</div>
+														<?php
+													}
+												}
+											?>
+											<input type="submit" name="pmprogroupacct_bulk_member_action_submit" value="<?php esc_attr_e( 'Apply', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
+										</div>
 									</div>
 									<script>
 										// Logic to show conditional fields and switch confirm text.
@@ -815,19 +826,18 @@ function pmprogroupacct_shortcode_manage_group() {
 									// Add the nonce.
 									wp_nonce_field( 'pmprogroupacct_member_action', 'pmprogroupacct_member_action_nonce' );
 								}
-								// Show member count to the right of the actions. Use core WP class to float the text to the right.
 								?>
-								<div class="pmpro_actions_nav-right">
-									<span class="displaying-num"><?php echo esc_html( sprintf( __( 'Showing %d - %d of %d members', 'pmpro-group-accounts' ), $offset + 1, $offset + count( $members_to_show ), $member_type_count ) ); ?></span>
-								</div>
-							</div> <!-- end .tablenav .top -->
+							</div>
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_data_count' ) ); ?>">
+								<?php echo esc_html( sprintf( __( 'Showing %d - %d of %d members', 'pmpro-group-accounts' ), $offset + 1, $offset + count( $members_to_show ), $member_type_count ) ); ?>
+							</div>
 							<table class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_table' ) ); ?>">
 								<thead>
 									<tr>
 										<?php
 										if ( ! empty( $bulk_member_actions ) ) {
 											?>
-											<th><label class="screen-reader-text" for="pmprogroupacct_select_all_members"><?php esc_html_e( 'Select All Members', 'pmpro-group-accounts' ); ?></label><input type="checkbox" id="pmprogroupacct_select_all_members" /></th>
+											<th><label class="screen-reader-text" for="pmprogroupacct_select_all_members"><?php esc_html_e( 'Select All Members', 'pmpro-group-accounts' ); ?></label><input type="checkbox" id="pmprogroupacct_select_all_members" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-checkbox' ) ); ?>" /></th>
 											<?php
 										}
 										?>
@@ -853,7 +863,10 @@ function pmprogroupacct_shortcode_manage_group() {
 											<?php
 											if ( ! empty( $bulk_member_actions ) ) {
 												?>
-												<td data-title="<?php esc_attr_e( 'Action', 'pmpro-group-accounts' ); ?>"><input type="checkbox" name="pmprogroupacct_action_user_ids[]" class="<?php echo pmpro_get_element_class( 'input' ); ?>" value="<?php echo esc_attr( $member->id ); ?>"></td>
+												<td data-title="<?php esc_attr_e( 'Action', 'pmpro-group-accounts' ); ?>">
+													<label class="screen-reader-text" for="pmprogroupacct_action_user_<?php echo esc_attr( $member->id ); ?>"><?php printf( esc_html__( 'Select Member %s', 'pmpro-group-accounts' ), esc_html( $user_login ) ); ?></label>
+													<input type="checkbox" id="pmprogroupacct_action_user_<?php echo esc_attr( $member->id ); ?>" name="pmprogroupacct_action_user_ids[]" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-checkbox' ) ); ?>" value="<?php echo esc_attr( $member->id ); ?>">
+												</td>
 												<?php
 											}
 											?>
@@ -920,7 +933,7 @@ function pmprogroupacct_shortcode_manage_group() {
 							<?php
 							// Show the group code and the levels that can be claimed with links to checkout for those levels.
 							?>
-							<form id="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_generate_new_group_code' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+							<form id="pmprogroupacct_generate_new_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_generate_new_group_code' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 								<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Generate a New Group Code', 'pmpro-group-accounts' ); ?></h3>
 								<p><?php esc_html_e( 'Generate a new group code to prevent new members from joining your group with the current code. Your existing group members will remain in your group. This action is permanent and cannot be reversed.', 'pmpro-group-accounts' ); ?></p>
 
@@ -930,8 +943,8 @@ function pmprogroupacct_shortcode_manage_group() {
 
 								// Show group code regenerate button.
 								?>
-								<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
-									<input type="submit" name="pmprogroupacct_generate_new_group_code" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Generate New Group Code', 'pmpro-group-accounts' ); ?>">
+								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_submit' ) ); ?>">
+									<input type="submit" name="pmprogroupacct_generate_new_group_code" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" value="<?php esc_attr_e( 'Generate New Group Code', 'pmpro-group-accounts' ); ?>">
 								</div> <!-- end .pmpro_form_submit -->
 							</form>
 
@@ -944,10 +957,10 @@ function pmprogroupacct_shortcode_manage_group() {
 							?>
 							<div id="pmprogroupacct_manage_group_invite_members">
 								<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Invite New Members via Email', 'pmpro-group-accounts' ); ?></h3>
-								<form id="pmprogroupacct_manage_group_invites" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_invites' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+								<form id="pmprogroupacct_manage_group_invites" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_invites' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 									<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
-										<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
-											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-textarea' ); ?>">
+										<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-textarea' ) ); ?>">
 												<label for="pmprogroupacct_invite_new_members_emails" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Email Addresses', 'pmpro-group-accounts' ); ?></label>
 												<textarea rows="5" name="pmprogroupacct_invite_new_members_emails" id="pmprogroupacct_invite_new_members_emails" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-textarea', 'pmprogroupacct_invite_new_members_emails' ) ); ?>"></textarea>
 												<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>"><?php esc_html_e( 'Enter one email address per line.', 'pmpro-group-accounts' ); ?></p>
@@ -960,7 +973,7 @@ function pmprogroupacct_shortcode_manage_group() {
 												<?php
 											} else {
 												?>
-												<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ); ?>">
+												<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ) ); ?>">
 													<label for="pmprogroupacct_invite_new_members_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label', 'pmprogroupacct_invite_new_members_level_id' ) ); ?>"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
 													<select name="pmprogroupacct_invite_new_members_level_id" id="pmprogroupacct_invite_new_members_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>">
 														<?php
@@ -981,9 +994,9 @@ function pmprogroupacct_shortcode_manage_group() {
 											?>
 										</div> <!-- end .pmpro_form_fields -->
 									</fieldset> <!-- end .pmpro_form_fieldset -->
-									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_submit' ) ); ?>">
 										<input type="hidden" name="pmprogroupacct_invite_new_members_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_invite_new_members' ) ); ?>">
-										<input type="submit" name="pmprogroupacct_invite_new_members_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
+										<input type="submit" name="pmprogroupacct_invite_new_members_submit" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" value="<?php esc_attr_e( 'Invite New Members', 'pmpro-group-accounts' ); ?>">
 									</div> <!-- end .pmpro_form_submit -->
 								</form> <!-- end #pmprogroupacct_manage_group_invites -->
 							</div> <!-- end #pmprogroupacct_manage_group_invite_members -->
@@ -994,29 +1007,29 @@ function pmprogroupacct_shortcode_manage_group() {
 							?>
 							<div id="pmprogroupacct_manage_group_create_member">
 								<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Create a New Group Member', 'pmpro-group-accounts' ); ?></h3>
-								<form id="pmprogroupacct_create_member" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_create_member' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+								<form id="pmprogroupacct_create_member" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_create_member' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 									<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
-										<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
-											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-username pmpro_form_field-required' ); ?>">
+										<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-username pmpro_form_field-required' ) ); ?>">
 												<label for="pmprogroupacct_create_member_username" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
 													<?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?>
 													<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-group-accounts' ); ?>">*</abbr></span>
 												</label>
-												<input type="text" name="pmprogroupacct_create_member_username" id="pmprogroupacct_create_member_username" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_form_input-required', 'pmprogroupacct_create_member_username' ); ?>">
+												<input type="text" name="pmprogroupacct_create_member_username" id="pmprogroupacct_create_member_username" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_form_input-required', 'pmprogroupacct_create_member_username' ) ); ?>">
 											</div> <!-- end .pmpro_form_field -->
-											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-email pmpro_form_field-required' ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-email pmpro_form_field-required' ) ); ?>">
 												<label for="pmprogroupacct_create_member_email" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
 													<?php esc_html_e( 'Email', 'pmpro-group-accounts' ); ?>
 													<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-group-accounts' ); ?>">*</abbr></span>
 												</label>
-												<input type="email" name="pmprogroupacct_create_member_email" id="pmprogroupacct_create_member_email" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-email pmpro_form_input-required', 'pmprogroupacct_create_member_email' ); ?>">
+												<input type="email" name="pmprogroupacct_create_member_email" id="pmprogroupacct_create_member_email" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-email pmpro_form_input-required', 'pmprogroupacct_create_member_email' ) ); ?>">
 											</div> <!-- end .pmpro_form_field -->
-											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-password pmpro_form_field-required' ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-password pmpro_form_field-required' ) ); ?>">
 												<label for="pmprogroupacct_create_member_password" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
 													<?php esc_html_e( 'Password', 'pmpro-group-accounts' ); ?>
 													<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-group-accounts' ); ?>">*</abbr></span>
 												</label>
-												<input type="password" name="pmprogroupacct_create_member_password" id="pmprogroupacct_create_member_password" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-password pmpro_form_input-required', 'pmprogroupacct_create_member_password' ); ?>">
+												<input type="password" name="pmprogroupacct_create_member_password" id="pmprogroupacct_create_member_password" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-password pmpro_form_input-required', 'pmprogroupacct_create_member_password' ) ); ?>">
 											</div> <!-- end .pmpro_form_field -->
 											<?php
 											// Just one child level in the group? Show as a hidden field.
@@ -1026,7 +1039,7 @@ function pmprogroupacct_shortcode_manage_group() {
 												<?php
 											} else {
 												?>
-												<div class="<?php echo pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ); ?>">
+												<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-select' ) ); ?>">
 													<label for="pmprogroupacct_create_member_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label', 'pmprogroupacct_create_member_level_id' ) ); ?>"><?php esc_html_e( 'Level', 'pmpro-group-accounts' ); ?></label>
 													<select name="pmprogroupacct_create_member_level_id" id="pmprogroupacct_create_member_level_id" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-select' ) ); ?>">
 														<?php
@@ -1047,9 +1060,9 @@ function pmprogroupacct_shortcode_manage_group() {
 											?>
 										</div> <!-- end .pmpro_form_fields -->
 									</fieldset> <!-- end .pmpro_form_fieldset -->
-									<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_submit' ) ); ?>">
 										<input type="hidden" name="pmprogroupacct_create_member_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_create_member' ) ); ?>">
-										<input type="submit" name="pmprogroupacct_create_member_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Create New Member', 'pmpro-group-accounts' ); ?>">
+										<input type="submit" name="pmprogroupacct_create_member_submit" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" value="<?php esc_attr_e( 'Create New Member', 'pmpro-group-accounts' ); ?>">
 									</div> <!-- end .pmpro_form_submit -->
 								</form> <!-- end #pmprogroupacct_create_member -->
 							</div> <!-- end #pmprogroupacct_manage_group_create_member -->
@@ -1063,15 +1076,15 @@ function pmprogroupacct_shortcode_manage_group() {
 									<h3 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Add Existing User to Group (Admin Only)', 'pmpro-group-accounts' ); ?></h3>
 									<p><?php esc_html_e( 'This will assign a new membership level to the user which may cause their other membership levels to be removed and payment subscriptions to be terminated.', 'pmpro-group-accounts' ); ?></p>
 									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_spacer' ) ); ?>"></div>
-									<form id="pmprogroupacct_add_existing_member" class="<?php echo pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_add_existing_member' ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
+									<form id="pmprogroupacct_add_existing_member" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form', 'pmprogroupacct_manage_group_add_existing_member' ) ); ?>" action="<?php echo esc_url( add_query_arg( 'pmprogroupacct_group_id', $group->id, pmpro_url( 'pmprogroupacct_manage_group' ) ) ) ?>" method="post">
 										<fieldset class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset' ) ); ?>">
-											<div class="<?php echo pmpro_get_element_class( 'pmpro_form_fields' ); ?>">
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
 												<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-username pmpro_form_field-required' ) ); ?>">
 													<label for="pmprogroupacct_add_existing_member_username" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
 														<?php esc_html_e( 'Username', 'pmpro-group-accounts' ); ?>
 														<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-group-accounts' ); ?>">*</abbr></span>
 													</label>
-													<input type="text" name="pmprogroupacct_add_existing_member_username" id="pmprogroupacct_add_existing_member_username" class="<?php echo pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_form_input-required', 'pmprogroupacct_add_existing_member_username' ); ?>">
+													<input type="text" name="pmprogroupacct_add_existing_member_username" id="pmprogroupacct_add_existing_member_username" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text pmpro_form_input-required', 'pmprogroupacct_add_existing_member_username' ) ); ?>">
 													<br>
 												</div> <!-- end .pmpro_form_field -->
 												<?php
@@ -1103,9 +1116,9 @@ function pmprogroupacct_shortcode_manage_group() {
 												?>
 											</div> <!-- end .pmpro_form_fields -->
 										</fieldset> <!-- end .pmpro_form_fieldset -->
-										<div class="<?php echo pmpro_get_element_class( 'pmpro_form_submit' ); ?>">
+										<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_submit' ) ); ?>">
 											<input type="hidden" name="pmprogroupacct_add_existing_member_nonce" value="<?php echo esc_attr( wp_create_nonce( 'pmprogroupacct_add_existing_member' ) ); ?>">
-											<input type="submit" name="pmprogroupacct_add_existing_member_submit" class="<?php echo pmpro_get_element_class( 'pmpro_btn' ); ?>" value="<?php esc_attr_e( 'Add Existing Member', 'pmpro-group-accounts' ); ?>">
+											<input type="submit" name="pmprogroupacct_add_existing_member_submit" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" value="<?php esc_attr_e( 'Add Existing Member', 'pmpro-group-accounts' ); ?>">
 										</div> <!-- end .pmpro_form_submit -->
 									</form> <!-- end #pmprogroupacct_add_existing_member -->
 								</div> <!-- end #pmprogroupacct_manage_group_add_existing_member -->
