@@ -887,7 +887,18 @@ function pmprogroupacct_shortcode_manage_group() {
 									?>
 								</tbody>
 							</table>
-							<?php echo wp_kses_post( pmpro_getPaginationString( $page, $member_type_count, $limit, 1, add_query_arg( 'pmprogroupacct_group_id', $group->id, get_permalink() ), '&pmprogroupacct_pn=' ) ); ?>
+							<?php
+							$pagination_url_args = array(
+								'pmprogroupacct_group_id' => $group->id,
+							);
+							if ( $member_type === 'inactive' ) {
+								$pagination_url_args['pmprogroupacct_manage_group_member_type'] = 'inactive';
+							}
+							if ( ! empty( $search_param ) ) {
+								$pagination_url_args['pmprogroupacct_group_member_search'] = $search_param;
+							}
+							echo wp_kses_post( pmpro_getPaginationString( $page, $member_type_count, $limit, 1, add_query_arg( $pagination_url_args, get_permalink() ), '&pmprogroupacct_pn=' ) );
+							?>
 						</form>
 					<?php
 					}
