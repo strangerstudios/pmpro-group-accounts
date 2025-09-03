@@ -707,13 +707,19 @@ function pmprogroupacct_shortcode_manage_group() {
 									);
 
 									if ( $is_admin ) {
-										// Transfer members.
-										$bulk_member_actions[] = array(
-											'label'            => __( 'Transfer', 'pmpro-group-accounts' ),
-											'confirm'          => __( 'Are you sure you want to transfer these users to another group?', 'pmpro-group-accounts' ),
-											'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-checkbox' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
-											'action'           => 'transfer',
-										);
+										// Only allow transferring members if there is more than one group on the site.
+										$groups = PMProGroupAcct_Group::get_groups( array(
+											'limit' => 2
+										) );
+										if ( count( $groups ) > 1 ) {
+											// Transfer members.
+											$bulk_member_actions[] = array(
+												'label'            => __( 'Transfer', 'pmpro-group-accounts' ),
+												'confirm'          => __( 'Are you sure you want to transfer these users to another group?', 'pmpro-group-accounts' ),
+												'conditional_html' => '<input type="text" name="pmprogroupacct_transfer_group_id" class="' . esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-checkbox' ) ) . '" placeholder="' . esc_attr__( 'Enter Group ID', 'pmpro-group-accounts' ) . '" />',
+												'action'           => 'transfer',
+											);
+										}
 									}
 								} elseif ( $is_admin ) {
 									// Restore membership.
