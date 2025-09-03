@@ -107,6 +107,8 @@ add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
  * @return string $content Content for the shortcode.
  */
 function pmprogroupacct_shortcode_manage_group() {
+	global $wpdb;
+
 	// Make sure that PMPro is enabled.
 	if ( ! function_exists( 'pmpro_get_element_class' ) ) {
 		return '<p>' . esc_html__( 'Paid Memberships Pro must be enabled to use the Group Accounts Add On.', 'pmpro-group-accounts' ) . '</p>';
@@ -637,16 +639,16 @@ function pmprogroupacct_shortcode_manage_group() {
 				// If we were passed a username or email, get the user ID.
 				$user_id = 0;
 				if ( ! empty( $_REQUEST['pmprogroupacct_group_member_search'] ) ) {
-					$user = get_user_by( 'login', sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ) );
-					if ( ! $user ) {
-						$user = get_user_by( 'email', sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ) );
-					}
-					if ( $user ) {
-						// Add the user filter to $get_members_to_show_args.
-						$get_members_to_show_args['group_child_user_id'] = $user->ID;
-					} else {
-						$get_members_to_show_args['group_child_user_id'] = -1; // No user found, so set to -1 to return no results.
-					}
+					$search_param = sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] );
+					$user_search_query = $wpdb->prepare(
+						"SELECT ID FROM {$wpdb->users} WHERE user_login LIKE %s OR user_email LIKE %s OR user_nicename LIKE %s OR display_name LIKE %s",
+						'%' . $search_param . '%',
+						'%' . $search_param . '%',
+						'%' . $search_param . '%',
+						'%' . $search_param . '%'
+					);
+					$results = $wpdb->get_col( $user_search_query );
+					$get_members_to_show_args['group_child_user_id'] = empty( $results ) ? -1 : $results;
 				}
 
 				// Get the array of group members to show.

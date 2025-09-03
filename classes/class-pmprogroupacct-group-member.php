@@ -116,8 +116,14 @@ class PMProGroupAcct_Group_Member {
 	
 		// Filter by user ID.
 		if ( isset( $args['group_child_user_id'] ) ) {
-			$where[]    = 'group_child_user_id = %d';
-			$prepared[] = $args['group_child_user_id'];
+			if ( is_array( $args['group_child_user_id'] ) ) {
+				$placeholders = implode( ',', array_fill( 0, count( $args['group_child_user_id'] ), '%d' ) );
+				$where[]      = "group_child_user_id IN ($placeholders)";
+				$prepared     = array_merge( $prepared, $args['group_child_user_id'] );
+			} else {
+				$where[]    = 'group_child_user_id = %d';
+				$prepared[] = $args['group_child_user_id'];
+			}
 		}
 	
 		// Filter by level ID.
