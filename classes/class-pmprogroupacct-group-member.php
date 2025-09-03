@@ -233,11 +233,13 @@ class PMProGroupAcct_Group_Member {
 				'group_child_level_id' => (int)$group_child_level_id,
 				'group_id' => (int)$group_id,
 				'group_child_status'   => 'active',
+				'status_updated'       => date( 'Y-m-d H:i:s' ),
 			),
 			array(
 				'%d',
 				'%d',
 				'%d',
+				'%s',
 				'%s',
 			)
 		);
