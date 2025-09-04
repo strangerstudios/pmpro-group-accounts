@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 1.4.1
+Stable tag: 1.5
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,15 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.5 - 2025-09-04 =
+* FEATURE: Admins can now migrate users between groups on the Manage Group page. #69 (@dparker1005)
+* FEATURE: Admins can now add existing users to a group on the Manage Group page. #69 (@dparker1005)
+* ENHANCEMENT: Now showing the date that a user joined or left a group on the Group Members table. #74 (@dparker1005)
+* ENHANCEMENT: Now allowing filtering the Group Members table by current members and old members. #77 (@dparker1005, @kimcoleman)
+* ENHANCEMENT: Added search capabilities to the Group Members table. #77 (@dparker1005, @kimcoleman)
+* ENHANCEMENT: Added pagination to the Group Members table. #77 (@dparker1005, @kimcoleman)
+* ENHANCEMENT: Child memberships are now removed asynchronously via Action Scheduler when a group parent loses their membership level to avoid timeouts. #71 (@dparker1005)
+
 = 1.4.1 - 2025-08-07 =
 * ENHANCEMENT: Now allowing sending test emails when editing the "Invite Member" email template. #57 (@MaximilianoRicoTabo)
 * ENHANCEMENT: Improved performance of the `pmprogroupacct_level_can_be_claimed_using_group_codes()` function. #67 (@dalemugford)

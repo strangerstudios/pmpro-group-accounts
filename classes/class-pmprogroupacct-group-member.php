@@ -55,7 +55,7 @@ class PMProGroupAcct_Group_Member {
 	/**
 	 * The datetime when the group member's status was last updated.
 	 *
-	 * @since TBD
+	 * @since 1.5
 	 *
 	 * @var string
 	 */

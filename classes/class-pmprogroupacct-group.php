@@ -288,7 +288,7 @@ class PMProGroupAcct_Group {
 	/**
 	 * Update the checkout code for this group.
 	 *
-	 * @since TBD
+	 * @since 1.5
 	 *
 	 * @param string $group_checkout_code The new checkout code for the group.
 	 */
