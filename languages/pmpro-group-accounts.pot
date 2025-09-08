@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.5\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.5.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-04T14:36:36+00:00\n"
+"POT-Creation-Date: 2025-09-08T18:45:55+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -133,7 +133,7 @@ msgstr ""
 #: includes/admin.php:177
 #: includes/children.php:101
 #: includes/edit-member.php:86
-#: includes/manage-group-page.php:608
+#: includes/manage-group-page.php:630
 msgid "Group Code"
 msgstr ""
 
@@ -262,7 +262,7 @@ msgid "Set a specific number of seats in the group or allow the member to choose
 msgstr ""
 
 #: includes/edit-level.php:109
-#: includes/manage-group-page.php:604
+#: includes/manage-group-page.php:626
 msgid "Total Seats"
 msgstr ""
 
@@ -388,7 +388,7 @@ msgid "Your Group Code is:"
 msgstr ""
 
 #: includes/emails.php:99
-#: includes/manage-group-page.php:923
+#: includes/manage-group-page.php:945
 msgid "New members can use this code to join your group at no additional cost."
 msgstr ""
 
@@ -454,368 +454,380 @@ msgstr ""
 msgid "There are not enough seats available in the group you are trying to transfer members to."
 msgstr ""
 
-#: includes/manage-group-page.php:222
+#: includes/manage-group-page.php:218
+msgid "Some memberships were not transferred. You cannot transfer the membership for the leader of the receiving group."
+msgstr ""
+
+#: includes/manage-group-page.php:230
 msgid "Group members transferred."
 msgstr ""
 
-#: includes/manage-group-page.php:227
+#: includes/manage-group-page.php:236
 msgid "You do not have permission to restore group members."
 msgstr ""
 
-#: includes/manage-group-page.php:232
+#: includes/manage-group-page.php:241
 msgid "Not enough seats available in this group."
 msgstr ""
 
-#: includes/manage-group-page.php:245
+#: includes/manage-group-page.php:249
+msgid "Some memberships were not restored. You cannot restore the group leader's membership."
+msgstr ""
+
+#: includes/manage-group-page.php:261
 msgid "Memberships restored for selected users."
 msgstr ""
 
-#: includes/manage-group-page.php:255
-#: includes/manage-group-page.php:282
+#: includes/manage-group-page.php:272
+#: includes/manage-group-page.php:299
 msgid "You do not have permission to update this group."
 msgstr ""
 
-#: includes/manage-group-page.php:260
+#: includes/manage-group-page.php:277
 msgid "Unable to validate your request. The number of seats has not been updated."
 msgstr ""
 
-#: includes/manage-group-page.php:265
+#: includes/manage-group-page.php:282
 msgid "Total seats must be a number."
 msgstr ""
 
-#: includes/manage-group-page.php:274
+#: includes/manage-group-page.php:291
 msgid "Group seats updated."
 msgstr ""
 
-#: includes/manage-group-page.php:287
+#: includes/manage-group-page.php:304
 msgid "Unable to validate your request. The group code was not updated."
 msgstr ""
 
-#: includes/manage-group-page.php:298
+#: includes/manage-group-page.php:315
 msgid "Group code updated."
 msgstr ""
 
-#: includes/manage-group-page.php:303
+#: includes/manage-group-page.php:320
 #, php-format
 msgid "The group code \"%1$s\" is already being used by another group. Please choose a different code or <a href=\"%2$s\">manage group ID %3$d</a>."
 msgstr ""
 
-#: includes/manage-group-page.php:305
+#: includes/manage-group-page.php:322
 #, php-format
 msgid "The group code \"%1$s\" is already being used by another group. Please choose a different code or manage group ID %2$d."
 msgstr ""
 
-#: includes/manage-group-page.php:316
-#: includes/manage-group-page.php:431
-#: includes/manage-group-page.php:501
-#: includes/manage-group-page.php:562
+#: includes/manage-group-page.php:333
+#: includes/manage-group-page.php:448
+#: includes/manage-group-page.php:518
+#: includes/manage-group-page.php:584
 msgid "Invalid nonce."
 msgstr ""
 
-#: includes/manage-group-page.php:321
-#: includes/manage-group-page.php:516
+#: includes/manage-group-page.php:338
+#: includes/manage-group-page.php:533
 msgid "No level ID was passed."
 msgstr ""
 
-#: includes/manage-group-page.php:326
+#: includes/manage-group-page.php:343
 msgid "Level ID must be a number."
 msgstr ""
 
-#: includes/manage-group-page.php:331
+#: includes/manage-group-page.php:348
 msgid "This level cannot be claimed using this group code."
 msgstr ""
 
-#: includes/manage-group-page.php:336
+#: includes/manage-group-page.php:353
 msgid "No email addresses were passed."
 msgstr ""
 
-#: includes/manage-group-page.php:362
+#: includes/manage-group-page.php:379
 msgid "No valid email addresses were passed."
 msgstr ""
 
-#: includes/manage-group-page.php:397
+#: includes/manage-group-page.php:414
 msgid "Failed to send emails."
 msgstr ""
 
-#: includes/manage-group-page.php:399
+#: includes/manage-group-page.php:416
 msgid "Invites sent."
 msgstr ""
 
-#: includes/manage-group-page.php:402
+#: includes/manage-group-page.php:419
 msgid "Invites sent to the following email addresses:"
 msgstr ""
 
-#: includes/manage-group-page.php:408
+#: includes/manage-group-page.php:425
 msgid "Failed to send invites to the following email addresses:"
 msgstr ""
 
-#: includes/manage-group-page.php:415
+#: includes/manage-group-page.php:432
 msgid "The following email addresses were invalid:"
 msgstr ""
 
-#: includes/manage-group-page.php:436
+#: includes/manage-group-page.php:453
 msgid "No available seats in this group."
 msgstr ""
 
-#: includes/manage-group-page.php:442
+#: includes/manage-group-page.php:459
 msgid "No email address provided."
 msgstr ""
 
-#: includes/manage-group-page.php:447
+#: includes/manage-group-page.php:464
 msgid "Invalid email address."
 msgstr ""
 
-#: includes/manage-group-page.php:453
+#: includes/manage-group-page.php:470
 msgid "Invalid username."
 msgstr ""
 
-#: includes/manage-group-page.php:459
+#: includes/manage-group-page.php:476
 msgid "Invalid password."
 msgstr ""
 
-#: includes/manage-group-page.php:465
-#: includes/manage-group-page.php:533
+#: includes/manage-group-page.php:482
+#: includes/manage-group-page.php:555
 msgid "Invalid level ID."
 msgstr ""
 
-#: includes/manage-group-page.php:475
+#: includes/manage-group-page.php:492
 msgid "Error creating user."
 msgstr ""
 
-#: includes/manage-group-page.php:486
+#: includes/manage-group-page.php:503
 msgid "Error changing user level."
 msgstr ""
 
-#: includes/manage-group-page.php:493
+#: includes/manage-group-page.php:510
 msgid "User created and added to group."
 msgstr ""
 
-#: includes/manage-group-page.php:506
+#: includes/manage-group-page.php:523
 msgid "You do not have permission to add existing members to this group."
 msgstr ""
 
-#: includes/manage-group-page.php:511
+#: includes/manage-group-page.php:528
 msgid "No username was passed."
 msgstr ""
 
-#: includes/manage-group-page.php:525
+#: includes/manage-group-page.php:542
 msgid "Invalid user."
 msgstr ""
 
-#: includes/manage-group-page.php:570
+#: includes/manage-group-page.php:550
+msgid "You cannot add the group leader to the group."
+msgstr ""
+
+#: includes/manage-group-page.php:592
 msgid "New group code generated."
 msgstr ""
 
-#: includes/manage-group-page.php:591
+#: includes/manage-group-page.php:613
 msgid "Group Settings (Admin Only)"
 msgstr ""
 
-#: includes/manage-group-page.php:596
+#: includes/manage-group-page.php:618
 #, php-format
 msgid "Manage the settings for group ID %1$s managed by %2$s."
 msgstr ""
 
-#: includes/manage-group-page.php:614
+#: includes/manage-group-page.php:636
 msgid "Update Settings"
 msgstr ""
 
-#: includes/manage-group-page.php:666
+#: includes/manage-group-page.php:688
 msgid "Group Members"
 msgstr ""
 
-#: includes/manage-group-page.php:674
+#: includes/manage-group-page.php:696
 msgid "Show"
 msgstr ""
 
-#: includes/manage-group-page.php:676
+#: includes/manage-group-page.php:698
 msgid "Show Active Members"
 msgstr ""
 
-#: includes/manage-group-page.php:677
+#: includes/manage-group-page.php:699
 msgid "Show Old Members"
 msgstr ""
 
-#: includes/manage-group-page.php:685
+#: includes/manage-group-page.php:707
 msgid "Search for username or email"
 msgstr ""
 
-#: includes/manage-group-page.php:686
+#: includes/manage-group-page.php:708
 msgid "Search..."
 msgstr ""
 
-#: includes/manage-group-page.php:688
+#: includes/manage-group-page.php:710
 msgid "Search"
 msgstr ""
 
-#: includes/manage-group-page.php:695
+#: includes/manage-group-page.php:717
 msgid "There are no members to show."
 msgstr ""
 
-#: includes/manage-group-page.php:706
+#: includes/manage-group-page.php:728
 msgid "Remove"
 msgstr ""
 
-#: includes/manage-group-page.php:707
+#: includes/manage-group-page.php:729
 msgid "Are you sure you want to remove these users from the group?"
 msgstr ""
 
-#: includes/manage-group-page.php:719
+#: includes/manage-group-page.php:741
 msgid "Transfer"
 msgstr ""
 
-#: includes/manage-group-page.php:720
+#: includes/manage-group-page.php:742
 msgid "Are you sure you want to transfer these users to another group?"
 msgstr ""
 
-#: includes/manage-group-page.php:721
-msgid "Enter Group ID"
+#: includes/manage-group-page.php:743
+msgid "Enter Group Code"
 msgstr ""
 
-#: includes/manage-group-page.php:729
+#: includes/manage-group-page.php:751
 msgid "Restore"
 msgstr ""
 
-#: includes/manage-group-page.php:730
+#: includes/manage-group-page.php:752
 msgid "Are you sure you want to restore these users to the group?"
 msgstr ""
 
-#: includes/manage-group-page.php:741
+#: includes/manage-group-page.php:763
 msgid "Select bulk action"
 msgstr ""
 
-#: includes/manage-group-page.php:743
+#: includes/manage-group-page.php:765
 msgid "Bulk actions"
 msgstr ""
 
-#: includes/manage-group-page.php:775
+#: includes/manage-group-page.php:797
 msgid "Apply"
 msgstr ""
 
-#: includes/manage-group-page.php:840
+#: includes/manage-group-page.php:862
 #, php-format
 msgid "Showing %d - %d of %d members"
 msgstr ""
 
-#: includes/manage-group-page.php:848
+#: includes/manage-group-page.php:870
 msgid "Select All Members"
 msgstr ""
 
-#: includes/manage-group-page.php:852
-#: includes/manage-group-page.php:881
-#: includes/manage-group-page.php:1034
-#: includes/manage-group-page.php:1103
+#: includes/manage-group-page.php:874
+#: includes/manage-group-page.php:903
+#: includes/manage-group-page.php:1056
+#: includes/manage-group-page.php:1125
 msgid "Username"
 msgstr ""
 
-#: includes/manage-group-page.php:853
-#: includes/manage-group-page.php:882
-#: includes/manage-group-page.php:996
-#: includes/manage-group-page.php:1062
-#: includes/manage-group-page.php:1118
+#: includes/manage-group-page.php:875
+#: includes/manage-group-page.php:904
+#: includes/manage-group-page.php:1018
+#: includes/manage-group-page.php:1084
+#: includes/manage-group-page.php:1140
 msgid "Level"
 msgstr ""
 
-#: includes/manage-group-page.php:854
-#: includes/manage-group-page.php:883
+#: includes/manage-group-page.php:876
+#: includes/manage-group-page.php:905
 msgid "Joined"
 msgstr ""
 
-#: includes/manage-group-page.php:854
+#: includes/manage-group-page.php:876
 msgid "Removed"
 msgstr ""
 
-#: includes/manage-group-page.php:864
+#: includes/manage-group-page.php:886
 msgid "[deleted]"
 msgstr ""
 
-#: includes/manage-group-page.php:874
+#: includes/manage-group-page.php:896
 msgid "Action"
 msgstr ""
 
-#: includes/manage-group-page.php:875
+#: includes/manage-group-page.php:897
 #, php-format
 msgid "Select Member %s"
 msgstr ""
 
-#: includes/manage-group-page.php:913
-#: includes/manage-group-page.php:1018
+#: includes/manage-group-page.php:935
+#: includes/manage-group-page.php:1040
 msgid "Invite New Members"
 msgstr ""
 
-#: includes/manage-group-page.php:918
+#: includes/manage-group-page.php:940
 msgid "This group is not accepting signups."
 msgstr ""
 
-#: includes/manage-group-page.php:922
+#: includes/manage-group-page.php:944
 #, php-format
 msgid "Your Group Code is: %s"
 msgstr ""
 
-#: includes/manage-group-page.php:938
+#: includes/manage-group-page.php:960
 #, php-format
 msgid "For %s membership:"
 msgstr ""
 
-#: includes/manage-group-page.php:956
+#: includes/manage-group-page.php:978
 msgid "Generate a New Group Code"
 msgstr ""
 
-#: includes/manage-group-page.php:957
+#: includes/manage-group-page.php:979
 msgid "Generate a new group code to prevent new members from joining your group with the current code. Your existing group members will remain in your group. This action is permanent and cannot be reversed."
 msgstr ""
 
-#: includes/manage-group-page.php:966
+#: includes/manage-group-page.php:988
 msgid "Generate New Group Code"
 msgstr ""
 
-#: includes/manage-group-page.php:978
+#: includes/manage-group-page.php:1000
 msgid "Invite New Members via Email"
 msgstr ""
 
-#: includes/manage-group-page.php:983
+#: includes/manage-group-page.php:1005
 msgid "Email Addresses"
 msgstr ""
 
-#: includes/manage-group-page.php:985
+#: includes/manage-group-page.php:1007
 msgid "Enter one email address per line."
 msgstr ""
 
-#: includes/manage-group-page.php:1028
+#: includes/manage-group-page.php:1050
 msgid "Create a New Group Member"
 msgstr ""
 
-#: includes/manage-group-page.php:1035
-#: includes/manage-group-page.php:1042
-#: includes/manage-group-page.php:1049
-#: includes/manage-group-page.php:1104
+#: includes/manage-group-page.php:1057
+#: includes/manage-group-page.php:1064
+#: includes/manage-group-page.php:1071
+#: includes/manage-group-page.php:1126
 msgid "Required Field"
 msgstr ""
 
-#: includes/manage-group-page.php:1041
+#: includes/manage-group-page.php:1063
 msgid "Email"
 msgstr ""
 
-#: includes/manage-group-page.php:1048
+#: includes/manage-group-page.php:1070
 msgid "Password"
 msgstr ""
 
-#: includes/manage-group-page.php:1084
+#: includes/manage-group-page.php:1106
 msgid "Create New Member"
 msgstr ""
 
-#: includes/manage-group-page.php:1095
+#: includes/manage-group-page.php:1117
 msgid "Add Existing User to Group (Admin Only)"
 msgstr ""
 
-#: includes/manage-group-page.php:1096
+#: includes/manage-group-page.php:1118
 msgid "This will assign a new membership level to the user which may cause their other membership levels to be removed and payment subscriptions to be terminated."
 msgstr ""
 
-#: includes/manage-group-page.php:1140
+#: includes/manage-group-page.php:1162
 msgid "Add Existing Member"
 msgstr ""
 
-#: includes/manage-group-page.php:1156
+#: includes/manage-group-page.php:1178
 msgid "View Your Membership Account"
 msgstr ""
 
