@@ -171,7 +171,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				} elseif ( $group_member->group_id !== $group->id ) {
 					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records is part of a different group.', 'pmpro-group-accounts' ) . '</div>';
 					break;
-				} elseif ( $group_member->group_child_user_id === $group->group_parent_user_id ) {
+				} elseif ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'restore' && $group_member->group_child_user_id === $group->group_parent_user_id ) {
 					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You cannot perform this action on the group leader.', 'pmpro-group-accounts' ) . '</div>';
 					break;
 				}
