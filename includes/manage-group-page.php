@@ -171,9 +171,6 @@ function pmprogroupacct_shortcode_manage_group() {
 				} elseif ( $group_member->group_id !== $group->id ) {
 					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'One or more of the selected records is part of a different group.', 'pmpro-group-accounts' ) . '</div>';
 					break;
-				} elseif ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'restore' && $group_member->group_child_user_id === $group->group_parent_user_id ) {
-					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You cannot perform this action on the group leader.', 'pmpro-group-accounts' ) . '</div>';
-					break;
 				}
 			}
 		}
@@ -216,13 +213,22 @@ function pmprogroupacct_shortcode_manage_group() {
 			if ( empty( $action_message ) ) {
 				// Loop through the group members and transfer them to the new group.
 				foreach ( $group_members_to_update as $group_member ) {
+					// Make sure the user is not the group parent.
+					if ( $group_member->group_child_user_id === $transfer_group->group_parent_user_id ) {
+						$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Some memberships were not transferred. You cannot transfer the membership for the leader of the receiving group.', 'pmpro-group-accounts' ) . '</div>';
+						continue;
+					}
+
 					// Remove the group member from the old group.
 					$group_member->update_group_child_status( 'inactive' );
 
 					// Add the group member to the new group.
 					PMProGroupAcct_Group_Member::create( $group_member->group_child_user_id, $group_member->group_child_level_id, $transfer_group->id );
 				}
-				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group members transferred.', 'pmpro-group-accounts' ) . '</div>';
+
+				if ( empty( $action_message ) ) {
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Group members transferred.', 'pmpro-group-accounts' ) . '</div>';
+				}
 			}
 		} elseif( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action'] ) && $_REQUEST['pmprogroupacct_bulk_member_action'] === 'restore' ) {
 			// Make sure the current user is an admin.
@@ -238,6 +244,12 @@ function pmprogroupacct_shortcode_manage_group() {
 			// Process the restore membership action.
 			if ( empty( $action_message ) ) {
 				foreach ( $group_members_to_update as $group_member ) {
+					// Make sure the user is not the group parent.
+					if ( $group_member->group_child_user_id === $group->group_parent_user_id ) {
+						$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Some memberships were not restored. You cannot restore the group leader\'s membership.', 'pmpro-group-accounts' ) . '</div>';
+						continue;
+					}
+
 					// Restore the user's membership.
 					pmpro_changeMembershipLevel( $group_member->group_child_level_id, $group_member->group_child_user_id );
 					pmpro_do_action_after_all_membership_level_changes(); // Call the action to process any group removals from levels lost.
@@ -245,7 +257,9 @@ function pmprogroupacct_shortcode_manage_group() {
 				}
 
 				// Show a success message.
-				$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Memberships restored for selected users.', 'pmpro-group-accounts' ) . '</div>';
+				if ( empty( $action_message ) ) {
+					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Memberships restored for selected users.', 'pmpro-group-accounts' ) . '</div>';
+				}
 			}
 		}
 	}
