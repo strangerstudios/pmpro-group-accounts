@@ -88,7 +88,11 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	 * @return string The default subject for the email.
 	 */
 	public static function get_default_subject() {
-		return esc_html__( '!!pmprogroupacct_parent_display_name!! has invited you to !!blog_name!!', 'pmpro-group-accounts' );
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return esc_html__( '!!pmprogroupacct_parent_display_name!! has invited you to !!blog_name!!', 'pmpro-group-accounts' );
+		}
+		return esc_html__( '{{ pmprogroupacct_parent_display_name }} has invited you to {{ blog_name }}', 'pmpro-group-accounts' );
 	}
 
 	/**
@@ -99,11 +103,19 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	 * @return string The default body content for the email.
 	 */
 	public static function get_default_body() {
-		return wp_kses_post( __( '<p>You have been invited to !!blog_name!! by !!pmprogroupacct_parent_display_name!!.</p>
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return wp_kses_post( __( '<p>You have been invited to !!blog_name!! by !!pmprogroupacct_parent_display_name!!.</p>
 
 <p>To join the group, click the link below and complete the checkout process.</p>
 
 <p>!!pmprogroupacct_invite_link!!</p>', 'pmpro-group-accounts' ) );
+		}
+		return wp_kses_post( __( '<p>You have been invited to {{ blog_name }} by {{ pmprogroupacct_parent_display_name }}.</p>
+
+<p>To join the group, click the link below and complete the checkout process.</p>
+
+<p>{{ pmprogroupacct_invite_link }}</p>', 'pmpro-group-accounts' ) );
 	}
 
 	/**
@@ -114,10 +126,18 @@ class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 	 * @return array The email template variables for the email (key => value pairs).
 	 */
 	public static function get_email_template_variables_with_description() {
+		if ( ! class_exists( 'PMPro_Liquid_Renderer' ) ) {
+			// Running a version of PMPro before liquid email rendering was available.
+			return array(
+				'!!pmprogroupacct_parent_display_name!!' => esc_html__( 'The display name of the parent user.', 'pmpro-group-accounts' ),
+				'!!pmprogroupacct_invite_link!!' => esc_html__( 'The link to the checkout page for the group.', 'pmpro-group-accounts' ),
+				'!!blog_name!!' => esc_html__( 'The name of the site.', 'pmpro-group-accounts' ),
+			);
+		}
 		return array(
-			'!!pmprogroupacct_parent_display_name!!' => esc_html__( 'The display name of the parent user.', 'pmpro-group-accounts' ),
-			'!!pmprogroupacct_invite_link!!' => esc_html__( 'The link to the checkout page for the group.', 'pmpro-group-accounts' ),
-			'!!blog_name!!' => esc_html__( 'The name of the site.', 'pmpro-group-accounts' ),
+			'{{ pmprogroupacct_parent_display_name }}' => esc_html__( 'The display name of the parent user.', 'pmpro-group-accounts' ),
+			'{{ pmprogroupacct_invite_link }}' => esc_html__( 'The link to the checkout page for the group.', 'pmpro-group-accounts' ),
+			'{{ blog_name }}' => esc_html__( 'The name of the site.', 'pmpro-group-accounts' ),
 		);
 	}
 
