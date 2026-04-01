@@ -1,15 +1,15 @@
-# Copyright (C) 2025 Paid Memberships Pro
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.5.1\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.5.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-09-08T18:45:56+00:00\n"
+"POT-Creation-Date: 2026-04-01T14:29:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -294,6 +294,7 @@ msgstr ""
 #: includes/edit-member.php:188
 #: includes/parents.php:400
 #: includes/parents.php:429
+#: includes/parents.php:432
 msgid "Manage Group"
 msgstr ""
 
@@ -352,6 +353,7 @@ msgstr ""
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:89
 #: includes/emails.php:28
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:91
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:93
 msgid "!!pmprogroupacct_parent_display_name!! has invited you to !!blog_name!!"
 msgstr ""
 
@@ -792,6 +794,7 @@ msgstr[1] ""
 
 #: includes/parents.php:138
 #: includes/parents.php:162
+#: includes/parents.php:165
 msgid "The number of seats must be a whole number."
 msgstr ""
 
@@ -811,6 +814,7 @@ msgstr ""
 #: includes/parents.php:382
 #: includes/parents.php:387
 #: includes/parents.php:416
+#: includes/parents.php:419
 msgid "Group Account"
 msgstr ""
 
@@ -1058,6 +1062,7 @@ msgstr ""
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:100
 #: includes/emails.php:30
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:102
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:108
 msgid ""
 "<p>You have been invited to !!blog_name!! by !!pmprogroupacct_parent_display_name!!.</p>\n"
 "\n"
@@ -1212,6 +1217,7 @@ msgstr[1] ""
 
 #: includes/parents.php:81
 #: includes/parents.php:103
+#: includes/parents.php:106
 #, php-format
 msgid "Choose the number of seats to purchase. You can purchase between %s and %s seats."
 msgstr ""
@@ -1227,16 +1233,19 @@ msgid "You will be charged an additional %s per seat with each recurring payment
 msgstr ""
 
 #: includes/parents.php:169
+#: includes/parents.php:172
 #, php-format
 msgid "You must purchase at least %s seats."
 msgstr ""
 
 #: includes/parents.php:175
+#: includes/parents.php:178
 #, php-format
 msgid "You cannot purchase more than %s seats."
 msgstr ""
 
 #: includes/parents.php:185
+#: includes/parents.php:188
 #, php-format
 msgid "There are currently %s members in your group. You must purchase at least that many seats."
 msgstr ""
@@ -1244,6 +1253,7 @@ msgstr ""
 #: includes/parents.php:385
 #: includes/parents.php:390
 #: includes/parents.php:419
+#: includes/parents.php:422
 #, php-format
 msgid "Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed)."
 msgstr ""
@@ -1401,21 +1411,28 @@ msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:116
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:132
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:138
 msgid "The display name of the parent user."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:117
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:119
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:133
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:139
 msgid "The link to the checkout page for the group."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:118
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:120
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:134
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:140
 msgid "The name of the site."
 msgstr ""
 
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:162
 #: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:164
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:184
 msgid "User"
 msgstr ""
 
@@ -1682,4 +1699,17 @@ msgstr ""
 
 #: includes/manage-group-page.php:743
 msgid "Enter Group Code"
+msgstr ""
+
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:95
+msgid "{{ pmprogroupacct_parent_display_name }} has invited you to {{ blog_name }}"
+msgstr ""
+
+#: classes/email-templates/class-pmpro-email-template-pmpro-group-accounts-invite.php:114
+msgid ""
+"<p>You have been invited to {{ blog_name }} by {{ pmprogroupacct_parent_display_name }}.</p>\n"
+"\n"
+"<p>To join the group, click the link below and complete the checkout process.</p>\n"
+"\n"
+"<p>{{ pmprogroupacct_invite_link }}</p>"
 msgstr ""
