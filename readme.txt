@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 6.8
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,10 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.5.2 - 2026-04-01 =
+* ENHANCEMENT: Updated the invite email template to use liquid syntax for PMPro 3.7+ with a fallback to the legacy `!!` syntax for older versions. #85 (@dparker1005)
+* BUG FIX: Fixed the seats input on checkout to prefill from the previous submission when a user is returned to checkout after a validation error. #86 (@dparker1005)
+
 = 1.5.1 - 2025-09-08 =
 * BUG FIX/ENHANCEMENT: Now protecting against group leaders being added to their own groups on the Manage Group page. #79 (@dparker1005)
 * BUG FIX: Fixed the placeholder for the "Transfer" bulk action input field. #78 (@dparker1005)
