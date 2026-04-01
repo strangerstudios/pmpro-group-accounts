@@ -453,3 +453,50 @@ function pmprogroupacct_pmpro_level_cost_text_child_account( $level_cost, $level
 	return $level_cost;
 }
 add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child_account', 10, 2 );
+
+/**
+ * Show "Managed by [parent name]" on the membership account page level card
+ * for child group members.
+ *
+ * @since 1.5.2
+ *
+ * @param object $level The level being displayed.
+ */
+function pmprogroupacct_pmpro_membership_account_after_level_card_content( $level ) {
+	// Check if the user is an active member claiming this level.
+	$group_member_query_args = array(
+		'group_child_user_id'  => (int) get_current_user_id(),
+		'group_child_level_id' => (int) $level->id,
+		'group_child_status'   => 'active',
+	);
+	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+
+	// If the user is not an active member claiming this level, bail.
+	if ( empty( $group_members ) ) {
+		return;
+	}
+
+	// Get the group that the user is a member of.
+	$group = new PMProGroupAcct_Group( $group_members[0]->group_id );
+
+	// If no group was found, bail.
+	if ( empty( $group->id ) ) {
+		return;
+	}
+
+	// Get the group parent.
+	$group_parent = get_userdata( $group->group_parent_user_id );
+
+	// If no group parent was found, bail.
+	if ( empty( $group_parent->ID ) ) {
+		return;
+	}
+
+	// Show the group parent.
+	?>
+	<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>">
+		<?php printf( esc_html__( 'Managed by %s', 'pmpro-group-accounts' ), esc_html( $group_parent->display_name ) ); ?>
+	</p>
+	<?php
+}
+add_action( 'pmpro_membership_account_after_level_card_content', 'pmprogroupacct_pmpro_membership_account_after_level_card_content' );
