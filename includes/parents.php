@@ -322,6 +322,8 @@ add_action( 'pmpro_after_checkout', 'pmprogroupacct_pmpro_after_checkout_parent'
  * @param $old_user_levels array The old levels the users had.
  */
 function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_user_levels ) {
+		
+	global $wpdb;
 	// Track if we cancel a membership during this function.
 	// If so, we need to make sure to run pmpro_do_action_after_all_membership_level_changes() afterwards.
 	$cancelled_membership = false;
@@ -347,6 +349,14 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 		foreach ( $lost_level_ids as $lost_level_id ) {
 			$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $lost_level_id );
 			if ( ! empty( $existing_group ) ) {
+				// Determine what status to apply to child accounts based on why the parent lost the level.
+				$parent_level_status = $wpdb->get_var( $wpdb->prepare(
+					"SELECT status FROM {$wpdb->pmpro_memberships_users} WHERE user_id = %d AND membership_id = %d ORDER BY id DESC LIMIT 1",
+					$user_id,
+					$lost_level_id
+				) );
+				$child_status = ( $parent_level_status === 'expired' ) ? 'expired' : 'cancelled';
+
 				// There is a group for this parent and level. Let's get all the active members for this group and cancel their group level.
 				$active_members = $existing_group->get_active_members();
 				foreach ( $active_members as $active_member ) {
@@ -356,14 +366,15 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 						PMPro_Action_Scheduler::instance()->maybe_add_task(
 							'pmpro_groupacct_cancel_user_membership',
 							array(
-								'user_id'       => $active_member->group_child_user_id,
+								'user_id'  => $active_member->group_child_user_id,
 								'level_id' => $active_member->group_child_level_id,
+								'status'   => $child_status,
 							),
 							'pmpro_groupacct_tasks'
 						);
 					} else {
 						// We don't have Action Scheduler. Just try to cancel the membership now.
-						pmpro_cancelMembershipLevel( $active_member->group_child_level_id, $active_member->group_child_user_id );
+						pmpro_cancelMembershipLevel( $active_member->group_child_level_id, $active_member->group_child_user_id, $child_status );
 						$cancelled_membership = true;
 					}
 				}
@@ -383,17 +394,18 @@ add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_af
 /**
  * Callback to cancel a specific membership level for a user.
  *
- * @param int $user_id The user ID to cancel the membership for.
- * @param int $level_id The membership level ID to cancel.
+ * @param int    $user_id  The user ID to cancel the membership for.
+ * @param int    $level_id The membership level ID to cancel.
+ * @param string $status   The status to set. 'expired' or 'cancelled'. Defaults to 'cancelled'.
  */
-function pmprogroupacct_cancel_user_membership( $user_id, $level_id ) {
-	// Cancel the user's membership level.
-	pmpro_cancelMembershipLevel( $level_id, $user_id );
+function pmprogroupacct_cancel_user_membership( $user_id, $level_id, $status = 'cancelled' ) {
+	// Cancel the user's membership level with the appropriate status.
+	pmpro_cancelMembershipLevel( $level_id, $user_id, $status );
 
 	// Run any actions needed after all membership level changes.
 	pmpro_do_action_after_all_membership_level_changes();
 }
-add_action( 'pmpro_groupacct_cancel_user_membership', 'pmprogroupacct_cancel_user_membership', 10, 2 );
+add_action( 'pmpro_groupacct_cancel_user_membership', 'pmprogroupacct_cancel_user_membership', 10, 3 );
 
 /**
  * Add an invoice bullet if the level purchased with the invoice that we are showing
