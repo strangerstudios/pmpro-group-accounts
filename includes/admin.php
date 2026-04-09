@@ -313,6 +313,22 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 		}
 	}
 
+	// If $group_id is not numeric, try to resolve it from an email address or user login.
+	if ( ! empty( $group_id ) && ! is_numeric( $group_id ) ) {
+		if ( is_email( $group_id ) ) {
+			$parent_user = get_user_by( 'email', $group_id );
+		} else {
+			$parent_user = get_user_by( 'login', $group_id );
+		}
+
+		if ( ! empty( $parent_user ) ) {
+			$parent_groups = PMProGroupAcct_Group::get_groups( array( 'group_parent_user_id' => $parent_user->ID, 'limit' => 1 ) );
+			$group_id      = ! empty( $parent_groups ) ? $parent_groups[0]->id : '';
+		} else {
+			$group_id = '';
+		}
+	}
+
 	// Add the child account if the level is a child level and passed through a group ID.
 	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
 		
@@ -358,16 +374,23 @@ function pmprogroupacct_manage_memberslist_column_body( $column_name, $user_id, 
 	// Populate the parent account column.
 	if ( 'pmprogroupacct_parent' === $column_name ) {
 		// Get the user's group member object for the membership level being shown.
-		$group_member_query_args = array(
+		// First try active, then fall back to inactive for Old/Expired/Cancelled Members views.
+		$group_members = PMProGroupAcct_Group_Member::get_group_members( array(
 			'group_child_user_id'  => $user_id,
 			'group_child_level_id' => $item['membership_id'],
 			'group_child_status'   => 'active',
-		);
-		$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+		) );
+
+		if ( empty( $group_members ) ) {
+			$group_members = PMProGroupAcct_Group_Member::get_group_members( array(
+				'group_child_user_id'  => $user_id,
+				'group_child_level_id' => $item['membership_id'],
+			) );
+		}
 
 		// If the membership is a group membership, get the group information.
 		if ( ! empty( $group_members) ) {
-			$group_id = $group_members[0]->group_id;	
+			$group_id = $group_members[0]->group_id;
 			$group = new PMProGroupAcct_Group( $group_id );
 			$parent_user = get_userdata( $group->group_parent_user_id );
 			$parent_user_info = empty( $parent_user ) ? esc_html( $group->group_parent_user_id ) : '<a href="' . esc_url( pmprogroupacct_member_edit_url_for_user( $parent_user ) ) . '">' . esc_html( $parent_user->user_login ) . '</a>';
@@ -405,23 +428,27 @@ add_filter( 'pmpro_members_list_csv_extra_columns', 'pmprogroupacct_members_list
  */
 function pmprogroupacct_members_list_csv_extra_columns_parent_account( $user ) {
 	// Get the user's group member object for the membership level in this row.
-	$group_member_query_args = array(
+	// First try active, then fall back to inactive for exported Old/Expired/Cancelled Members.
+	$group_members = PMProGroupAcct_Group_Member::get_group_members( array(
 		'group_child_user_id'  => $user->ID,
 		'group_child_level_id' => $user->membership_id,
 		'group_child_status'   => 'active',
-	);
-	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
+	) );
+
+	if ( empty( $group_members ) ) {
+		$group_members = PMProGroupAcct_Group_Member::get_group_members( array(
+			'group_child_user_id'  => $user->ID,
+			'group_child_level_id' => $user->membership_id,
+		) );
+	}
 
 	// If the membership is a group membership, get the group information.
-	if ( ! empty( $group_members) ) {
+	if ( ! empty( $group_members ) ) {
 		$group_id = $group_members[0]->group_id;
 		$group = new PMProGroupAcct_Group( $group_id );
 		$parent_user = get_userdata( $group->group_parent_user_id );
 		return ! empty( $parent_user ) ? $parent_user->user_login : '';
-	} else {
-		return '';
 	}
-  
-  // If we make it here, lets just return nothing.
-  return '';
+
+	return '';
 }
