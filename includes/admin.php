@@ -313,19 +313,15 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 		}
 	}
 
-	// If $group_id is not numeric, try to resolve it from an email address or user login.
-	if ( ! empty( $group_id ) && ! is_numeric( $group_id ) ) {
+	// Check if the group ID is an email address. If so, look up the user and group associated with that email address. This allows imports to reference a parent account by email instead of group code or group ID.
+	if ( ! empty( $group_id ) ) {
 		if ( is_email( $group_id ) ) {
-			$parent_user = get_user_by( 'email', $group_id );
-		} else {
-			$parent_user = get_user_by( 'login', $group_id );
-		}
-
-		if ( ! empty( $parent_user ) ) {
-			$parent_groups = PMProGroupAcct_Group::get_groups( array( 'group_parent_user_id' => $parent_user->ID, 'limit' => 1 ) );
+			$parent_user   = get_user_by( 'email', $group_id );
+			$parent_groups = ! empty( $parent_user ) ? PMProGroupAcct_Group::get_groups( array( 'group_parent_user_id' => $parent_user->ID, 'limit' => 1 ) ) : array();
 			$group_id      = ! empty( $parent_groups ) ? $parent_groups[0]->id : '';
 		} else {
-			$group_id = '';
+			$group    = PMProGroupAcct_Group::get_group_by_checkout_code( $group_id );
+			$group_id = ! empty( $group ) ? $group->id : '';
 		}
 	}
 
