@@ -72,3 +72,51 @@ function pmprogroupacct_member_edit_url_for_user( $user ) {
 	// Return the parent user edit URL.
 	return $member_edit_url;
 }
+
+/**
+ * Render a "Generate Group" form for each parent-eligible level the user
+ * holds that does not yet have a group associated with it.
+ *
+ * @since 1.5.3
+ *
+ * @param WP_User $user The user being edited.
+ * @param array   $levels The user's parent-eligible levels without a group.
+ */
+function pmprogroupacct_render_generate_group_forms( $user, $levels ) {
+	?>
+	<h4><?php esc_html_e( 'Generate Parent Group', 'pmpro-group-accounts' ); ?></h4>
+	<p class="description"><?php esc_html_e( 'Create a group and checkout code for this user so they can invite members.', 'pmpro-group-accounts' ); ?></p>
+	<?php
+	foreach ( $levels as $level ) {
+		$settings      = pmprogroupacct_get_settings_for_level( $level->id );
+		$min_seats     = ! empty( $settings['min_seats'] ) ? (int)$settings['min_seats'] : 0;
+		$max_seats     = ! empty( $settings['max_seats'] ) ? (int)$settings['max_seats'] : 0;
+		$default_seats = $max_seats > 0 ? $max_seats : $min_seats;
+		$input_id      = 'pmprogroupacct_generate_seats_' . (int)$level->id;
+		?>
+		<form method="post" style="margin: 0 0 1em 0;">
+			<?php wp_nonce_field( 'pmprogroupacct_generate_group_' . (int)$user->ID . '_' . (int)$level->id, 'pmprogroupacct_generate_group_nonce' ); ?>
+			<input type="hidden" name="pmprogroupacct_generate_group_user_id" value="<?php echo esc_attr( (int)$user->ID ); ?>" />
+			<input type="hidden" name="pmprogroupacct_generate_group_level_id" value="<?php echo esc_attr( (int)$level->id ); ?>" />
+			<p><strong><?php echo esc_html( sprintf( __( 'Parent Level: %s', 'pmpro-group-accounts' ), $level->name ) ); ?></strong></p>
+			<table class="form-table">
+				<tr>
+					<th scope="row"><label for="<?php echo esc_attr( $input_id ); ?>"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label></th>
+					<td>
+						<input id="<?php echo esc_attr( $input_id ); ?>" type="number" min="0" max="4294967295" name="pmprogroupacct_generate_group_seats" value="<?php echo esc_attr( $default_seats ); ?>" />
+						<?php submit_button( __( 'Generate Group', 'pmpro-group-accounts' ), 'secondary', 'pmprogroupacct_generate_group_submit', false ); ?>
+						<?php if ( $min_seats || $max_seats ) { ?>
+							<p class="description">
+								<?php
+								/* translators: 1: min seats, 2: max seats. */
+								echo esc_html( sprintf( __( 'Level default range: %1$s to %2$s seats.', 'pmpro-group-accounts' ), number_format_i18n( $min_seats ), number_format_i18n( $max_seats ) ) );
+								?>
+							</p>
+						<?php } ?>
+					</td>
+				</tr>
+			</table>
+		</form>
+		<?php
+	}
+}

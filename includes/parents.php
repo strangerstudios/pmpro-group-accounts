@@ -333,14 +333,15 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 
 		// Get the new level for this user.
 		$new_levels    = pmpro_getMembershipLevelsForUser( $user_id );
-		$new_level_ids = wp_list_pluck( $new_levels, 'id' );		
+		$new_level_ids = wp_list_pluck( $new_levels, 'id' );
 
-		// Make sure the user has a group for any group parent levels they gained.
+		// For levels the user just gained, auto-create a group only when the level has a fixed
+		// seat count (min_seats === max_seats). Variable-seat levels wait for checkout or for an
+		// admin to generate the group manually, since the seat count is not predetermined.
 		$received_level_ids = array_diff( $new_level_ids, $old_level_ids );
 		foreach ( $received_level_ids as $received_level_id ) {
 			pmprogroupacct_create_free_group_if_needed( $user_id, $received_level_id );
 		}
-
 
 		// Check if the parent has a group for any of the levels they lost.
 		$lost_level_ids = array_diff( $old_level_ids, $new_level_ids );
@@ -379,6 +380,32 @@ function pmprogroupacct_pmpro_after_all_membership_level_changes_parent( $old_us
 }
 // Hook at a late priority since we may change further levels and need to run pmpro_do_action_after_all_membership_level_changes() again.
 add_action( 'pmpro_after_all_membership_level_changes', 'pmprogroupacct_pmpro_after_all_membership_level_changes_parent', 20, 1 );
+
+/**
+ * When a user logs in, check if they have all needed groups for their levels.
+ * If not, create empty groups for them.
+ *
+ * @since 1.0.1
+ * @deprecated 1.5.3 No longer hooked. Groups are now only created at checkout or via the admin "Generate Group" form.
+ *
+ * @param string $user_login The user's login.
+ * @param WP_User $user The user object.
+ */
+function pmprogroupacct_wp_login_parent( $user_login, $user ) {
+	// Make sure that PMPro is enabled.
+	if ( ! function_exists( 'pmpro_getMembershipLevelsForUser' ) ) {
+		return;
+	}
+
+	// Get the user's levels.
+	$levels = pmpro_getMembershipLevelsForUser( $user->ID );
+
+	// Loop through the user's levels and create empty groups if needed.
+	foreach ( $levels as $level ) {
+		pmprogroupacct_create_free_group_if_needed( $user->ID, $level->id );
+	}
+}
+add_action( 'wp_login', 'pmprogroupacct_wp_login_parent', 10, 2 );
 
 /**
  * Callback to cancel a specific membership level for a user.
@@ -439,32 +466,6 @@ function pmprogroupacct_pmpro_invoice_bullets_bottom_parent( $invoice ) {
 add_action( 'pmpro_invoice_bullets_bottom', 'pmprogroupacct_pmpro_invoice_bullets_bottom_parent' );
 
 /**
- * When a user logs in, check if they have all needed groups for their levels.
- * If not, create empty groups for them.
- *
- * @since 1.0.1
- *
- * @param string $user_login The user's login.
- * @param WP_User $user The user object.
- */
-function pmprogroupacct_wp_login_parent( $user_login, $user ) {
-	// Make sure that PMPro is enabled.
-	if ( ! function_exists( 'pmpro_getMembershipLevelsForUser' ) ) {
-		return;
-	}
-
-	// Get the user's levels.
-	$levels = pmpro_getMembershipLevelsForUser( $user->ID );
-
-	// Loop through the user's levels and create empty groups if needed.
-	foreach ( $levels as $level ) {
-		pmprogroupacct_create_free_group_if_needed( $user->ID, $level->id );
-	}
-}
-add_action( 'wp_login', 'pmprogroupacct_wp_login_parent', 10, 2 );
-
-
-/**
  * Creates an "free" group if needed for a given parent user and level.
  *
  * A "free" group is a new, empty group that is created with the maximum number
@@ -491,9 +492,14 @@ function pmprogroupacct_create_free_group_if_needed( $user_id, $level_id ) {
 		return;
 	}
 
-	// Create a group for this user and level.
-	// If the pricing model is free, give them the max seats.
-	// Otherwise, give them them 0. The `pmpro_after_checkout` filter will update the seats at chekout if needed.
-	$seats = ( $settings['pricing_model'] === 'none' ) ? $settings['max_seats'] : 0;
-	PMProGroupAcct_Group::create( $user_id, $level_id, $seats );
+	// Only auto-create a group when the seat count is fixed (min_seats === max_seats and > 0).
+	// Variable ranges (e.g. "0 to 10 seats" or "3 to 10 seats") wait for checkout or an admin to
+	// generate the group manually, since we don't know how many seats the parent actually wants.
+	$min_seats = empty( $settings['min_seats'] ) ? 0 : (int) $settings['min_seats'];
+	$max_seats = empty( $settings['max_seats'] ) ? 0 : (int) $settings['max_seats'];
+	if ( $min_seats < 1 || $min_seats !== $max_seats ) {
+		return;
+	}
+
+	PMProGroupAcct_Group::create( $user_id, $level_id, $min_seats );
 }
