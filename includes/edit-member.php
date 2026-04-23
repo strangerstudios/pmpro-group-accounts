@@ -57,6 +57,9 @@ add_action( 'admin_init', 'pmprogroupacct_hook_edit_member_profile', 0 );
 function pmprogroupacct_show_group_account_info( $user ) {
 	global $pmpro_pages;
 
+	// Show any notice set by the generate-group handler on the previous request.
+	pmprogroupacct_maybe_render_generate_group_notice();
+
 	// Get all groups that the user manages.
 	$group_query_args = array(
 		'group_parent_user_id' => (int)$user->ID,
@@ -69,12 +72,37 @@ function pmprogroupacct_show_group_account_info( $user ) {
 	);
 	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
 
+	// Figure out which of the user's parent-eligible levels do not yet have a group
+	// so we can offer an inline "Generate Group" form for each one. This supports
+	// users who hold multiple parent-level memberships at once.
+	$levels_without_groups = array();
+	if ( function_exists( 'pmpro_getMembershipLevelsForUser' ) ) {
+		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
+		if ( ! empty( $user_levels ) ) {
+			$existing_parent_level_ids = wp_list_pluck( $groups, 'group_parent_level_id' );
+			foreach ( $user_levels as $user_level ) {
+				$level_settings = pmprogroupacct_get_settings_for_level( $user_level->id );
+				if ( empty( $level_settings ) || empty( $level_settings['child_level_ids'] ) ) {
+					continue;
+				}
+				if ( in_array( (int)$user_level->id, array_map( 'intval', $existing_parent_level_ids ), true ) ) {
+					continue;
+				}
+				$levels_without_groups[] = $user_level;
+			}
+		}
+	}
+
 	// Show the UI.
 	?>
 	<h3><?php esc_html_e( 'Manage Groups', 'pmpro-group-accounts' ); ?></h3>
 	<?php
 	if ( empty( $groups ) ) {
-		echo '<p>' . esc_html__( 'This user does not manage any groups.', 'pmpro-group-accounts' ) . '</p>';
+		if ( empty( $levels_without_groups ) ) {
+			echo '<p>' . esc_html__( 'This user does not manage any groups.', 'pmpro-group-accounts' ) . '</p>';
+		} else {
+			echo '<p>' . esc_html__( 'This user has a parent-eligible membership level but does not yet have a group. Generate a group below to provide them with a checkout code.', 'pmpro-group-accounts' ) . '</p>';
+		}
 	} else {
 		// Show the groups that the user manages.
 		?>
@@ -138,8 +166,13 @@ function pmprogroupacct_show_group_account_info( $user ) {
 				}
 				?>
 			</tbody>
-		</table> 
+		</table>
 		<?php
+	}
+
+	// Show a "Generate Group" form for each parent-eligible level the user holds that has no group yet.
+	if ( ! empty( $levels_without_groups ) ) {
+		pmprogroupacct_render_generate_group_forms( $user, $levels_without_groups );
 	}
 	?>
 	<h3><?php esc_html_e( 'Manage Child Memberships', 'pmpro-group-accounts' ); ?></h3>
@@ -199,4 +232,100 @@ function pmprogroupacct_show_group_account_info( $user ) {
 		</table> 
 		<?php
 	}
+}
+
+/**
+ * Handle the "Generate Group" form submission on the Edit Member panel.
+ *
+ * Runs early on admin_init so that we can process the POST before PMPro's
+ * main member-save flow runs — otherwise auto-created "free groups" can
+ * appear before our handler and swallow the admin-entered seat count.
+ *
+ * If a group already exists for the user/level (e.g. was just auto-created
+ * with 0 seats), we update its seat count instead of creating a new one.
+ *
+ * @since 1.5.3
+ */
+function pmprogroupacct_maybe_handle_generate_group_form() {
+	if ( empty( $_POST['pmprogroupacct_generate_group_submit'] ) || empty( $_POST['pmprogroupacct_generate_group_level_id'] ) ) {
+		return;
+	}
+
+	$level_id = (int) $_POST['pmprogroupacct_generate_group_level_id'];
+	$user_id  = isset( $_POST['pmprogroupacct_generate_group_user_id'] ) ? (int) $_POST['pmprogroupacct_generate_group_user_id'] : 0;
+
+	if ( empty( $user_id ) || empty( $level_id ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'pmpro_edit_members' ) && ! current_user_can( 'edit_users' ) ) {
+		return;
+	}
+
+	if ( empty( $_POST['pmprogroupacct_generate_group_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['pmprogroupacct_generate_group_nonce'] ), 'pmprogroupacct_generate_group_' . $user_id . '_' . $level_id ) ) {
+		pmprogroupacct_set_generate_group_notice( 'error', __( 'Unable to generate group: security check failed.', 'pmpro-group-accounts' ) );
+		return;
+	}
+
+	// Confirm the user still has this level and that the level is a parent level.
+	if ( ! pmpro_hasMembershipLevel( $level_id, $user_id ) ) {
+		pmprogroupacct_set_generate_group_notice( 'error', __( 'Unable to generate group: this user does not have that membership level.', 'pmpro-group-accounts' ) );
+		return;
+	}
+	$settings = pmprogroupacct_get_settings_for_level( $level_id );
+	if ( empty( $settings ) || empty( $settings['child_level_ids'] ) ) {
+		pmprogroupacct_set_generate_group_notice( 'error', __( 'Unable to generate group: that level is not configured for group accounts.', 'pmpro-group-accounts' ) );
+		return;
+	}
+
+	$seats = isset( $_POST['pmprogroupacct_generate_group_seats'] ) ? max( 0, (int) $_POST['pmprogroupacct_generate_group_seats'] ) : 0;
+
+	// If a group already exists (e.g. auto-created as an empty free group), update its seats.
+	$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $level_id );
+	if ( ! empty( $existing_group ) ) {
+		$existing_group->update_group_total_seats( $seats );
+		pmprogroupacct_set_generate_group_notice( 'success', __( 'Group seats updated successfully.', 'pmpro-group-accounts' ) );
+	} else {
+		$group = PMProGroupAcct_Group::create( $user_id, $level_id, $seats );
+		if ( empty( $group ) ) {
+			pmprogroupacct_set_generate_group_notice( 'error', __( 'Unable to generate group. Please try again.', 'pmpro-group-accounts' ) );
+			return;
+		}
+		pmprogroupacct_set_generate_group_notice( 'success', __( 'Group generated successfully.', 'pmpro-group-accounts' ) );
+	}
+
+	// Redirect to avoid the outer Edit Member form reprocessing the submission.
+	$redirect_url = remove_query_arg( array( 'pmprogroupacct_generated' ) );
+	$redirect_url = wp_get_referer() ? wp_get_referer() : $redirect_url;
+	wp_safe_redirect( $redirect_url );
+	exit;
+}
+add_action( 'admin_init', 'pmprogroupacct_maybe_handle_generate_group_form', 5 );
+
+/**
+ * Store a transient notice for the current user about the generate-group action.
+ *
+ * @since 1.5.3
+ *
+ * @param string $type    Either 'success' or 'error'.
+ * @param string $message The message to display.
+ */
+function pmprogroupacct_set_generate_group_notice( $type, $message ) {
+	set_transient( 'pmprogroupacct_generate_notice_' . get_current_user_id(), array( 'type' => $type, 'message' => $message ), 30 );
+}
+
+/**
+ * Render (and clear) any pending notice set by the generate-group handler.
+ *
+ * @since 1.5.3
+ */
+function pmprogroupacct_maybe_render_generate_group_notice() {
+	$key    = 'pmprogroupacct_generate_notice_' . get_current_user_id();
+	$notice = get_transient( $key );
+	if ( empty( $notice ) || empty( $notice['message'] ) ) {
+		return;
+	}
+	delete_transient( $key );
+	$class = $notice['type'] === 'success' ? 'notice-success' : 'notice-error';
+	echo '<div class="notice ' . esc_attr( $class ) . '"><p>' . esc_html( $notice['message'] ) . '</p></div>';
 }
