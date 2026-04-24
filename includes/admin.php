@@ -285,6 +285,41 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
 
 
 /**
+ * Add Group Accounts fields to the Import Users From CSV mapping screen.
+ *
+ * @since 1.5
+ * @param array $fields The available mapping fields organised by group.
+ * @return array
+ */
+function pmprogroupacct_pmproiucsv_mapping_fields( $fields ) {
+	$fields['pmprogroupacct'] = array(
+		'label'  => __( 'Group Accounts', 'pmpro-group-accounts' ),
+		'fields' => array(
+			'pmprogroupacct_group_total_seats' => __( 'Group Total Seats (Parent)', 'pmpro-group-accounts' ),
+			'pmprogroupacct_group_id'          => __( 'Group ID (Child)', 'pmpro-group-accounts' ),
+		),
+	);
+	return $fields;
+}
+add_filter( 'pmproiucsv_mapping_fields', 'pmprogroupacct_pmproiucsv_mapping_fields' );
+
+/**
+ * Register CSV column header aliases for Group Accounts fields so they are auto-detected on the mapping screen.
+ *
+ * @since 1.5
+ * @param array $aliases Existing header-to-field-key aliases.
+ * @return array
+ */
+function pmprogroupacct_pmproiucsv_field_aliases( $aliases ) {
+	$aliases['group_total_seats'] = 'pmprogroupacct_group_total_seats';
+	$aliases['group_seats']       = 'pmprogroupacct_group_total_seats';
+	$aliases['seats']             = 'pmprogroupacct_group_total_seats';
+	$aliases['group_id']          = 'pmprogroupacct_group_id';
+	return $aliases;
+}
+add_filter( 'pmproiucsv_field_aliases', 'pmprogroupacct_pmproiucsv_field_aliases' );
+
+/**
  * Import group account member associations when using the Import Users From CSV plugin.
  *
  * @param WP_User $user The user object that was imported.
@@ -296,7 +331,7 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	global $wpdb;
 
 	$group_id = empty( $user->pmprogroupacct_group_id ) ? '' : $user->pmprogroupacct_group_id;
-	$seats = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : '';
+	$seats    = ! empty( $user->pmprogroupacct_group_total_seats ) ? intval( $user->pmprogroupacct_group_total_seats ) : '';
 
 	// Bail if we don't have seats and we don't have a group ID. We aren't creating / updating a parent group account or
 	// adding a user to a child group account
@@ -313,12 +348,13 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 		}
 	}
 
-	// Add the child account if the level is a child level and passed through a group ID.
-	if ( ! empty( $group_id ) && pmprogroupacct_level_can_be_claimed_using_group_codes( $membership_id ) ) {
-		
+	// Add the child account to the group. Skip the "can be claimed" check since
+	// an explicit group ID during import is sufficient authorization.
+	if ( ! empty( $group_id ) ) {
+
 		// Let's set all previous instances to "inactive" before trying to insert the child record.
-		$wpdb->query( 
-			$wpdb->prepare( 
+		$wpdb->query(
+			$wpdb->prepare(
 				"UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = %d AND group_child_level_id = %d",
 				$user->ID,
 				$membership_id
