@@ -458,7 +458,7 @@ add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child
  * Show "Managed by [parent name]" on the membership account page level card
  * for child group members.
  *
- * @since 1.5.2
+ * @since TBD
  *
  * @param object $level The level being displayed.
  */
@@ -494,8 +494,11 @@ function pmprogroupacct_pmpro_membership_account_after_level_card_content( $leve
 
 	// Show the group parent.
 	?>
-	<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>">
-		<?php printf( esc_html__( 'Managed by %s', 'pmpro-group-accounts' ), esc_html( $group_parent->display_name ) ); ?>
+	<p>
+		<?php
+			/* translators: %s: the display name of the group parent. */
+			printf( esc_html__( 'Managed by %s', 'pmpro-group-accounts' ), esc_html( $group_parent->display_name ) );
+		?>
 	</p>
 	<?php
 }
