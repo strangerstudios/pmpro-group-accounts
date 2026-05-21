@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Group Accounts Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.5.2\n"
+"Project-Id-Version: Paid Memberships Pro - Group Accounts Add On 1.6\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-01T14:29:34+00:00\n"
+"POT-Creation-Date: 2026-05-21T17:28:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-group-accounts\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #. Author of the plugin
 #: pmpro-group-accounts.php
-#: includes/admin.php:46
+#: includes/admin.php:67
 msgid "Paid Memberships Pro"
 msgstr ""
 
@@ -40,9 +40,90 @@ msgstr ""
 msgid "https://www.paidmembershipspro.com"
 msgstr ""
 
+#: classes/class-pmprogroupacct-groups-list-table.php:32
+#: includes/admin.php:158
+#: includes/edit-member.php:102
+#: includes/edit-member.php:194
+msgid "Group ID"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:33
+#: includes/admin.php:199
+#: includes/admin.php:400
+msgid "Parent Account"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:34
+#: includes/admin-groups.php:121
+#: includes/edit-member.php:103
+msgid "Parent Level"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:35
+#: includes/admin.php:198
+#: includes/children.php:101
+#: includes/edit-member.php:104
+#: includes/manage-group-page.php:630
+msgid "Group Code"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:36
+#: includes/edit-member.php:106
+msgid "Seats"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:37
+#: includes/edit-member.php:197
+msgid "Status"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:88
+msgid "No groups found."
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:168
+msgid "Filter by parent level"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:170
+msgid "All Parent Levels"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:177
+msgid "Filter by status"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:179
+msgid "All Statuses"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:180
+#: classes/class-pmprogroupacct-groups-list-table.php:262
+msgid "Active"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:181
+#: classes/class-pmprogroupacct-groups-list-table.php:262
+msgid "Inactive"
+msgstr ""
+
+#: classes/class-pmprogroupacct-groups-list-table.php:184
+msgid "Filter"
+msgstr ""
+
+#. translators: %d: deleted parent level ID
+#: classes/class-pmprogroupacct-groups-list-table.php:228
+#, php-format
+msgid "(level %d not found)"
+msgstr ""
+
 #: classes/class-pmprogroupacct-member-edit-panel.php:9
-#: includes/admin.php:71
-#: includes/admin.php:103
+#: includes/admin-groups.php:25
+#: includes/admin.php:52
+#: includes/admin.php:53
+#: includes/admin.php:92
+#: includes/admin.php:124
+#: includes/admin.php:317
 msgid "Group Accounts"
 msgstr ""
 
@@ -103,81 +184,141 @@ msgstr ""
 msgid "User"
 msgstr ""
 
+#: includes/admin-groups.php:19
+msgid "You do not have permission to access this page."
+msgstr ""
+
+#: includes/admin-groups.php:27
+msgid "Add New Group"
+msgstr ""
+
+#: includes/admin-groups.php:99
+msgid "No membership levels are configured for group accounts. Add a child level to a parent level under Memberships → Settings → Levels before creating a group."
+msgstr ""
+
+#: includes/admin-groups.php:112
+msgid "Parent User"
+msgstr ""
+
+#: includes/admin-groups.php:116
+msgid "Enter the parent user's username or email. They must already hold the chosen parent level."
+msgstr ""
+
+#: includes/admin-groups.php:125
+msgid "— Select a parent level —"
+msgstr ""
+
+#: includes/admin-groups.php:134
+#: includes/parents.php:101
+msgid "Number of Seats"
+msgstr ""
+
+#: includes/admin-groups.php:143
+#: includes/edit-member.php:177
+msgid "Create Group"
+msgstr ""
+
+#: includes/admin-groups.php:144
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin-groups.php:188
+msgid "Could not find a user with that username or email."
+msgstr ""
+
+#: includes/admin-groups.php:193
+msgid "Please choose a parent level that is configured for group accounts."
+msgstr ""
+
+#: includes/admin-groups.php:197
+msgid "The chosen user does not currently have that membership level. Give them the level first, then create their group."
+msgstr ""
+
+#: includes/admin-groups.php:232
+msgid "Unable to create the group. Please try again."
+msgstr ""
+
+#. translators: %d: parent level ID
+#: includes/admin-groups.php:240
+#, php-format
+msgid "level #%d"
+msgstr ""
+
+#. translators: 1: parent user login, 2: parent level name or fallback
+#: includes/admin-groups.php:246
+#, php-format
+msgid "Group created for %1$s on the %2$s level."
+msgstr ""
+
+#: includes/admin-groups.php:301
+msgid "A group already exists for that user and level. Opening the existing group."
+msgstr ""
+
 #: includes/admin.php:31
 #, php-format
 msgid "Thank you for activating. <a href=\"%s\">Create a new membership level or update an existing level</a> to add group account features."
 msgstr ""
 
 #. translators: 1: This plugin's name. 2: Required plugin name(s).
-#: includes/admin.php:70
-#: includes/admin.php:102
+#: includes/admin.php:91
+#: includes/admin.php:123
 #, php-format
 msgid "The following plugin(s) are required for the %1$s plugin to work: %2$s"
 msgstr ""
 
-#: includes/admin.php:134
+#: includes/admin.php:155
 #: includes/parents.php:86
 msgid "Group Account Information"
 msgstr ""
 
-#: includes/admin.php:137
-#: includes/edit-member.php:84
-#: includes/edit-member.php:155
-msgid "Group ID"
-msgstr ""
-
-#: includes/admin.php:141
-#: includes/edit-member.php:156
+#: includes/admin.php:162
+#: includes/edit-member.php:195
 msgid "Group Owner"
 msgstr ""
 
-#: includes/admin.php:159
+#: includes/admin.php:180
 msgid "Actions"
 msgstr ""
 
-#: includes/admin.php:161
-#: includes/edit-member.php:89
-#: includes/edit-member.php:129
-#: includes/edit-member.php:159
-#: includes/edit-member.php:188
+#: includes/admin.php:182
+#: includes/edit-member.php:107
+#: includes/edit-member.php:148
+#: includes/edit-member.php:198
+#: includes/edit-member.php:227
 #: includes/manage-group-page.php:12
 #: includes/manage-group-page.php:50
-#: includes/parents.php:432
+#: includes/parents.php:425
 msgid "Manage Group"
 msgstr ""
 
-#: includes/admin.php:177
-#: includes/children.php:101
-#: includes/edit-member.php:86
-#: includes/manage-group-page.php:630
-msgid "Group Code"
-msgstr ""
-
-#: includes/admin.php:178
-#: includes/admin.php:343
-msgid "Parent Account"
-msgstr ""
-
-#: includes/admin.php:196
-#: includes/admin.php:201
-#: includes/admin.php:375
+#: includes/admin.php:217
+#: includes/admin.php:222
+#: includes/admin.php:432
 msgid "&#8212;"
 msgstr ""
 
-#: includes/admin.php:277
+#: includes/admin.php:298
 msgid "View Documentation"
 msgstr ""
 
-#: includes/admin.php:277
+#: includes/admin.php:298
 msgid "Docs"
 msgstr ""
 
-#: includes/admin.php:278
+#: includes/admin.php:299
 msgid "Visit Customer Support Forum"
 msgstr ""
 
-#: includes/admin.php:278
+#: includes/admin.php:299
 msgid "Support"
+msgstr ""
+
+#: includes/admin.php:319
+msgid "Group Total Seats (Parent)"
+msgstr ""
+
+#: includes/admin.php:320
+msgid "Group ID (Child)"
 msgstr ""
 
 #: includes/children.php:27
@@ -226,8 +367,10 @@ msgstr ""
 msgid "Group"
 msgstr ""
 
+#. translators: %s: the display name of the group parent.
 #: includes/children.php:397
 #: includes/children.php:451
+#: includes/children.php:500
 #, php-format
 msgid "Managed by %s"
 msgstr ""
@@ -354,49 +497,43 @@ msgstr ""
 msgid "WARNING: This level does not have a recurring subscription. Child accounts will assume a monthly billing period unless you configure the subscription on this parent level."
 msgstr ""
 
-#: includes/edit-member.php:74
+#: includes/edit-member.php:90
 msgid "Manage Groups"
 msgstr ""
 
-#: includes/edit-member.php:77
+#: includes/edit-member.php:94
 msgid "This user does not manage any groups."
 msgstr ""
 
-#: includes/edit-member.php:85
-msgid "Parent Level"
-msgstr ""
-
-#: includes/edit-member.php:87
+#: includes/edit-member.php:105
 msgid "Group Levels"
 msgstr ""
 
-#: includes/edit-member.php:88
-msgid "Seats"
-msgstr ""
-
-#: includes/edit-member.php:119
+#: includes/edit-member.php:138
 msgid "None"
 msgstr ""
 
-#: includes/edit-member.php:132
-#: includes/edit-member.php:191
+#: includes/edit-member.php:151
+#: includes/edit-member.php:230
 msgid "Page not set."
 msgstr ""
 
-#: includes/edit-member.php:145
+#. translators: %s: parent membership level name
+#: includes/edit-member.php:176
+#, php-format
+msgid "This user holds the %s parent level but does not have a group yet."
+msgstr ""
+
+#: includes/edit-member.php:184
 msgid "Manage Child Memberships"
 msgstr ""
 
-#: includes/edit-member.php:148
+#: includes/edit-member.php:187
 msgid "This user has not been a member of any groups."
 msgstr ""
 
-#: includes/edit-member.php:157
+#: includes/edit-member.php:196
 msgid "Level ID"
-msgstr ""
-
-#: includes/edit-member.php:158
-msgid "Status"
 msgstr ""
 
 #: includes/emails.php:98
@@ -885,10 +1022,6 @@ msgid_plural "Group members will be able to claim the following membership level
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/parents.php:101
-msgid "Number of Seats"
-msgstr ""
-
 #: includes/parents.php:106
 #, php-format
 msgid "Choose the number of seats to purchase. You can purchase between %s and %s seats."
@@ -913,11 +1046,11 @@ msgstr ""
 msgid "There are currently %s members in your group. You must purchase at least that many seats."
 msgstr ""
 
-#: includes/parents.php:419
+#: includes/parents.php:412
 msgid "Group Account"
 msgstr ""
 
-#: includes/parents.php:422
+#: includes/parents.php:415
 #, php-format
 msgid "Users can join your group by using the %1$s code at checkout (%2$s/%3$s seats claimed)."
 msgstr ""
