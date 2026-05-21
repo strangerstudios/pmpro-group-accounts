@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
-Tested up to: 6.8
-Stable tag: 1.5.2
+Tested up to: 7.0
+Stable tag: 1.6
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,12 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.6 - 2026-05-21 =
+* FEATURE: Added a new "Group Accounts" admin page (Memberships → Group Accounts) for administrators to view all groups on the site and manually create new groups. The new admin list table supports custom columns via the `pmprogroupacct_manage_groupslist_columns` filter and the `pmprogroupacct_manage_grouplist_custom_column` action. #92 (@dparker1005)
+* ENHANCEMENT: Added a "Managed by [parent name]" message to the membership account page level cards for child group members, supporting the PMPro 3.4+ card-based account layout. #87 (@dparker1005)
+* ENHANCEMENT: Added Group Accounts fields to the new mapping screen in the Import Users From CSV Add On so administrators can map CSV headers to group seat counts and group IDs. #91 (@andrewlimaza)
+* DEPRECATED: Removed automatic creation of empty 0-seat groups on level gain and parent login. Groups are now created only at checkout or by an administrator via the new admin page. #92 (@dparker1005)
+
 = 1.5.2 - 2026-04-01 =
 * ENHANCEMENT: Updated the invite email template to use liquid syntax for PMPro 3.7+ with a fallback to the legacy `!!` syntax for older versions. #85 (@dparker1005)
 * BUG FIX: Fixed the seats input on checkout to prefill from the previous submission when a user is returned to checkout after a validation error. #86 (@dparker1005)

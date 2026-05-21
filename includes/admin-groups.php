@@ -2,7 +2,7 @@
 /**
  * Group Accounts admin page: list of all groups and form to create new groups.
  *
- * @since TBD
+ * @since 1.6
  */
 
 /**
@@ -12,7 +12,7 @@
  *   - '' (default): list table view
  *   - 'add':        Add Group form
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_page() {
 	if ( ! function_exists( 'pmpro_get_edit_member_capability' ) || ! current_user_can( pmpro_get_edit_member_capability() ) ) {
@@ -42,7 +42,7 @@ function pmprogroupacct_admin_groups_page() {
 /**
  * Render the list view.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_render_list() {
 	$list_table = new PMProGroupAcct_Groups_List_Table();
@@ -70,7 +70,7 @@ function pmprogroupacct_admin_groups_render_list() {
  * Pre-fills parent user and parent level from query args when provided
  * (e.g. when arriving from the Edit Member panel's "Create Group" link).
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_render_add_form() {
 	$state           = pmprogroupacct_admin_groups_consume_form_state();
@@ -150,7 +150,7 @@ function pmprogroupacct_admin_groups_render_add_form() {
 /**
  * Handle the Add Group form submission. Runs on admin_init so we can redirect.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_handle_post() {
 	if ( empty( $_POST['pmprogroupacct_admin_action'] ) ) {
@@ -260,7 +260,7 @@ add_action( 'admin_init', 'pmprogroupacct_admin_groups_handle_post' );
  * state (validation/create errors), never both — so clearing the whole transient
  * here is safe and avoids leaking a refreshed TTL across page reloads.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_render_notice() {
 	$key   = 'pmprogroupacct_admin_form_' . get_current_user_id();
@@ -280,7 +280,7 @@ function pmprogroupacct_admin_groups_render_notice() {
  * Stash form state (inputs + errors + optional notice) so the redirect target can re-render.
  * Single-use, scoped to the current user, 60-second TTL.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_set_form_state( $state ) {
 	set_transient( 'pmprogroupacct_admin_form_' . get_current_user_id(), $state, 60 );
@@ -292,7 +292,7 @@ function pmprogroupacct_admin_groups_set_form_state( $state ) {
  *
  * Exits.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_redirect_to_existing_group( $existing_group ) {
 	pmprogroupacct_admin_groups_set_form_state( array(
@@ -310,7 +310,7 @@ function pmprogroupacct_admin_groups_redirect_to_existing_group( $existing_group
 /**
  * Read and clear the stashed form state.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_admin_groups_consume_form_state() {
 	$key   = 'pmprogroupacct_admin_form_' . get_current_user_id();

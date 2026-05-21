@@ -7,12 +7,12 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 /**
  * List table for all groups in the Group Accounts admin page.
  *
- * @since TBD
+ * @since 1.6
  */
 class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function __construct() {
 		parent::__construct(
@@ -25,7 +25,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function get_columns() {
 		$columns = array(
@@ -40,7 +40,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 		/**
 		 * Filter the columns shown on the Group Accounts admin list table.
 		 *
-		 * @since TBD
+		 * @since 1.6
 		 *
 		 * @param array $columns Column slug => label.
 		 */
@@ -50,7 +50,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Dispatch column rendering for any column without a dedicated column_<slug> method.
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 *
 	 * @param PMProGroupAcct_Group $item The group object for this row.
 	 * @param string               $column_name The column slug being rendered.
@@ -61,7 +61,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 		 * Callbacks should echo their own escaped HTML for the matching column slug; the return
 		 * value of this method is discarded by WP_List_Table.
 		 *
-		 * @since TBD
+		 * @since 1.6
 		 *
 		 * @param string               $column_name The column slug being rendered.
 		 * @param PMProGroupAcct_Group $item        The group object for this row.
@@ -70,7 +70,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	protected function get_sortable_columns() {
 		return array(
@@ -82,7 +82,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function no_items() {
 		esc_html_e( 'No groups found.', 'pmpro-group-accounts' );
@@ -91,7 +91,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Fetch the groups for the current page and set up pagination.
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function prepare_items() {
 		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
@@ -152,7 +152,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Render the Parent Level + Status filter dropdowns above the table.
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 */
 	protected function extra_tablenav( $which ) {
 		if ( 'top' !== $which ) {
@@ -189,7 +189,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Group ID column — linked to the frontend Manage Group page when available.
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_id( $item ) {
 		$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group' );
@@ -204,7 +204,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_parent_user( $item ) {
 		$parent_user = get_userdata( $item->group_parent_user_id );
@@ -219,7 +219,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_parent_level( $item ) {
 		$level = pmpro_getLevel( $item->group_parent_level_id );
@@ -231,7 +231,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	}
 
 	/**
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_group_checkout_code( $item ) {
 		return '<code>' . esc_html( $item->group_checkout_code ) . '</code>';
@@ -240,7 +240,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	/**
 	 * Seats column: "active/total".
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_seats( $item ) {
 		$active = (int) $item->get_active_members( true );
@@ -254,7 +254,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 	 * Reuses PMPro core's pmpro_subscription-status badge classes for visual parity
 	 * with the Orders and Subscriptions list tables.
 	 *
-	 * @since TBD
+	 * @since 1.6
 	 */
 	public function column_status( $item ) {
 		$is_active = pmpro_hasMembershipLevel( (int) $item->group_parent_level_id, (int) $item->group_parent_user_id );

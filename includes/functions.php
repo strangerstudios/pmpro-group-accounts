@@ -77,7 +77,7 @@ function pmprogroupacct_member_edit_url_for_user( $user ) {
  * Build a URL to the Group Accounts admin page, optionally with query args
  * for action / parent_user_id / parent_level_id prefill.
  *
- * @since TBD
+ * @since 1.6
  *
  * @param array $args Optional query args to append.
  * @return string
@@ -94,7 +94,7 @@ function pmprogroupacct_admin_groups_url( $args = array() ) {
  * levels for group accounts (i.e. their `pmprogroupacct_settings` has at least
  * one entry in `child_level_ids`).
  *
- * @since TBD
+ * @since 1.6
  *
  * @return array Indexed array of level objects from pmpro_getAllLevels().
  */

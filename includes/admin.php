@@ -40,7 +40,7 @@ add_action( 'admin_notices', 'pmprogroupacct_admin_notice' );
 /**
  * Register the Group Accounts admin page under the Memberships menu.
  *
- * @since TBD
+ * @since 1.6
  */
 function pmprogroupacct_add_admin_menu() {
 	if ( ! defined( 'PMPRO_VERSION' ) || ! function_exists( 'pmpro_get_edit_member_capability' ) ) {
@@ -308,7 +308,7 @@ add_filter('plugin_row_meta', 'pmprogroupacct_plugin_row_meta', 10, 2);
 /**
  * Add Group Accounts fields to the Import Users From CSV mapping screen.
  *
- * @since TBD
+ * @since 1.6
  * @param array $fields The available mapping fields organised by group.
  * @return array
  */
@@ -327,7 +327,7 @@ add_filter( 'pmproiucsv_mapping_fields', 'pmprogroupacct_pmproiucsv_mapping_fiel
 /**
  * Register CSV column header aliases for Group Accounts fields so they are auto-detected on the mapping screen.
  *
- * @since TBD
+ * @since 1.6
  * @param array $aliases Existing header-to-field-key aliases.
  * @return array
  */

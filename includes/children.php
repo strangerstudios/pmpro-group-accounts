@@ -458,7 +458,7 @@ add_filter( 'pmpro_level_cost_text', 'pmprogroupacct_pmpro_level_cost_text_child
  * Show "Managed by [parent name]" on the membership account page level card
  * for child group members.
  *
- * @since TBD
+ * @since 1.6
  *
  * @param object $level The level being displayed.
  */
