@@ -38,6 +38,27 @@ function pmprogroupacct_admin_notice() {
 add_action( 'admin_notices', 'pmprogroupacct_admin_notice' );
 
 /**
+ * Register the Group Accounts admin page under the Memberships menu.
+ *
+ * @since TBD
+ */
+function pmprogroupacct_add_admin_menu() {
+	if ( ! defined( 'PMPRO_VERSION' ) || ! function_exists( 'pmpro_get_edit_member_capability' ) ) {
+		return;
+	}
+
+	add_submenu_page(
+		'pmpro-dashboard',
+		__( 'Group Accounts', 'pmpro-group-accounts' ),
+		__( 'Group Accounts', 'pmpro-group-accounts' ),
+		pmpro_get_edit_member_capability(),
+		'pmpro-groupacct-groups',
+		'pmprogroupacct_admin_groups_page'
+	);
+}
+add_action( 'admin_menu', 'pmprogroupacct_add_admin_menu' );
+
+/**
  * Show a message if Paid Memberships Pro is inactive or not installed.
  */
 function pmprogroupacct_required_installed() {

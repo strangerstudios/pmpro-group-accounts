@@ -72,3 +72,44 @@ function pmprogroupacct_member_edit_url_for_user( $user ) {
 	// Return the parent user edit URL.
 	return $member_edit_url;
 }
+
+/**
+ * Build a URL to the Group Accounts admin page, optionally with query args
+ * for action / parent_user_id / parent_level_id prefill.
+ *
+ * @since TBD
+ *
+ * @param array $args Optional query args to append.
+ * @return string
+ */
+function pmprogroupacct_admin_groups_url( $args = array() ) {
+	return add_query_arg(
+		array_merge( array( 'page' => 'pmpro-groupacct-groups' ), $args ),
+		admin_url( 'admin.php' )
+	);
+}
+
+/**
+ * Return the list of membership level objects that are configured as parent
+ * levels for group accounts (i.e. their `pmprogroupacct_settings` has at least
+ * one entry in `child_level_ids`).
+ *
+ * @since TBD
+ *
+ * @return array Indexed array of level objects from pmpro_getAllLevels().
+ */
+function pmprogroupacct_get_parent_eligible_levels() {
+	if ( ! function_exists( 'pmpro_getAllLevels' ) ) {
+		return array();
+	}
+
+	$all_levels   = pmpro_getAllLevels( true, true );
+	$parent_levels = array();
+	foreach ( $all_levels as $level ) {
+		$settings = pmprogroupacct_get_settings_for_level( $level->id );
+		if ( ! empty( $settings ) && ! empty( $settings['child_level_ids'] ) ) {
+			$parent_levels[] = $level;
+		}
+	}
+	return $parent_levels;
+}
