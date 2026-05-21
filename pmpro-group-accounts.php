@@ -17,9 +17,11 @@ define( 'PMPROGROUPACCT_VERSION', '1.5.2' );
 
 include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group.php' );
 include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-group-member.php' );
+include_once( PMPROGROUPACCT_DIR . '/classes/class-pmprogroupacct-groups-list-table.php' );
 
 include_once( PMPROGROUPACCT_DIR . '/includes/functions.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/admin.php' );
+include_once( PMPROGROUPACCT_DIR . '/includes/admin-groups.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/scripts.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/emails.php' );
 include_once( PMPROGROUPACCT_DIR . '/includes/edit-level.php' );

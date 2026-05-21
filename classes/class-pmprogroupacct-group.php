@@ -84,72 +84,92 @@ class PMProGroupAcct_Group {
 	 *
 	 * @since 1.0
 	 *
-	 * @param array $args The query arguments to use to retrieve groups.
+	 * @param array $args The query arguments to use to retrieve groups. Supports id,
+	 *                    group_parent_user_id, group_parent_level_id, group_checkout_code,
+	 *                    orderby, limit, offset, status ('active' | 'inactive'), return_count.
 	 *
-	 * @return PMProGroupAcct_Group[] The list of groups.
+	 * @return PMProGroupAcct_Group[]|int The list of groups, or a count when return_count is set.
 	 */
 	public static function get_groups( $args = array() ) {
 		global $wpdb;
-
-		$sql_query = "SELECT id FROM {$wpdb->pmprogroupacct_groups}";
 
 		$prepared = array();
 		$where    = array();
 		$orderby  = isset( $args['orderby'] ) ? $args['orderby'] : '`id` DESC';
 		$limit    = isset( $args['limit'] ) ? (int) $args['limit'] : 100;
+		$offset   = isset( $args['offset'] ) ? (int) $args['offset'] : 0;
+		$status   = isset( $args['status'] ) && in_array( strtolower( (string) $args['status'] ), array( 'active', 'inactive' ), true ) ? strtolower( $args['status'] ) : '';
 
 		// Detect unsupported orderby usage.
 		if ( $orderby !== preg_replace( '/[^a-zA-Z0-9\s,`]/', ' ', $orderby ) ) {
-			return [];
+			return empty( $args['return_count'] ) ? array() : 0;
 		}
 
-		// Filter by ID.
+		// Alias the table as `g` so we can JOIN for the status filter without ambiguity.
+		// DISTINCT is only needed when the status JOIN is active (it can match multiple
+		// rows per group). Without the JOIN, the base table's UNIQUE keys already make
+		// each g.id unique, so DISTINCT is pure overhead.
+		$is_count  = ! empty( $args['return_count'] );
+		$needs_distinct = ( '' !== $status );
+		if ( $is_count ) {
+			$select = $needs_distinct ? 'COUNT(DISTINCT g.id)' : 'COUNT(*)';
+		} else {
+			$select = $needs_distinct ? 'DISTINCT g.id' : 'g.id';
+		}
+		$sql_query = "SELECT {$select} FROM {$wpdb->pmprogroupacct_groups} g";
+
+		// JOIN pmpro_memberships_users when filtering by active/inactive status.
+		if ( '' !== $status ) {
+			$sql_query .= " LEFT JOIN {$wpdb->pmpro_memberships_users} mu ON mu.user_id = g.group_parent_user_id AND mu.membership_id = g.group_parent_level_id AND mu.status = 'active'";
+		}
+
 		if ( isset( $args['id'] ) ) {
-			$where[]    = 'id = %d';
+			$where[]    = 'g.id = %d';
 			$prepared[] = $args['id'];
 		}
-
-		// Filter by parent user ID.
 		if ( isset( $args['group_parent_user_id'] ) ) {
-			$where[]    = 'group_parent_user_id = %d';
+			$where[]    = 'g.group_parent_user_id = %d';
 			$prepared[] = $args['group_parent_user_id'];
 		}
-
-		// Filter by parent level ID.
 		if ( isset( $args['group_parent_level_id'] ) ) {
-			$where[]    = 'group_parent_level_id = %d';
+			$where[]    = 'g.group_parent_level_id = %d';
 			$prepared[] = $args['group_parent_level_id'];
 		}
-
-		// Filter by checkout group_checkout_code.
 		if ( isset( $args['group_checkout_code'] ) ) {
-			$where[]    = 'group_checkout_code = %s';
+			$where[]    = 'g.group_checkout_code = %s';
 			$prepared[] = $args['group_checkout_code'];
 		}
+		if ( 'active' === $status ) {
+			$where[] = 'mu.id IS NOT NULL';
+		} elseif ( 'inactive' === $status ) {
+			$where[] = 'mu.id IS NULL';
+		}
 
-		// Maybe filter the data.
 		if ( ! empty( $where ) ) {
 			$sql_query .= ' WHERE ' . implode( ' AND ', $where );
 		}
 
-		// Add the order and limit.
-		$sql_query .= " ORDER BY {$orderby} LIMIT {$limit}";
-
-		// Prepare the query.
-		if ( ! empty( $prepared ) ) {
-			$sql_query = $wpdb->prepare( $sql_query, $prepared );
+		if ( $is_count ) {
+			if ( ! empty( $prepared ) ) {
+				$sql_query = $wpdb->prepare( $sql_query, $prepared );
+			}
+			return (int) $wpdb->get_var( $sql_query );
 		}
 
-		// Get the data.
+		// Prefix orderby with the `g.` alias so it remains unambiguous when the status JOIN is present.
+		$sql_query .= " ORDER BY g.{$orderby} LIMIT %d OFFSET %d";
+		$prepared[] = $limit;
+		$prepared[] = $offset;
+		$sql_query  = $wpdb->prepare( $sql_query, $prepared );
+
 		$group_ids = $wpdb->get_col( $sql_query );
 		if ( empty( $group_ids ) ) {
 			return array();
 		}
 
-		// Return the list of groups.
 		$groups = array();
 		foreach ( $group_ids as $group_id ) {
-			$group = new self( (int)$group_id );
+			$group = new self( (int) $group_id );
 			if ( ! empty( $group->id ) ) {
 				$groups[] = $group;
 			}

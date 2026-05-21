@@ -69,12 +69,30 @@ function pmprogroupacct_show_group_account_info( $user ) {
 	);
 	$group_members = PMProGroupAcct_Group_Member::get_group_members( $group_member_query_args );
 
+	// Find parent-eligible levels the user holds that do not yet have a group,
+	// so we can offer a "Create Group" link for each one.
+	$levels_without_groups     = array();
+	$user_levels               = pmpro_getMembershipLevelsForUser( $user->ID );
+	$existing_parent_level_ids = $groups ? array_map( 'intval', wp_list_pluck( $groups, 'group_parent_level_id' ) ) : array();
+	foreach ( (array) $user_levels as $user_level ) {
+		$level_settings = pmprogroupacct_get_settings_for_level( $user_level->id );
+		if ( empty( $level_settings ) || empty( $level_settings['child_level_ids'] ) ) {
+			continue;
+		}
+		if ( in_array( (int) $user_level->id, $existing_parent_level_ids, true ) ) {
+			continue;
+		}
+		$levels_without_groups[] = $user_level;
+	}
+
 	// Show the UI.
 	?>
 	<h3><?php esc_html_e( 'Manage Groups', 'pmpro-group-accounts' ); ?></h3>
 	<?php
 	if ( empty( $groups ) ) {
-		echo '<p>' . esc_html__( 'This user does not manage any groups.', 'pmpro-group-accounts' ) . '</p>';
+		if ( empty( $levels_without_groups ) ) {
+			echo '<p>' . esc_html__( 'This user does not manage any groups.', 'pmpro-group-accounts' ) . '</p>';
+		}
 	} else {
 		// Show the groups that the user manages.
 		?>
@@ -105,8 +123,9 @@ function pmprogroupacct_show_group_account_info( $user ) {
 						<td>
 						<?php
 							$group_settings = pmprogroupacct_get_settings_for_level( $group->group_parent_level_id );
+							$child_level_ids = ! empty( $group_settings['child_level_ids'] ) ? $group_settings['child_level_ids'] : array();
 							$child_level_links = array();
-							foreach ( $group_settings['child_level_ids'] as $child_level_id ) {
+							foreach ( $child_level_ids as $child_level_id ) {
 								if ( ! empty( $pmpro_pages['checkout'] ) ) {
 									$child_level = pmpro_getLevel( $child_level_id );
 									$child_level_links[] = '<a target="_blank" href="' . esc_url( add_query_arg( array( 'level' => $child_level->id, 'pmprogroupacct_group_code' => $group->group_checkout_code ), pmpro_url( 'checkout' ) ) ) . '">' . esc_html( $child_level->name ) . '</a>';
@@ -138,8 +157,28 @@ function pmprogroupacct_show_group_account_info( $user ) {
 				}
 				?>
 			</tbody>
-		</table> 
+		</table>
 		<?php
+	}
+
+	// "Create Group" link per parent-eligible level the user holds without a group.
+	if ( ! empty( $levels_without_groups ) ) {
+		foreach ( $levels_without_groups as $level_without_group ) {
+			$create_url = pmprogroupacct_admin_groups_url( array(
+				'action'          => 'add',
+				'parent_user_id'  => (int) $user->ID,
+				'parent_level_id' => (int) $level_without_group->id,
+			) );
+			?>
+			<p>
+				<?php
+				/* translators: %s: parent membership level name */
+				echo esc_html( sprintf( __( 'This user holds the %s parent level but does not have a group yet.', 'pmpro-group-accounts' ), $level_without_group->name ) );
+				echo ' <a href="' . esc_url( $create_url ) . '">' . esc_html__( 'Create Group', 'pmpro-group-accounts' ) . '</a>';
+				?>
+			</p>
+			<?php
+		}
 	}
 	?>
 	<h3><?php esc_html_e( 'Manage Child Memberships', 'pmpro-group-accounts' ); ?></h3>
