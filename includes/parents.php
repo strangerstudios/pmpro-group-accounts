@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * If the user is checking out for a group parent level, we want to let them
  * choose the number of seats to purchase if there is a variable amount. We
@@ -100,7 +104,7 @@ function pmprogroupacct_pmpro_checkout_boxes_parent() {
 						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-seats', 'pmpro_form_field-seats' ) ); ?>">
 							<label for="pmprogroupacct_seats" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Number of Seats', 'pmpro-group-accounts' ); ?></label>
 							<?php
-								$seats_value = isset( $_REQUEST['pmprogroupacct_seats'] ) ? max( $settings['min_seats'], min( $settings['max_seats'], intval( $_REQUEST['pmprogroupacct_seats'] ) ) ) : $settings['min_seats'];
+								$seats_value = isset( $_REQUEST['pmprogroupacct_seats'] ) ? max( $settings['min_seats'], min( $settings['max_seats'], intval( $_REQUEST['pmprogroupacct_seats'] ) ) ) : $settings['min_seats']; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only prefill of the checkout field.
 							?>
 							<input class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-number pmpro_alter_price', 'pmprogroupacct_seats' ) ); ?>" id="pmprogroupacct_seats" name="pmprogroupacct_seats" type="number" min="<?php echo esc_attr( $settings['min_seats'] ); ?>" max="<?php echo esc_attr( $settings['max_seats'] ); ?>" value="<?php echo esc_attr( $seats_value ); ?>" />
 							<p class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>"><?php printf( esc_html__( 'Choose the number of seats to purchase. You can purchase between %s and %s seats.', 'pmpro-group-accounts' ), esc_html( number_format_i18n( ( (int)$settings['min_seats'] ) ) ), esc_html( number_format_i18n( (int)$settings['max_seats'] ) ) ); ?></p>
@@ -160,11 +164,11 @@ function pmprogroupacct_pmpro_registration_checks_parent( $continue_checkout ) {
 	}
 
 	// If the number of seats entered is not an integer, show an error.
-	if ( ! isset( $_REQUEST['pmprogroupacct_seats'] ) || ! is_numeric( $_REQUEST['pmprogroupacct_seats'] ) ) {
+	if ( ! isset( $_REQUEST['pmprogroupacct_seats'] ) || ! is_numeric( $_REQUEST['pmprogroupacct_seats'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Validation during checkout; PMPro core verifies the checkout nonce.
 		$continue_checkout = false;
 		pmpro_setMessage( esc_html__( 'The number of seats must be a whole number.', 'pmpro-group-accounts' ), 'pmpro_error' );
 	}
-	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
+	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Validation during checkout; PMPro core verifies the checkout nonce.
 
 	// If the number of seats is less than the minimum, show an error.
 	if ( $seats < $settings['min_seats'] ) {
@@ -215,7 +219,7 @@ function pmprogroupacct_pmpro_checkout_level_parent( $level ) {
 	}
 
 	// Get the number of seats being purchased. This is either the number of seats entered or the minimum seats if set.
-	$seats = intval( isset( $_REQUEST['pmprogroupacct_seats'] ) ? $_REQUEST['pmprogroupacct_seats'] : $settings['min_seats'] );
+	$seats = intval( isset( $_REQUEST['pmprogroupacct_seats'] ) ? $_REQUEST['pmprogroupacct_seats'] : $settings['min_seats'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Used to price the checkout level; PMPro core verifies the checkout nonce before processing.
 
 	// If the number of seats is not an integer, bail.
 	if ( empty( $seats ) || ! is_numeric( $seats ) ) {
@@ -293,7 +297,7 @@ function pmprogroupacct_pmpro_after_checkout_parent( $user_id ) {
 	}
 
 	// Get the number of seats being purchased.
-	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0;
+	$seats = isset( $_REQUEST['pmprogroupacct_seats'] ) ? intval( $_REQUEST['pmprogroupacct_seats'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs in pmpro_after_checkout; PMPro core verifies the checkout nonce.
 
 	// Check if there is already a group for this user and level.
 	$existing_group = PMProGroupAcct_Group::get_group_by_parent_user_id_and_parent_level_id( $user_id, $level->id );

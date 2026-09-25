@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Get the group account settings for a membership level.
  *
@@ -36,7 +40,7 @@ function pmprogroupacct_level_can_be_claimed_using_group_codes( $level_id ) {
 	if ( null === $all_settings ) {
 		global $wpdb;
 		// Get all `pmprogroupacct_settings` metadata for all levels.
-		$all_settings = $wpdb->get_col(
+		$all_settings = $wpdb->get_col( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared query on PMPro's level meta table; cached in a static variable.
 			$wpdb->prepare(
 				"SELECT meta_value FROM $wpdb->pmpro_membership_levelmeta WHERE meta_key = %s",
 				'pmprogroupacct_settings'

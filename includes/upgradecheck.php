@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Run any necessary upgrades to the DB.
  */
@@ -9,7 +13,7 @@ function pmprogroupacct_check_for_upgrades() {
 	global $wpdb;
 	$wpdb->hide_errors();
 	$wpdb->pmprogroupacct_groups = $wpdb->prefix . 'pmprogroupacct_groups';
-	$table_exists = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->pmprogroupacct_groups . "'");
+	$table_exists = $wpdb->query("SHOW TABLES LIKE '" . $wpdb->pmprogroupacct_groups . "'"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is built from $wpdb->prefix; schema check during upgrade.
 	if(!$table_exists)
 		$db_version = 0;
 

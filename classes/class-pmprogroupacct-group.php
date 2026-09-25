@@ -62,6 +62,7 @@ class PMProGroupAcct_Group {
 		global $wpdb;
 
 		if ( is_int( $group_id ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared query on the add-on's custom table.
 			$data = $wpdb->get_row(
 				$wpdb->prepare(
 					"SELECT * FROM {$wpdb->pmprogroupacct_groups} WHERE id = %d",
@@ -151,8 +152,9 @@ class PMProGroupAcct_Group {
 
 		if ( $is_count ) {
 			if ( ! empty( $prepared ) ) {
-				$sql_query = $wpdb->prepare( $sql_query, $prepared );
+				$sql_query = $wpdb->prepare( $sql_query, $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is built from static SQL fragments with placeholders only.
 			}
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql_query is static SQL with placeholders, prepared above when there are values.
 			return (int) $wpdb->get_var( $sql_query );
 		}
 
@@ -160,8 +162,9 @@ class PMProGroupAcct_Group {
 		$sql_query .= " ORDER BY g.{$orderby} LIMIT %d OFFSET %d";
 		$prepared[] = $limit;
 		$prepared[] = $offset;
-		$sql_query  = $wpdb->prepare( $sql_query, $prepared );
+		$sql_query  = $wpdb->prepare( $sql_query, $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Placeholders only; $orderby is restricted to [a-zA-Z0-9_ ,`] above.
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql_query was prepared above.
 		$group_ids = $wpdb->get_col( $sql_query );
 		if ( empty( $group_ids ) ) {
 			return array();
@@ -248,7 +251,7 @@ class PMProGroupAcct_Group {
 		$group_checkout_code = self::generate_group_checkout_code();
 
 		// Create the group in the database.
-		$wpdb->insert(
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Insert into the add-on's custom table.
 			$wpdb->pmprogroupacct_groups,
 			array(
 				'group_parent_user_id'  => (int)$group_parent_user_id,
@@ -321,7 +324,7 @@ class PMProGroupAcct_Group {
 		}
 
 		$this->group_checkout_code = $group_checkout_code;
-		$wpdb->update(
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Update on the add-on's custom table.
 			$wpdb->pmprogroupacct_groups,
 			array(
 				'group_checkout_code' => $group_checkout_code,
@@ -354,7 +357,7 @@ class PMProGroupAcct_Group {
 		}
 
 		$this->group_total_seats = $group_total_seats;
-		$wpdb->update(
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Update on the add-on's custom table.
 			$wpdb->pmprogroupacct_groups,
 			array(
 				'group_total_seats' => $group_total_seats,
@@ -424,7 +427,7 @@ class PMProGroupAcct_Group {
 
 		// While $new_group_checkout_code is not unique, generate a new code.
 		$new_group_checkout_code = pmpro_getDiscountCode();
-		while ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->pmprogroupacct_groups} WHERE group_checkout_code = %s", $new_group_checkout_code ) ) ) {
+		while ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->pmprogroupacct_groups} WHERE group_checkout_code = %s", $new_group_checkout_code ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared uniqueness check on the add-on's custom table.
 			$new_group_checkout_code = pmpro_getDiscountCode();
 		}
 
