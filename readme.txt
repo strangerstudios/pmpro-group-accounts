@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,11 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.6.2 - 2026-10-01 =
+* SECURITY: Improved sanitization and escaping throughout the plugin to resolve Plugin Check security findings. #98 (@dparker1005)
+* BUG FIX: Fixed an issue where invite email addresses containing an apostrophe were rejected as invalid. #98 (@dparker1005)
+* BUG FIX: Fixed an issue where custom group codes containing a quote or backslash were saved with stray backslashes. If a group code shows a backslash on the Manage Group page, edit the code to remove it or regenerate the code so that checkout and invite links match. #98 (@dparker1005)
+
 = 1.6.1 - 2026-09-11 =
 * SECURITY: Fixed an issue where the group seat total and group checkout code could be updated on the Manage Group page even when the permission or nonce checks failed. #95 (@flintfromthebasement)
 * SECURITY: Fixed an issue where invites could be sent for levels that are not child levels of the group. #97 (@flintfromthebasement)
