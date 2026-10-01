@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add group account settings to the edit level page.
  *
@@ -19,9 +23,11 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 	);
 
 	// Are we copying a level?
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only: which level's settings to prefill when copying.
 	if ( isset( $_REQUEST['copy'] ) ) {
 		$copy = intval( $_REQUEST['copy'] );
 	}
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	// Get the group account settings for the level.
 	if ( ! empty( $copy ) && $copy > 0 ) {
@@ -70,7 +76,7 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 					<div class="pmpro_message pmpro_alert">
 						<p>
 							<?php esc_html_e( 'You do not have any membership levels that can be set as the child account for this group.', 'pmpro-group-accounts' ); ?>
-							<?php printf( __( 'Please <a target="_blank" href="%s">create an additional membership level</a> to use as the child account for this group.', 'pmpro-group-accounts' ), add_query_arg( array( 'page' => 'pmpro-membershiplevels' ), admin_url( 'admin.php' ) ) ); ?>
+							<?php printf( wp_kses_post( __( 'Please <a target="_blank" href="%s">create an additional membership level</a> to use as the child account for this group.', 'pmpro-group-accounts' ) ), esc_url( add_query_arg( array( 'page' => 'pmpro-membershiplevels' ), admin_url( 'admin.php' ) ) ) ); ?>
 						</p>
 					</div>
 					<?php
@@ -153,12 +159,12 @@ function pmprogroupacct_pmpro_membership_level_before_content_settings( $level )
 								<td>
 									<?php
 									if ( pmpro_getCurrencyPosition() == "left" )
-										echo $pmpro_currency_symbol;
+										echo wp_kses_post( $pmpro_currency_symbol );
 									?>
 									<input name="pmprogroupacct_pricing_model_settings" type="text" value="<?php echo esc_attr( pmpro_filter_price_for_text_field( $settings['pricing_model_settings'] ) ); ?>" class="regular-text" />
 									<?php
 									if ( pmpro_getCurrencyPosition() == "right" )
-										echo $pmpro_currency_symbol;
+										echo wp_kses_post( $pmpro_currency_symbol );
 									?>
 									<p class="description"><?php esc_html_e( 'The additional cost at checkout per seat.', 'pmpro-group-accounts' ); ?></p>
 								</td>
@@ -198,6 +204,7 @@ add_action( 'pmpro_membership_level_before_content_settings', 'pmprogroupacct_pm
  * @param int $level_id The ID of the level being saved.
  */
 function pmprogroupacct_pmpro_save_membership_level( $level_id ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Runs on pmpro_save_membership_level after PMPro verifies the level edit nonce and capability. Fields are always present on that form; values are cast, safelisted or sanitized, and saved via the metadata API, which expects slashed input.
 	// Validate the passed data.
 	if ( empty( $_REQUEST['pmprogroupacct_child_level_ids'] ) ) {
 		// This is not a group account level. Clear any existing settings.
@@ -233,6 +240,7 @@ function pmprogroupacct_pmpro_save_membership_level( $level_id ) {
 	}
 	$settings['price_application']		= pmpro_sanitize_with_safelist( $_REQUEST['pmprogroupacct_price_application'], array( 'both', 'initial', 'recurring' ) ) ? $_REQUEST['pmprogroupacct_price_application'] : 'both';
 	update_pmpro_membership_level_meta( $level_id, 'pmprogroupacct_settings', $settings );
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 }
 add_action( 'pmpro_save_membership_level', 'pmprogroupacct_pmpro_save_membership_level' );
 

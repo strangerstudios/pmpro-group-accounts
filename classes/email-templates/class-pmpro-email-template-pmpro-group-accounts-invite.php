@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 class PMPro_Email_Template_PMProGroupAcct_Invite extends PMPro_Email_Template {
 

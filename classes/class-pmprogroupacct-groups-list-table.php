@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-list-table.php';
@@ -102,6 +105,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 		// Build query args common to count and fetch. Validate orderby against the
 		// sortable-columns map so a typo'd URL falls back to the default rather than
 		// blanking the list.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only list table sorting, filtering and pagination.
 		$args             = array();
 		$orderby_input    = isset( $_REQUEST['orderby'] ) ? sanitize_key( $_REQUEST['orderby'] ) : 'id';
 		$valid_orderbys   = array();
@@ -113,7 +117,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 		if ( ! in_array( $orderby_input, $valid_orderbys, true ) ) {
 			$orderby_input = 'id';
 		}
-		$order           = ( isset( $_REQUEST['order'] ) && 'asc' === strtolower( $_REQUEST['order'] ) ) ? 'ASC' : 'DESC';
+		$order           = ( isset( $_REQUEST['order'] ) && 'asc' === strtolower( sanitize_text_field( wp_unslash( $_REQUEST['order'] ) ) ) ) ? 'ASC' : 'DESC';
 		$args['orderby'] = $orderby_input . ' ' . $order;
 
 		if ( ! empty( $_REQUEST['l'] ) ) {
@@ -126,6 +130,7 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 				$args['status'] = $status;
 			}
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		$total_items = PMProGroupAcct_Group::get_groups( array_merge( $args, array( 'return_count' => true ) ) );
 		$total_pages = $per_page > 0 ? (int) ceil( $total_items / $per_page ) : 0;
@@ -159,8 +164,10 @@ class PMProGroupAcct_Groups_List_Table extends WP_List_Table {
 			return;
 		}
 
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only filter values used to pre-select the dropdowns.
 		$selected_level  = isset( $_REQUEST['l'] ) ? (int) $_REQUEST['l'] : 0;
 		$selected_status = ! empty( $_REQUEST['status'] ) ? sanitize_key( $_REQUEST['status'] ) : '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		$parent_levels   = pmprogroupacct_get_parent_eligible_levels();
 		?>
 		<div class="alignleft actions">

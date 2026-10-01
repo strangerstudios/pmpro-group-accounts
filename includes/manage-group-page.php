@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Add a page setting for the Manage Group page.
  *
@@ -73,11 +77,11 @@ function pmprogroupacct_manage_group_preheader() {
 		$redirect = false;
 
 		// Make sure that a group ID was passed. If not, set $redirect to true.
-		if ( empty( $_REQUEST['pmprogroupacct_group_id'] ) ) {
+		if ( empty( $_REQUEST['pmprogroupacct_group_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing and permission check.
 			$redirect = true;
 		} else {
 			// Get the group.
-			$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) );
+			$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing and permission check.
 
 			// If the group doesn't exist, set $redirect to true.
 			if ( empty( $group->id ) ) {
@@ -93,7 +97,7 @@ function pmprogroupacct_manage_group_preheader() {
 
 		// Redirect if necessary.
 		if ( ! empty( $redirect ) ) {
-			wp_redirect( pmpro_url( 'account' ) );
+			wp_redirect( pmpro_url( 'account' ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_url() is filterable and may point offsite (e.g. Network Subsite).
 			exit;
 		}
 	}
@@ -120,7 +124,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	}
 
 	// Get the group.
-	$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) );
+	$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; permission is checked below and each action verifies its own nonce.
 
 	// If the group doesn't exist, show an error.
 	if ( empty( $group->id ) ) {
@@ -141,7 +145,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	$action_message = '';
 	if ( ! empty( $_REQUEST['pmprogroupacct_bulk_member_action_submit'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_member_action_nonce'], 'pmprogroupacct_member_action' ) ) {
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_member_action_nonce'] ?? '' ) ), 'pmprogroupacct_member_action' ) ) {
 			$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. No changes were made.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -153,7 +157,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Get the group members.
 		if ( empty( $action_message ) ) {
 			$group_members_to_update = array();
-			foreach ( $_REQUEST['pmprogroupacct_action_user_ids'] as $group_member_id ) {
+			foreach ( $_REQUEST['pmprogroupacct_action_user_ids'] as $group_member_id ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each ID is cast with intval() below.
 				$group_members_to_update[] = new PMProGroupAcct_Group_Member( intval( $group_member_id ) );
 			}
 
@@ -198,7 +202,7 @@ function pmprogroupacct_shortcode_manage_group() {
 			// If there wasn't an error, get the group to transfer to.
 			if ( empty( $action_message ) ) {
 				// Get the group to transfer to.
-				$transfer_group_code = empty( $_REQUEST['pmprogroupacct_transfer_group_code'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_transfer_group_code'] );
+				$transfer_group_code = empty( $_REQUEST['pmprogroupacct_transfer_group_code'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_transfer_group_code'] ) );
 				$transfer_group = PMProGroupAcct_Group::get_group_by_checkout_code( $transfer_group_code );
 				if ( empty( $transfer_group ) ) {
 					$action_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid group code.', 'pmpro-group-accounts' ) . '</div>';
@@ -273,7 +277,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 
 		// Make sure that the nonce is valid.
-		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_update_group_settings_nonce'] ?? '' ) ), 'pmprogroupacct_update_group_settings' ) ) {
 			$seats_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. The number of seats has not been updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -300,12 +304,12 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 
 		// Make sure that the nonce is valid.
-		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_update_group_settings_nonce'], 'pmprogroupacct_update_group_settings' ) ) {
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_update_group_settings_nonce'] ?? '' ) ), 'pmprogroupacct_update_group_settings' ) ) {
 			$group_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Unable to validate your request. The group code was not updated.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Only make changes if the checks above passed and this is a different group code.
-		$new_group_code = sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] );
+		$new_group_code = sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) );
 		if ( empty( $group_code_message ) && $new_group_code !== $group->group_checkout_code ) {
 			// Make sure that no other group has this code.
 			$existing_group = PMProGroupAcct_Group::get_group_by_checkout_code( $new_group_code );
@@ -330,7 +334,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	$valid_emails = array();
 	if ( isset( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( ! wp_verify_nonce( $_REQUEST['pmprogroupacct_invite_new_members_nonce'], 'pmprogroupacct_invite_new_members' ) ) {
+		if ( ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_invite_new_members_nonce'] ?? '' ) ), 'pmprogroupacct_invite_new_members' ) ) {
 			$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -356,7 +360,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 		// Make sure that the email addresses are valid. Each should be on a new line.
 		if ( empty( $invite_message ) ) {
-			$emails = explode( "\n", trim( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) );
+			$emails = explode( "\n", trim( wp_unslash( $_REQUEST['pmprogroupacct_invite_new_members_emails'] ) ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each line is validated with is_email() below and escaped on output; sanitize_textarea_field() would strip %XX octets and change valid addresses.
 			$valid_emails = array();
 			$invalid_emails = array();
 
@@ -445,7 +449,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	$create_member_message = '';
 	if ( ! empty( $_REQUEST['pmprogroupacct_create_member_submit'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( empty( $_REQUEST['pmprogroupacct_create_member_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_create_member_nonce'], 'pmprogroupacct_create_member' ) ) {
+		if ( empty( $_REQUEST['pmprogroupacct_create_member_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_create_member_nonce'] ) ), 'pmprogroupacct_create_member' ) ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -455,7 +459,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 
 		// Make sure that we have an email.
-		$email = empty( $_REQUEST['pmprogroupacct_create_member_email'] ) ? '' : sanitize_email( $_REQUEST['pmprogroupacct_create_member_email'] );
+		$email = empty( $_REQUEST['pmprogroupacct_create_member_email'] ) ? '' : sanitize_email( wp_unslash( $_REQUEST['pmprogroupacct_create_member_email'] ) );
 		if ( empty( $create_member_message ) && empty( $email ) ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No email address provided.', 'pmpro-group-accounts' ) . '</div>';
 		}
@@ -466,13 +470,13 @@ function pmprogroupacct_shortcode_manage_group() {
 		}
 
 		// Make sure that we have a username.
-		$username = empty( $_REQUEST['pmprogroupacct_create_member_username'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_username'] );
+		$username = empty( $_REQUEST['pmprogroupacct_create_member_username'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_create_member_username'] ) );
 		if ( empty( $create_member_message ) && empty( $username ) ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid username.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that we have a password.
-		$password = empty( $_REQUEST['pmprogroupacct_create_member_password'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_password'] );
+		$password = empty( $_REQUEST['pmprogroupacct_create_member_password'] ) ? '' : sanitize_text_field( $_REQUEST['pmprogroupacct_create_member_password'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Passwords stay slashed to match how wp_signon() checks them.
 		if ( empty( $create_member_message ) && empty( $password ) ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid password.', 'pmpro-group-accounts' ) . '</div>';
 		}
@@ -515,7 +519,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	// If an admin is trying to add an existing user to the group, do that.
 	if ( ! empty( $_REQUEST['pmprogroupacct_add_existing_member_submit'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( empty( $_REQUEST['pmprogroupacct_add_existing_member_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_add_existing_member_nonce'], 'pmprogroupacct_add_existing_member' ) ) {
+		if ( empty( $_REQUEST['pmprogroupacct_add_existing_member_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_add_existing_member_nonce'] ) ), 'pmprogroupacct_add_existing_member' ) ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -537,7 +541,7 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Make sure this is a valid user.
 		if ( empty( $create_member_message ) ) {
 			// Get the user ID.
-			$username = sanitize_text_field( $_REQUEST['pmprogroupacct_add_existing_member_username'] );
+			$username = sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_add_existing_member_username'] ) );
 			$user = get_user_by( 'login', $username );
 			if ( empty( $user ) || empty( $user->ID ) ) {
 				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid user.', 'pmpro-group-accounts' ) . '</div>';
@@ -581,7 +585,7 @@ function pmprogroupacct_shortcode_manage_group() {
 	$generate_code_message = '';
 	if ( ! empty( $_REQUEST['pmprogroupacct_generate_new_group_code'] ) ) {
 		// Make sure that the nonce is valid.
-		if ( empty( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'] ) || ! wp_verify_nonce( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'], 'pmprogroupacct_generate_new_group_code' ) ) {
+		if ( empty( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_REQUEST['pmprogroupacct_generate_new_group_code_nonce'] ) ), 'pmprogroupacct_generate_new_group_code' ) ) {
 			$generate_code_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid nonce.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
@@ -662,7 +666,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				// If we were passed a username or email, get the user ID.
 				$user_id = 0;
 				if ( ! empty( $_REQUEST['pmprogroupacct_group_member_search'] ) ) {
-					$search_param = sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] );
+					$search_param = sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_member_search'] ) );
 					$user_search_query = $wpdb->prepare(
 						"SELECT ID FROM {$wpdb->users} WHERE user_login LIKE %s OR user_email LIKE %s OR user_nicename LIKE %s OR display_name LIKE %s",
 						'%' . $search_param . '%',
@@ -670,7 +674,7 @@ function pmprogroupacct_shortcode_manage_group() {
 						'%' . $search_param . '%',
 						'%' . $search_param . '%'
 					);
-					$results = $wpdb->get_col( $user_search_query );
+					$results = $wpdb->get_col( $user_search_query ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- $user_search_query was prepared above.
 					$get_members_to_show_args['group_child_user_id'] = empty( $results ) ? -1 : $results;
 				}
 
@@ -706,7 +710,7 @@ function pmprogroupacct_shortcode_manage_group() {
 								<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields pmpro_form_fields-inline' ) ); ?>">
 									<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-search' ) ); ?>">
 										<label class="screen-reader-text" for="pmprogroupacct_group_member_search"><?php esc_html_e( 'Search for username or email', 'pmpro-group-accounts' ); ?></label>
-										<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ); ?>" placeholder="<?php esc_attr_e( 'Search...', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-search', 'pmprogroupacct_group_member_search' ) ); ?>"/>
+										<input type="text" id="pmprogroupacct_group_member_search" name="pmprogroupacct_group_member_search" value="<?php echo esc_attr( sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_member_search'] ?? '' ) ) ); ?>" placeholder="<?php esc_attr_e( 'Search...', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-search', 'pmprogroupacct_group_member_search' ) ); ?>"/>
 									</div>
 									<input type="submit" value="<?php esc_attr_e( 'Search', 'pmpro-group-accounts' ); ?>" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_btn' ) ); ?>" />
 								</div>

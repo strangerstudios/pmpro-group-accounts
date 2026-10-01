@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * If a group code is passed and no other checkout messages are being shown, show a message that the group code has been applied if
  * the code is valid or an error message if not.
@@ -18,7 +22,7 @@ function pmprogroupacct_checkout_before_form_child() {
 	}
 
 	// Check if a group code was already passed.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only lookup to display a checkout message.
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
@@ -59,7 +63,7 @@ function pmprogroupacct_checkout_after_level_cost_child() {
 	}
 
 	// Check if a valid group code was already passed.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only lookup to display the applied code.
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
@@ -123,7 +127,7 @@ function pmprogroupacct_pmpro_checkout_level_child( $level ) {
 	}
 
 	// Check if a valid group code was already passed.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only lookup to adjust the checkout level.
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
@@ -157,7 +161,7 @@ function pmprogroupacct_pmpro_level_cost_text_child_checkout( $level_cost_text, 
 	}
 
 	// Check if a valid group code was already passed.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only lookup to adjust the level cost text.
 	if ( ! empty( $group_code ) ) {
 		// Check if the group code is valid.
 		$group = PMProGroupAcct_Group::get_group_by_checkout_code( $group_code );
@@ -198,7 +202,7 @@ function pmprogroupacct_pmpro_registration_checks_child( $pmpro_continue_registr
 	}
 
 	// Check if a valid group code is being used.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Validation during checkout; PMPro core verifies the checkout nonce.
 	if ( empty( $group_code ) ) {
 		// No group code is being used, so we're good.
 		return $pmpro_continue_registration;
@@ -285,7 +289,7 @@ function pmprogroupacct_pmpro_after_checkout_child( $user_id, $morder ) {
 	}
 
 	// Check if a valid group code was used.
-	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( $_REQUEST['pmprogroupacct_group_code'] ) : '';
+	$group_code = isset( $_REQUEST['pmprogroupacct_group_code'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_group_code'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Runs in pmpro_after_checkout; PMPro core verifies the checkout nonce.
 	if ( empty( $group_code ) ) {
 		// No group code was used, so we're good.
 		return;

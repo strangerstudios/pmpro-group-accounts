@@ -72,6 +72,7 @@ class PMProGroupAcct_Group_Member {
 		global $wpdb;
 
 		if ( is_int( $member_id ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared query on the add-on's custom table.
 			$data = $wpdb->get_row(
 				$wpdb->prepare(
 					"SELECT * FROM {$wpdb->pmprogroupacct_group_members} WHERE id = %d",
@@ -162,10 +163,11 @@ class PMProGroupAcct_Group_Member {
 
 		// Prepare the query.
 		if ( ! empty( $prepared ) ) {
-			$sql_query = $wpdb->prepare( $sql_query, $prepared );
+			$sql_query = $wpdb->prepare( $sql_query, $prepared ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Query is built from static SQL fragments with placeholders only.
 		}
 	
 		// Get the data.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql_query is static SQL with placeholders, prepared above when there are values.
 		$member_ids = $wpdb->get_col( $sql_query );
 
 		// If we're just counting, return the count.
@@ -226,7 +228,7 @@ class PMProGroupAcct_Group_Member {
 		}
 
 		// Create the group member in the database with an "active" status if they don't exist.
-		$wpdb->insert(
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Insert into the add-on's custom table.
 			$wpdb->pmprogroupacct_group_members,
 			array(
 				'group_child_user_id'  => (int)$group_child_user_id,
@@ -298,7 +300,7 @@ class PMProGroupAcct_Group_Member {
 		}
 
 		$this->group_child_status = $group_child_status;
-		$wpdb->update(
+		$wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Update on the add-on's custom table.
 			$wpdb->pmprogroupacct_group_members,
 			array(
 				'group_child_status' => $group_child_status,

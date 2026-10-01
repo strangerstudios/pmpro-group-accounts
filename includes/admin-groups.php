@@ -5,6 +5,10 @@
  * @since 1.6
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Render the Group Accounts admin page.
  *
@@ -19,7 +23,7 @@ function pmprogroupacct_admin_groups_page() {
 		wp_die( esc_html__( 'You do not have permission to access this page.', 'pmpro-group-accounts' ) );
 	}
 
-	$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : '';
+	$action = isset( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view routing.
 	?>
 	<div class="wrap">
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Group Accounts', 'pmpro-group-accounts' ); ?></h1>
@@ -52,12 +56,14 @@ function pmprogroupacct_admin_groups_render_list() {
 		<input type="hidden" name="page" value="pmpro-groupacct-groups" />
 		<?php
 		// Preserve sort state across filter submissions.
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only sort values echoed back into the filter form.
 		if ( ! empty( $_REQUEST['orderby'] ) ) {
 			echo '<input type="hidden" name="orderby" value="' . esc_attr( sanitize_key( wp_unslash( $_REQUEST['orderby'] ) ) ) . '" />';
 		}
 		if ( ! empty( $_REQUEST['order'] ) ) {
 			echo '<input type="hidden" name="order" value="' . esc_attr( sanitize_key( wp_unslash( $_REQUEST['order'] ) ) ) . '" />';
 		}
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		$list_table->display();
 		?>
 	</form>
@@ -76,12 +82,14 @@ function pmprogroupacct_admin_groups_render_add_form() {
 	$state           = pmprogroupacct_admin_groups_consume_form_state();
 	$errors          = isset( $state['errors'] ) ? (array) $state['errors'] : array();
 	$parent_user_in  = isset( $state['parent_user'] ) ? (string) $state['parent_user'] : '';
-	$parent_level_id = isset( $state['parent_level_id'] ) ? (int) $state['parent_level_id'] : ( isset( $_REQUEST['parent_level_id'] ) ? (int) $_REQUEST['parent_level_id'] : 0 );
+	$parent_level_id = isset( $state['parent_level_id'] ) ? (int) $state['parent_level_id'] : ( isset( $_REQUEST['parent_level_id'] ) ? (int) $_REQUEST['parent_level_id'] : 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only form prefill.
 	$seats           = isset( $state['seats'] ) ? (int) $state['seats'] : 0;
 
 	// If we arrived via the Edit Member CTA with a parent_user_id, prefill the user field with their login.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only form prefill.
 	if ( '' === $parent_user_in && ! empty( $_REQUEST['parent_user_id'] ) ) {
 		$prefill_user = get_userdata( (int) $_REQUEST['parent_user_id'] );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		if ( ! empty( $prefill_user ) ) {
 			$parent_user_in = $prefill_user->user_login;
 		}
@@ -156,7 +164,7 @@ function pmprogroupacct_admin_groups_handle_post() {
 	if ( empty( $_POST['pmprogroupacct_admin_action'] ) ) {
 		return;
 	}
-	if ( 'add' !== sanitize_key( $_POST['pmprogroupacct_admin_action'] ) ) {
+	if ( 'add' !== sanitize_key( $_POST['pmprogroupacct_admin_action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Routing only; capability and nonce are verified below before any state change.
 		return;
 	}
 	if ( ! function_exists( 'pmpro_get_edit_member_capability' ) || ! current_user_can( pmpro_get_edit_member_capability() ) ) {

@@ -3,6 +3,10 @@
  * Admin functions.
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Runs only when the plugin is activated.
  *
@@ -28,7 +32,7 @@ function pmprogroupacct_admin_notice() {
 	// Check transient, if available display notice.
 	if ( get_transient( 'pmpro-group-accounts-admin-notice' ) ) { ?>
 		<div class="updated notice is-dismissible">
-			<p><?php printf( __( 'Thank you for activating. <a href="%s">Create a new membership level or update an existing level</a> to add group account features.', 'pmpro-group-accounts' ), add_query_arg( array( 'page' => 'pmpro-membershiplevels' ), admin_url( 'admin.php' ) ) ); ?></p>
+			<p><?php printf( wp_kses_post( __( 'Thank you for activating. <a href="%s">Create a new membership level or update an existing level</a> to add group account features.', 'pmpro-group-accounts' ) ), esc_url( add_query_arg( array( 'page' => 'pmpro-membershiplevels' ), admin_url( 'admin.php' ) ) ) ); ?></p>
 		</div>
 		<?php
 		// Delete transient, only display this notice once.
@@ -90,7 +94,7 @@ function pmprogroupacct_required_installed() {
 				/* translators: 1: This plugin's name. 2: Required plugin name(s). */
 				esc_html__( 'The following plugin(s) are required for the %1$s plugin to work: %2$s', 'pmpro-group-accounts' ),
 				esc_html__( 'Group Accounts', 'pmpro-group-accounts' ),
-				implode( ', ', $install_plugins ) // $install_plugins was escaped when built.
+				implode( ', ', $install_plugins ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $install_plugins was escaped when built.
 			)
 		);
 
@@ -122,7 +126,7 @@ function pmprogroupacct_required_installed() {
 				/* translators: 1: This plugin's name. 2: Required plugin name(s). */
 				esc_html__( 'The following plugin(s) are required for the %1$s plugin to work: %2$s', 'pmpro-group-accounts' ),
 				esc_html__( 'Group Accounts', 'pmpro-group-accounts' ),
-				implode( ', ', $activate_plugins ) // $activate_plugins was escaped when built.
+				implode( ', ', $activate_plugins ) // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $activate_plugins was escaped when built.
 			)
 		);
 
@@ -374,6 +378,7 @@ function pmprogroupacct_pmproiucsv_post_user_import( $user, $membership_id, $ord
 	if ( ! empty( $group_id ) ) {
 
 		// Let's set all previous instances to "inactive" before trying to insert the child record.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Prepared update on the add-on's custom table.
 		$wpdb->query(
 			$wpdb->prepare(
 				"UPDATE $wpdb->pmprogroupacct_group_members SET group_child_status = 'inactive' WHERE group_child_user_id = %d AND group_child_level_id = %d",
@@ -433,7 +438,7 @@ function pmprogroupacct_manage_memberslist_column_body( $column_name, $user_id, 
 		}
 
 		// Echo the data for this column.
-		echo $parent_user_info;
+		echo $parent_user_info; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when built above.
 	}
 }
 add_filter( 'pmpro_manage_memberslist_custom_column', 'pmprogroupacct_manage_memberslist_column_body', 10, 3 );
