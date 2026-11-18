@@ -54,8 +54,8 @@ function pmprogroupacct_email_data( $data, $email ) {
 	// Set the group data in case we bail early.
 	$data['pmprogroupacct_group_info'] = '';
 
-	// If 'checkout' is not in the email template name, bail.
-	if (  empty( $email->template ) || strpos( $email->template, 'checkout' ) === false ) {
+	// If 'checkout' is not in the email template name and this is not the Approvals Add On's application_approved email, bail.
+	if ( empty( $email->template ) || ( strpos( $email->template, 'checkout' ) === false && 'application_approved' !== $email->template ) ) {
 		return $data; 
 	}
 
