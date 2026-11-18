@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, group accounts, corporate accounts, team memberships
 Requires at least: 5.4
 Tested up to: 7.1
-Stable tag: 1.6.2
+Stable tag: 1.6.3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -27,6 +27,14 @@ This plugin allows you to sell memberships to corporate organizations, families,
 View full documentation at: https://www.paidmembershipspro.com/add-ons/group-accounts/
 
 == Changelog ==
+= 1.6.3 - 2026-11-18 =
+* ENHANCEMENT: Added optional First Name and Last Name fields to the Create a New Group Member form on the Manage Group page. #101 (@dparker1005)
+* ENHANCEMENT: The `!!pmprogroupacct_group_info!!` email variable can now be used in the Approvals Add On's Application Approved email. #99 (@dparker1005)
+* ENHANCEMENT: Logged-out visitors to the Manage Group page are now sent to the login page and returned to their group after logging in. #102 (@dparker1005)
+* BUG FIX: Fixed an issue where page builders like Elementor could not load the Manage Group page for editing. #102 (@dparker1005)
+* BUG FIX: Fixed an issue where deleted membership levels remained in other levels' group child level settings. #100 (@dparker1005)
+* BUG FIX: Fixed an issue where child members could see "Managed by" text in place of the level cost on every page when no Membership Account page was set. #103 (@dparker1005)
+
 = 1.6.2 - 2026-10-01 =
 * SECURITY: Improved sanitization and escaping throughout the plugin to resolve Plugin Check security findings. #98 (@dparker1005)
 * BUG FIX: Fixed an issue where invite email addresses containing an apostrophe were rejected as invalid. #98 (@dparker1005)
