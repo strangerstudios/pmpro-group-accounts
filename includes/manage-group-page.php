@@ -58,49 +58,26 @@ function pmprogroupacct_member_action_links( $action_links, $level_id ) {
 add_filter( 'pmpro_member_action_links', 'pmprogroupacct_member_action_links', 10, 2 );
 
 /**
- * Redirect to the Membership Account page if someone tries to access the
- * Manage Group page without a group ID or access.
+ * Redirect logged-out visitors on the Manage Group page to the login page.
+ *
+ * The [pmprogroupacct_manage_group] shortcode handles missing, invalid and
+ * unauthorized groups itself, so page builders can still load this page.
  *
  * @since 1.0
  * @return void
  */
 function pmprogroupacct_manage_group_preheader() {
-	if ( ! is_admin() ) {
-		global $pmpro_pages;
+	global $pmpro_pages;
 
-		// Return if this is not the Manage Group page.
-		if ( empty( $pmpro_pages['pmprogroupacct_manage_group'] ) || ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
-			return;
-		}
-
-		// Set up the $redirect variable.
-		$redirect = false;
-
-		// Make sure that a group ID was passed. If not, set $redirect to true.
-		if ( empty( $_REQUEST['pmprogroupacct_group_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing and permission check.
-			$redirect = true;
-		} else {
-			// Get the group.
-			$group = new PMProGroupAcct_Group( intval( $_REQUEST['pmprogroupacct_group_id'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing and permission check.
-
-			// If the group doesn't exist, set $redirect to true.
-			if ( empty( $group->id ) ) {
-				$redirect = true;
-			}
-
-			// Check if the current user can view this page.
-			$is_admin = current_user_can( apply_filters( 'pmpro_edit_member_capability', 'manage_options' ) );
-			if ( ! $is_admin && $group->group_parent_user_id !== get_current_user_id() ) {
-				$redirect = true;
-			}
-		}
-
-		// Redirect if necessary.
-		if ( ! empty( $redirect ) ) {
-			wp_redirect( pmpro_url( 'account' ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_url() is filterable and may point offsite (e.g. Network Subsite).
-			exit;
-		}
+	// Return if the user is logged in or this is not the Manage Group page.
+	if ( is_user_logged_in() || empty( $pmpro_pages['pmprogroupacct_manage_group'] ) || ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
+		return;
 	}
+
+	// Send them back to this group after logging in.
+	$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group', empty( $_REQUEST['pmprogroupacct_group_id'] ) ? '' : 'pmprogroupacct_group_id=' . (int) $_REQUEST['pmprogroupacct_group_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: keeps the requested group selected after login. Permission is checked by the shortcode.
+	wp_redirect( pmpro_login_url( $manage_group_url ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_login_url() is filterable and may point to an offsite SSO login page.
+	exit;
 }
 add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
 
