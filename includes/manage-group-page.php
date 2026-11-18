@@ -58,6 +58,30 @@ function pmprogroupacct_member_action_links( $action_links, $level_id ) {
 add_filter( 'pmpro_member_action_links', 'pmprogroupacct_member_action_links', 10, 2 );
 
 /**
+ * Redirect logged-out visitors on the Manage Group page to the login page.
+ *
+ * The [pmprogroupacct_manage_group] shortcode handles missing, invalid and
+ * unauthorized groups itself, so page builders can still load this page.
+ *
+ * @since 1.0
+ * @return void
+ */
+function pmprogroupacct_manage_group_preheader() {
+	global $pmpro_pages;
+
+	// Return if the user is logged in or this is not the Manage Group page.
+	if ( is_user_logged_in() || empty( $pmpro_pages['pmprogroupacct_manage_group'] ) || ! is_page( $pmpro_pages['pmprogroupacct_manage_group'] ) ) {
+		return;
+	}
+
+	// Send them back to this group after logging in.
+	$manage_group_url = pmpro_url( 'pmprogroupacct_manage_group', empty( $_REQUEST['pmprogroupacct_group_id'] ) ? '' : 'pmprogroupacct_group_id=' . (int) $_REQUEST['pmprogroupacct_group_id'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only: keeps the requested group selected after login. Permission is checked by the shortcode.
+	wp_redirect( pmpro_login_url( $manage_group_url ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_login_url() is filterable and may point to an offsite SSO login page.
+	exit;
+}
+add_action( 'wp', 'pmprogroupacct_manage_group_preheader', 1 );
+
+/**
  * Show the content for the [pmprogroupacct_manage_group] shortcode.
  *
  * @since 1.0
