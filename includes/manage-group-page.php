@@ -481,6 +481,10 @@ function pmprogroupacct_shortcode_manage_group() {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Invalid password.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
+		// Get the optional first and last name.
+		$first_name = empty( $_REQUEST['pmprogroupacct_create_member_first_name'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_create_member_first_name'] ) );
+		$last_name  = empty( $_REQUEST['pmprogroupacct_create_member_last_name'] ) ? '' : sanitize_text_field( wp_unslash( $_REQUEST['pmprogroupacct_create_member_last_name'] ) );
+
 		// Make sure we have a valid level ID for this group.
 		$level_id = empty( $_REQUEST['pmprogroupacct_create_member_level_id'] ) ? '' : intval( $_REQUEST['pmprogroupacct_create_member_level_id'] );
 		if ( empty( $create_member_message ) && ( empty( $level_id ) || ! in_array( $level_id, $group_settings['child_level_ids'], true ) ) ) {
@@ -490,7 +494,15 @@ function pmprogroupacct_shortcode_manage_group() {
 		// If we still don't have an error, create the user.
 		if ( empty( $create_member_message ) ) {
 			// Create the user.
-			$user_id = wp_create_user( $username, $password, $email );
+			$user_id = wp_insert_user(
+				array(
+					'user_login' => wp_slash( $username ),
+					'user_email' => wp_slash( $email ),
+					'user_pass'  => $password,
+					'first_name' => wp_slash( $first_name ),
+					'last_name'  => wp_slash( $last_name ),
+				)
+			);
 
 			// If user creation failed, show an error message.
 			if ( is_wp_error( $user_id ) ) {
@@ -1069,6 +1081,14 @@ function pmprogroupacct_shortcode_manage_group() {
 													<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-group-accounts' ); ?>">*</abbr></span>
 												</label>
 												<input type="email" name="pmprogroupacct_create_member_email" id="pmprogroupacct_create_member_email" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-email pmpro_form_input-required', 'pmprogroupacct_create_member_email' ) ); ?>">
+											</div> <!-- end .pmpro_form_field -->
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-first_name' ) ); ?>">
+												<label for="pmprogroupacct_create_member_first_name" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'First Name', 'pmpro-group-accounts' ); ?></label>
+												<input type="text" name="pmprogroupacct_create_member_first_name" id="pmprogroupacct_create_member_first_name" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'pmprogroupacct_create_member_first_name' ) ); ?>">
+											</div> <!-- end .pmpro_form_field -->
+											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-last_name' ) ); ?>">
+												<label for="pmprogroupacct_create_member_last_name" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>"><?php esc_html_e( 'Last Name', 'pmpro-group-accounts' ); ?></label>
+												<input type="text" name="pmprogroupacct_create_member_last_name" id="pmprogroupacct_create_member_last_name" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'pmprogroupacct_create_member_last_name' ) ); ?>">
 											</div> <!-- end .pmpro_form_field -->
 											<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-password pmpro_form_field-required' ) ); ?>">
 												<label for="pmprogroupacct_create_member_password" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
