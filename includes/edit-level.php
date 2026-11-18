@@ -253,5 +253,22 @@ add_action( 'pmpro_save_membership_level', 'pmprogroupacct_pmpro_save_membership
  */
 function pmprogroupacct_pmpro_delete_membership_level( $level_id ) {
 	delete_pmpro_membership_level_meta( $level_id, 'pmprogroupacct_settings' );
+
+	// Remove the deleted level from other levels' child level IDs.
+	$levels = pmpro_getAllLevels( true, true );
+	foreach ( $levels as $level ) {
+		$settings = pmprogroupacct_get_settings_for_level( $level->id );
+		if ( empty( $settings ) || empty( $settings['child_level_ids'] ) || ! in_array( (int) $level_id, array_map( 'intval', $settings['child_level_ids'] ), true ) ) {
+			continue;
+		}
+
+		$settings['child_level_ids'] = array_values( array_diff( array_map( 'intval', $settings['child_level_ids'] ), array( (int) $level_id ) ) );
+		if ( empty( $settings['child_level_ids'] ) ) {
+			// No child levels remain, so this is no longer a group account level.
+			delete_pmpro_membership_level_meta( $level->id, 'pmprogroupacct_settings' );
+		} else {
+			update_pmpro_membership_level_meta( $level->id, 'pmprogroupacct_settings', $settings );
+		}
+	}
 }
 add_action( 'pmpro_delete_membership_level', 'pmprogroupacct_pmpro_delete_membership_level' );
