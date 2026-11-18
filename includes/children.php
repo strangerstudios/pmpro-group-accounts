@@ -418,7 +418,7 @@ function pmprogroupacct_pmpro_level_cost_text_child_account( $level_cost, $level
 	global $pmpro_pages;
 
 	// Check if we are on the Membership Account page.
-	if ( empty( $pmpro_pages ) || ! is_array( $pmpro_pages ) || ! array_key_exists( 'account', $pmpro_pages ) || ! is_page( $pmpro_pages['account'] ) ) {
+	if ( empty( $pmpro_pages ) || ! is_array( $pmpro_pages ) || ! array_key_exists( 'account', $pmpro_pages ) || empty( $pmpro_pages['account'] ) || ! is_page( $pmpro_pages['account'] ) ) {
 		return $level_cost;
 	};
 
