@@ -398,7 +398,7 @@ function pmprogroupacct_shortcode_manage_group() {
 				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Invites sent.', 'pmpro-group-accounts' ) . '</div>';
 			} else {
 				// Some emails were sent, but others were not. List the emails that were sent, the emails that failed to send, and the invalid emails.
-				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
+				$invite_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '"><p>' . esc_html__( 'Invites sent to the following email addresses:', 'pmpro-group-accounts' ) . '</p><ul>';
 				foreach ( $sent_emails as $sent_email ) {
 					$invite_message .= '<li>' . esc_html( $sent_email ) . '</li>';
 				}
@@ -494,7 +494,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			// If changing the level failed, show an error message.
 			if ( empty( $change_level ) ) {
-				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Error changing user level.', 'pmpro-group-accounts' );
+				$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'Error changing user level.', 'pmpro-group-accounts' ) . '</div>';
 			}
 		}
 
@@ -515,6 +515,11 @@ function pmprogroupacct_shortcode_manage_group() {
 		// Make sure that the current user has permission to add existing members.
 		if ( empty( $create_member_message ) && ! $is_admin ) {
 			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'You do not have permission to add existing members to this group.', 'pmpro-group-accounts' ) . '</div>';
+		}
+
+		// Make sure that there is an available seat in the group.
+		if ( empty( $create_member_message ) && ! $group->is_accepting_signups() ) {
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_error' ) . '">' . esc_html__( 'No available seats in this group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 
 		// Make sure that a user ID was passed.
@@ -567,6 +572,7 @@ function pmprogroupacct_shortcode_manage_group() {
 
 			// Add the user to the group.
 			PMProGroupAcct_Group_Member::create( $user_id, $level_id, $group->id );
+			$create_member_message = '<div class="' . pmpro_get_element_class( 'pmpro_message pmpro_success' ) . '">' . esc_html__( 'User added to group.', 'pmpro-group-accounts' ) . '</div>';
 		}
 	}
 
